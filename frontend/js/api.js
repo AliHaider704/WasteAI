@@ -4,7 +4,7 @@
 // ?scenario=ok|uncertain|hazard|rate_limited|image_too_large|all_sources_failed picks the response.
 
 const params = new URLSearchParams(location.search);
-export const MOCK = params.get("mock") !== "0"; // S1: flip this default to false
+export const MOCK = params.get("mock") === "1";
 const API_BASE = "/api/v1";
 const MOCK_BASE = "mock/";
 const MOCK_DELAY_MS = 900;

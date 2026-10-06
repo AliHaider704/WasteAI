@@ -1,4 +1,9 @@
 // PATH: waste-ai/frontend/js/app.js
+import "./i18n.js";
+import "./theme.js";
+import "./upload.js";
+import "./results.js";
+import "./audio.js";
 // Hash routing (#/, #/browse, #/result) and the browse view over mock categories.
 // M3 wires scan/upload, M4 fills #result-root, M5 provides window.__i18n and lang/theme, M6 sound.
 
