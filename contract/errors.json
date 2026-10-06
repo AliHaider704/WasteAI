@@ -1,0 +1,72 @@
+{
+  "_path": "contract/errors.json",
+  "version": 1,
+  "note": "Contract v1 (frozen). `code` is stable and used by the UI as an i18n key. `message` is returned by the API according to ?lang=ar|en (default en). Messages may be reworded; codes never change.",
+  "errors": [
+    {
+      "code": "invalid_image",
+      "http": 400,
+      "message": {
+        "en": "The image could not be read. Please try another photo.",
+        "ar": "تعذّرت قراءة الصورة. يرجى تجربة صورة أخرى."
+      }
+    },
+    {
+      "code": "image_too_large",
+      "http": 413,
+      "message": {
+        "en": "Image must be 2 MB or less.",
+        "ar": "يجب ألا يتجاوز حجم الصورة 2 ميغابايت."
+      }
+    },
+    {
+      "code": "unsupported_type",
+      "http": 415,
+      "message": {
+        "en": "Only JPEG, PNG or WebP images are supported.",
+        "ar": "الصيغ المدعومة هي JPEG وPNG وWebP فقط."
+      }
+    },
+    {
+      "code": "invalid_request",
+      "http": 422,
+      "message": {
+        "en": "The request is invalid.",
+        "ar": "الطلب غير صالح."
+      }
+    },
+    {
+      "code": "rate_limited",
+      "http": 429,
+      "retry_after_header": true,
+      "message": {
+        "en": "Too many requests. Please wait a moment and try again.",
+        "ar": "عدد الطلبات كبير جدًا. يرجى الانتظار قليلًا ثم المحاولة مرة أخرى."
+      }
+    },
+    {
+      "code": "all_sources_failed",
+      "http": 502,
+      "message": {
+        "en": "We could not analyze this photo right now. Please try again.",
+        "ar": "تعذّر تحليل هذه الصورة حاليًا. يرجى المحاولة مرة أخرى."
+      }
+    },
+    {
+      "code": "overloaded",
+      "http": 503,
+      "message": {
+        "en": "The service is busy. Please try again in a few seconds.",
+        "ar": "الخدمة مشغولة حاليًا. يرجى المحاولة بعد ثوانٍ."
+      }
+    },
+    {
+      "code": "internal_error",
+      "http": 500,
+      "message": {
+        "en": "Something went wrong on our side. Please try again.",
+        "ar": "حدث خطأ من جهتنا. يرجى المحاولة مرة أخرى."
+      }
+    }
+  ]
+}

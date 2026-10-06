@@ -1,0 +1,7 @@
+{"_path": "server/data/label_rules/hazardous.json",
+ "paint": {"hazardous_chemical": 1.0}, "paint can": {"hazardous_chemical": 1.0}, "solvent": {"hazardous_chemical": 1.0},
+ "pesticide": {"hazardous_chemical": 1.0}, "insecticide": {"hazardous_chemical": 1.0}, "chemical": {"hazardous_chemical": 1.0},
+ "spray can": {"hazardous_chemical": 0.8, "metal_other": 0.2}, "aerosol": {"hazardous_chemical": 0.9},
+ "motor oil": {"hazardous_chemical": 1.0}, "engine oil": {"hazardous_chemical": 1.0}, "bleach": {"hazardous_chemical": 1.0},
+ "fuel": {"hazardous_chemical": 1.0}, "gasoline": {"hazardous_chemical": 1.0}, "fertilizer": {"hazardous_chemical": 0.8},
+ "fluorescent lamp": {"hazardous_chemical": 0.8, "ewaste_small": 0.2}, "thinner": {"hazardous_chemical": 1.0}}

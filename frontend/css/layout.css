@@ -1,0 +1,69 @@
+/* PATH: waste-ai/frontend/css/layout.css */
+/* Breakpoints: base 360+, 768 (cards in 2 columns), 1024 (more air), 1440 (wider gutters). */
+html { block-size: 100%; }
+body {
+  min-block-size: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg, Canvas);
+  color: var(--color-text, CanvasText);
+}
+
+.skip-link {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  padding: 0.75rem 1rem;
+  background: var(--color-accent, #1f5d3a);
+  color: var(--color-on-accent, #fff);
+  transform: translateY(-120%);
+}
+.skip-link:focus { transform: translateY(0); }
+
+.app-header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 10;
+  background: var(--color-bg, Canvas);
+  border-block-end: 1px solid var(--color-border, #8884);
+}
+.app-header__inner {
+  max-inline-size: 45rem;
+  margin-inline: auto;
+  padding-block: 0.5rem;
+  padding-inline: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.toolbar { display: flex; gap: 0.5rem; }
+
+.app-main {
+  flex: 1;
+  max-inline-size: 45rem;
+  margin-inline: auto;
+  inline-size: 100%;
+  padding-block: 1.5rem 3rem;
+  padding-inline: 1rem;
+}
+.view[hidden] { display: none; }
+.view > * + * { margin-block-start: 1rem; }
+
+.actions { display: grid; gap: 0.75rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; grid-template-columns: 1fr; }
+
+@media (min-width: 768px) {
+  .app-main { padding-block: 2rem 4rem; padding-inline: 1.5rem; }
+  .app-header__inner { padding-inline: 1.5rem; }
+  .cards { grid-template-columns: repeat(2, 1fr); }
+  .actions { grid-template-columns: repeat(2, 1fr); }
+  .actions .btn--primary { grid-column: 1 / -1; }
+}
+@media (min-width: 1024px) {
+  .app-main { padding-block-start: 3rem; }
+}
+@media (min-width: 1440px) {
+  .app-main { padding-block-start: 4rem; }
+}

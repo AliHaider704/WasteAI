@@ -1,0 +1,8 @@
+{
+  "_path": "waste-ai/frontend/mock/error_all_sources_failed.json",
+  "error": {
+    "code": "all_sources_failed",
+    "message": "We could not analyze this photo right now. Please try again.",
+    "request_id": "a3d7c5e9-b5f4-4a06-98b2-1e6c9f3a0b06"
+  }
+}

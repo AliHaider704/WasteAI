@@ -1,0 +1,12 @@
+{"_path": "server/data/label_rules/glass.json",
+ "labels": {
+  "glass": {"glass": 1.0},
+  "glass bottle": {"glass": 1.0},
+  "wine bottle": {"glass": 1.0},
+  "beer bottle": {"glass": 1.0},
+  "bottle": {"glass": 0.4},
+  "jar": {"glass": 0.8, "plastic_unknown": 0.2},
+  "drinking glass": {"glass": 1.0},
+  "wine glass": {"glass": 1.0},
+  "glassware": {"glass": 1.0}
+ }}

@@ -1,0 +1,478 @@
+# contract/openapi.yaml
+openapi: 3.1.0
+info:
+  title: AI Waste Segregation System API
+  version: 1.0.0
+  description: |
+    Contract v1 (FROZEN after sync point S0). Source of truth: docs/ARCHITECTURE.md sections 3-5.
+    Classification = labels from sources -> rule-based mapper -> category scores -> aggregator.
+    No generative AI. Images are never stored.
+
+    Rules:
+    - Additive changes only inside v1 (new optional fields, new category IDs). Clients ignore unknown fields.
+    - Breaking changes require /api/v2.
+    - All non-2xx responses use the ErrorResponse shape. `code` is stable; `message` is localized by `lang` (texts in contract/errors.json).
+  license:
+    name: TBD (decided in Phase M7, D-011)
+    identifier: NOASSERTION
+servers:
+  - url: /api/v1
+    description: Same-origin (Nginx proxies /api/ to 127.0.0.1:8100)
+tags:
+  - name: system
+  - name: content
+  - name: classification
+paths:
+  /health:
+    get:
+      tags: [system]
+      operationId: getHealth
+      summary: Liveness and source status
+      responses:
+        "200":
+          description: Service is alive.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+              examples:
+                healthy:
+                  value:
+                    status: ok
+                    version: 1.0.0
+                    sources:
+                      local_onnx: up
+                      azure: up
+                      reciclapi: disabled
+        "500":
+          $ref: "#/components/responses/InternalError"
+  /categories:
+    get:
+      tags: [content]
+      operationId: listCategories
+      summary: Full category list with localized names and guidance
+      description: |
+        Merges contract/categories.json (id, group, bin, icon) with content/guidance.<lang>.json
+        (name, summary, steps, warnings). Text fields are empty strings / empty arrays when content is missing.
+      parameters:
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: All categories.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoriesResponse"
+              examples:
+                sample:
+                  summary: Truncated sample (the real response lists all 26 IDs)
+                  value:
+                    version: 1
+                    categories:
+                      - {id: plastic_pet, name: PET plastic, group: plastics, bin: blue, icon: cup-soda, summary: "Clear drink bottles and food trays marked with the number 1.", steps: [Empty it, Rinse, Remove cap], warnings: []}
+                      - {id: battery, name: Batteries, group: e-waste, bin: special, icon: battery-warning, summary: "Never put batteries in general trash.", steps: [Tape the terminals, Keep dry, Take to a collection point], warnings: [Damaged batteries can start a fire. Check your local authorities.]}
+        "422":
+          $ref: "#/components/responses/InvalidRequest"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+        "500":
+          $ref: "#/components/responses/InternalError"
+  /classify:
+    post:
+      tags: [classification]
+      operationId: classifyImage
+      summary: Classify a waste item from one photo
+      description: |
+        Multipart field `image` (jpeg/png/webp, <= 2 MB). Magic bytes are validated, not only content-type.
+        The client should send a JPEG resized to <= 1024 px (quality 0.85).
+        Per-IP limit 10 requests/minute. Sources run in parallel (6 s timeout each); a failing source is skipped.
+        If no source returns labels the response is 502 `all_sources_failed`.
+      parameters:
+        - $ref: "#/components/parameters/Lang"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [image]
+              properties:
+                image:
+                  type: string
+                  contentEncoding: binary
+                  contentMediaType: image/*
+                  description: JPEG, PNG or WebP, 2 MB or less.
+      responses:
+        "200":
+          description: Classification result (`ok` or `uncertain`).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClassifyResponse"
+              examples:
+                ok:
+                  summary: Confident result
+                  value:
+                    request_id: b3f1c0de-5a3e-4c58-9d0b-2f7a6c1e8a10
+                    status: ok
+                    category: {id: plastic_pet, name: PET plastic, group: plastics, confidence: 0.87}
+                    alternatives:
+                      - {id: plastic_unknown, name: Plastic (type unknown), confidence: 0.09}
+                    agreement: full
+                    hazard: false
+                    guidance:
+                      bin: blue
+                      summary: Clear drink bottles are widely recycled.
+                      steps: [Empty it, Rinse, Remove cap]
+                      warnings: []
+                    sources:
+                      - {name: local_onnx, ok: true, top: [{label: plastic, score: 0.91}]}
+                      - {name: azure, ok: true, top: [{label: bottle, score: 0.88}]}
+                    elapsed_ms: 1420
+                uncertain:
+                  summary: Not sure (category is null, up to 2 alternatives)
+                  value:
+                    request_id: 0c9d6a52-7e1b-4f0e-8b34-6a52d1f4c9e3
+                    status: uncertain
+                    category: null
+                    alternatives:
+                      - {id: cardboard, name: Cardboard, confidence: 0.41}
+                      - {id: paper, name: Paper, confidence: 0.33}
+                    agreement: none
+                    hazard: false
+                    guidance: null
+                    sources:
+                      - {name: local_onnx, ok: true, top: [{label: cardboard, score: 0.52}, {label: paper, score: 0.31}]}
+                      - {name: azure, ok: false, top: []}
+                    elapsed_ms: 2310
+                hazard:
+                  summary: Hazard category (warnings must always be shown)
+                  value:
+                    request_id: 5e8b7f12-3c4d-4a96-b1e0-9d2c7a6f3b44
+                    status: ok
+                    category: {id: battery, name: Batteries, group: e-waste, confidence: 0.78}
+                    alternatives:
+                      - {id: ewaste_small, name: Small electronics, confidence: 0.14}
+                    agreement: partial
+                    hazard: true
+                    guidance:
+                      bin: special
+                      summary: Never put batteries in general trash.
+                      steps: [Tape the terminals, Keep dry, Take to a collection point]
+                      warnings:
+                        - Damaged or swollen batteries can start a fire.
+                        - This is guidance only. Check your local authorities.
+                    sources:
+                      - {name: local_onnx, ok: true, top: [{label: battery, score: 0.83}]}
+                      - {name: azure, ok: true, top: [{label: electronics, score: 0.64}]}
+                    elapsed_ms: 1710
+        "400":
+          $ref: "#/components/responses/InvalidImage"
+        "413":
+          $ref: "#/components/responses/ImageTooLarge"
+        "415":
+          $ref: "#/components/responses/UnsupportedType"
+        "422":
+          $ref: "#/components/responses/InvalidRequest"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "502":
+          $ref: "#/components/responses/AllSourcesFailed"
+        "503":
+          $ref: "#/components/responses/Overloaded"
+  /feedback:
+    post:
+      tags: [classification]
+      operationId: submitFeedback
+      summary: User corrects a result
+      description: Stores only request_id, correct_category_id and a timestamp.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FeedbackRequest"
+            examples:
+              glass:
+                value:
+                  request_id: b3f1c0de-5a3e-4c58-9d0b-2f7a6c1e8a10
+                  correct_category_id: glass
+      responses:
+        "204":
+          description: Feedback stored. No body.
+        "422":
+          $ref: "#/components/responses/InvalidRequest"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+        "500":
+          $ref: "#/components/responses/InternalError"
+components:
+  parameters:
+    Lang:
+      name: lang
+      in: query
+      required: false
+      description: Language of names, guidance and error messages. Defaults to `en`.
+      schema:
+        type: string
+        enum: [ar, en]
+        default: en
+  schemas:
+    CategoryId:
+      type: string
+      description: Frozen list (26 IDs). New IDs may be added later; never renamed or removed in v1.
+      enum:
+        - plastic_pet
+        - plastic_hdpe
+        - plastic_pvc
+        - plastic_ldpe
+        - plastic_pp
+        - plastic_ps
+        - plastic_other
+        - plastic_unknown
+        - paper
+        - cardboard
+        - carton_beverage
+        - glass
+        - metal_aluminum
+        - metal_steel
+        - metal_other
+        - organic_food
+        - organic_garden
+        - ewaste_small
+        - ewaste_large
+        - battery
+        - textile
+        - hazardous_chemical
+        - medical
+        - wood
+        - construction
+        - general_residual
+    Group:
+      type: string
+      description: Category group as listed in docs/ARCHITECTURE.md section 5.
+      enum: [plastics, paper, glass, metals, organic, e-waste, other]
+    Bin:
+      type: string
+      description: Semantic bin color. The UI maps each value to a design token.
+      enum: [blue, green, yellow, red, black, brown, grey, special]
+    Agreement:
+      type: string
+      enum: [full, partial, none, single_source]
+    Confidence:
+      type: number
+      minimum: 0
+      maximum: 1
+    Category:
+      type: object
+      required: [id, name, group, bin, icon, summary, steps, warnings]
+      properties:
+        id: {$ref: "#/components/schemas/CategoryId"}
+        name: {type: string}
+        group: {$ref: "#/components/schemas/Group"}
+        bin: {$ref: "#/components/schemas/Bin"}
+        icon:
+          type: string
+          description: Lucide icon name.
+        summary: {type: string}
+        steps:
+          type: array
+          items: {type: string}
+        warnings:
+          type: array
+          items: {type: string}
+    CategoriesResponse:
+      type: object
+      required: [version, categories]
+      properties:
+        version:
+          type: integer
+          const: 1
+        categories:
+          type: array
+          items: {$ref: "#/components/schemas/Category"}
+    ResultCategory:
+      type: object
+      required: [id, name, group, confidence]
+      properties:
+        id: {$ref: "#/components/schemas/CategoryId"}
+        name: {type: string}
+        group: {$ref: "#/components/schemas/Group"}
+        confidence: {$ref: "#/components/schemas/Confidence"}
+    Alternative:
+      type: object
+      required: [id, name, confidence]
+      properties:
+        id: {$ref: "#/components/schemas/CategoryId"}
+        name: {type: string}
+        confidence: {$ref: "#/components/schemas/Confidence"}
+    Guidance:
+      type: object
+      required: [bin, summary, steps, warnings]
+      properties:
+        bin: {$ref: "#/components/schemas/Bin"}
+        summary: {type: string}
+        steps:
+          type: array
+          items: {type: string}
+        warnings:
+          type: array
+          items: {type: string}
+    SourceLabel:
+      type: object
+      required: [label, score]
+      properties:
+        label:
+          type: string
+          description: Raw English label from the source (UI shows it only in the "Why?" panel).
+        score: {$ref: "#/components/schemas/Confidence"}
+    SourceResult:
+      type: object
+      required: [name, ok, top]
+      properties:
+        name:
+          type: string
+          enum: [local_onnx, azure, reciclapi]
+        ok:
+          type: boolean
+          description: false when the source failed, timed out, hit quota or was skipped (then `top` is empty).
+        top:
+          type: array
+          maxItems: 3
+          items: {$ref: "#/components/schemas/SourceLabel"}
+    ClassifyResponse:
+      type: object
+      required: [request_id, status, category, alternatives, agreement, hazard, guidance, sources, elapsed_ms]
+      properties:
+        request_id:
+          type: string
+          description: Opaque ID (UUID). Used by /feedback.
+        status:
+          type: string
+          enum: [ok, uncertain]
+        category:
+          description: Null when status is `uncertain`.
+          oneOf:
+            - {$ref: "#/components/schemas/ResultCategory"}
+            - {type: "null"}
+        alternatives:
+          type: array
+          maxItems: 2
+          items: {$ref: "#/components/schemas/Alternative"}
+        agreement: {$ref: "#/components/schemas/Agreement"}
+        hazard:
+          type: boolean
+          description: |
+            True when a hazard category (battery, hazardous_chemical, medical, ewaste_*) scores >= 0.35.
+            The UI always shows warnings then, even when status is `uncertain`.
+        guidance:
+          description: |
+            Null when status is `uncertain` and hazard is false. When hazard is true, guidance is present
+            (for the hazard category) and its `warnings` are non-empty.
+          oneOf:
+            - {$ref: "#/components/schemas/Guidance"}
+            - {type: "null"}
+        sources:
+          type: array
+          items: {$ref: "#/components/schemas/SourceResult"}
+        elapsed_ms:
+          type: integer
+          minimum: 0
+    FeedbackRequest:
+      type: object
+      required: [request_id, correct_category_id]
+      properties:
+        request_id: {type: string}
+        correct_category_id: {$ref: "#/components/schemas/CategoryId"}
+    SourceStatus:
+      type: string
+      enum: [up, down, quota, disabled]
+    HealthResponse:
+      type: object
+      required: [status, version, sources]
+      properties:
+        status:
+          type: string
+          const: ok
+        version: {type: string}
+        sources:
+          type: object
+          required: [local_onnx, azure, reciclapi]
+          properties:
+            local_onnx: {$ref: "#/components/schemas/SourceStatus"}
+            azure: {$ref: "#/components/schemas/SourceStatus"}
+            reciclapi: {$ref: "#/components/schemas/SourceStatus"}
+    ErrorCode:
+      type: string
+      enum:
+        - invalid_image
+        - image_too_large
+        - unsupported_type
+        - invalid_request
+        - rate_limited
+        - all_sources_failed
+        - overloaded
+        - internal_error
+    ErrorResponse:
+      type: object
+      required: [error]
+      examples:
+        - error: {code: image_too_large, message: Image must be 2 MB or less., request_id: 7a1e2b3c-0d4f-4e5a-8b6c-9d0e1f2a3b4c}
+      properties:
+        error:
+          type: object
+          required: [code, message, request_id]
+          properties:
+            code: {$ref: "#/components/schemas/ErrorCode"}
+            message:
+              type: string
+              description: Localized by `lang`.
+            request_id: {type: string}
+  responses:
+    InvalidImage:
+      description: 400 - the image cannot be decoded.
+      content:
+        application/json:
+          schema: {$ref: "#/components/schemas/ErrorResponse"}
+    ImageTooLarge:
+      description: 413 - image is larger than 2 MB. (Nginx rejects bodies over 3 MB before the API; that response is not JSON.)
+      content:
+        application/json:
+          schema: {$ref: "#/components/schemas/ErrorResponse"}
+    UnsupportedType:
+      description: 415 - not jpeg, png or webp (checked by magic bytes).
+      content:
+        application/json:
+          schema: {$ref: "#/components/schemas/ErrorResponse"}
+    InvalidRequest:
+      description: 422 - bad parameters or body.
+      content:
+        application/json:
+          schema: {$ref: "#/components/schemas/ErrorResponse"}
+    RateLimited:
+      description: 429 - per-IP limit (10 requests/minute) exceeded.
+      headers:
+        Retry-After:
+          description: Seconds to wait before retrying.
+          required: true
+          schema: {type: integer, minimum: 1}
+      content:
+        application/json:
+          schema: {$ref: "#/components/schemas/ErrorResponse"}
+    AllSourcesFailed:
+      description: 502 - no source returned labels.
+      content:
+        application/json:
+          schema: {$ref: "#/components/schemas/ErrorResponse"}
+    Overloaded:
+      description: 503 - concurrency limit hit (2 concurrent, 5 s queue wait). Retry.
+      content:
+        application/json:
+          schema: {$ref: "#/components/schemas/ErrorResponse"}
+    InternalError:
+      description: 500 - unexpected error.
+      content:
+        application/json:
+          schema: {$ref: "#/components/schemas/ErrorResponse"}

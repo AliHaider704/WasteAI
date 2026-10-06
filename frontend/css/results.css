@@ -1,0 +1,92 @@
+/* PATH: waste-ai/frontend/css/results.css */
+/* Result UI. Two columns (photo | details) from 900px. Colors fall back if a token is missing. */
+
+/* Give the two-column layout room while the result view is visible. */
+.app-main:has(.view[data-view="result"]:not([hidden])) { max-inline-size: 60rem; }
+
+.result { display: grid; gap: 1.5rem; grid-template-columns: minmax(0, 1fr); }
+.result__media { min-inline-size: 0; }
+.result__photo {
+  display: block;
+  inline-size: 100%;
+  max-block-size: 50vh;
+  object-fit: cover;
+  border: 1px solid var(--color-border, #8886);
+  border-radius: 0.75rem;
+}
+.result__card { display: grid; gap: 1rem; align-content: start; min-inline-size: 0; }
+
+.result__head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+.result__icon { inline-size: 2rem; block-size: 2rem; }
+.result__name { margin: 0; font-size: 1.75rem; line-height: 1.25; overflow-wrap: anywhere; }
+.result__meta { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.result__sub { margin: 0; font-size: 1.25rem; }
+.result__summary { margin: 0; }
+
+/* Confidence is always written in words; the border style is only a secondary cue. */
+.result__confidence {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2rem;
+  padding-inline: 0.75rem;
+  border: 2px solid var(--color-border, #8886);
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.result__confidence[data-level="high"] { border-color: var(--color-accent, #1f5d3a); }
+.result__confidence[data-level="medium"] { border-style: solid; }
+.result__confidence[data-level="low"] { border-style: dashed; }
+
+.result__steps, .result__list { margin: 0; padding-inline-start: 1.5rem; display: grid; gap: 0.5rem; }
+.result__list { list-style: disc; }
+
+.result__warnings {
+  padding: 1rem;
+  border: 1px solid var(--color-border, #8886);
+  border-inline-start: 6px solid var(--color-warning, #b45309);
+  border-radius: 0.5rem;
+  background: var(--color-surface, transparent);
+  display: grid;
+  gap: 0.5rem;
+}
+
+.result__alts { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
+.result__alts .btn { inline-size: 100%; justify-content: flex-start; }
+.result__chosen { display: grid; gap: 0.75rem; }
+.result__chosen:empty { display: none; }
+
+.result__why { border: 1px solid var(--color-border, #8886); border-radius: 0.75rem; padding-inline: 1rem; }
+.result__why summary {
+  min-block-size: 3rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 600;
+}
+.result__why[open] summary { border-block-end: 1px solid var(--color-border, #8886); margin-block-end: 0.75rem; }
+.result__why > :last-child { margin-block-end: 1rem; }
+.result__why summary:focus-visible { outline: 3px solid var(--focus-ring-color, var(--color-accent, #1f5d3a)); outline-offset: 2px; }
+.result__facts { display: grid; grid-template-columns: auto 1fr; gap: 0.25rem 1rem; margin-block: 0 0.75rem; }
+.result__facts dt { font-weight: 600; }
+.result__facts dd { margin: 0; }
+.result__labels { overflow-wrap: anywhere; }
+
+.result__feedback, .result__form { display: grid; gap: 0.75rem; }
+.result__form[hidden] { display: none; }
+.result__label { font-weight: 600; }
+
+@media (min-width: 900px) {
+  .result { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); align-items: start; gap: 2rem; }
+  .result__photo { max-block-size: none; }
+  .result__media { position: sticky; inset-block-start: 5rem; }
+}
+
+/* Reveal: opacity/transform only, 200ms ease-out; skipped entirely under reduced motion. */
+@keyframes result-reveal {
+  from { opacity: 0; transform: translateY(0.5rem); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .result--reveal { animation: result-reveal 200ms ease-out both; }
+}

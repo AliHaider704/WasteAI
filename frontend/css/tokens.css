@@ -1,0 +1,149 @@
+/* PATH: waste-ai/frontend/css/tokens.css
+   Design tokens. Light = warm paper, Dark = graphite. One deep-green accent.
+   Theme: data-theme="light|dark" on <html>; default follows prefers-color-scheme.
+   All colors are 6-digit hex (the preview page reads them to verify AA contrast). */
+
+:root {
+  color-scheme: light;
+
+  /* Surfaces and text */
+  --color-bg: #F6F1E7;
+  --color-surface: #FFFDF8;
+  --color-surface-2: #EFE8DA;
+  --color-text: #1F2A24;
+  --color-text-muted: #55605A;
+  --color-border: #D9D1C0;
+  --color-border-strong: #8A8372;
+
+  /* Brand accent (deep green) */
+  --color-accent: #1F6B47;
+  --color-accent-hover: #175538;
+  --color-on-accent: #FFFFFF;
+  --color-accent-soft: #DDEBDD;
+
+  /* Status */
+  --color-warning-bg: #FBEBD0;
+  --color-warning-text: #6B3A00;
+  --color-danger-bg: #FBE0DC;
+  --color-danger-text: #9A1B14;
+
+  /* Focus ring */
+  --color-focus: #0B57D0;
+
+  /* Bin colors (semantic): -bg fill, -fg text on that fill */
+  --bin-blue-bg: #1D5FA8;    --bin-blue-fg: #FFFFFF;
+  --bin-green-bg: #1E7A3C;   --bin-green-fg: #FFFFFF;
+  --bin-yellow-bg: #F2C230;  --bin-yellow-fg: #1F1A05;
+  --bin-red-bg: #B3261E;     --bin-red-fg: #FFFFFF;
+  --bin-black-bg: #2B2B2B;   --bin-black-fg: #FFFFFF;
+  --bin-brown-bg: #7A4A2A;   --bin-brown-fg: #FFFFFF;
+  --bin-grey-bg: #6B7280;    --bin-grey-fg: #FFFFFF;
+  --bin-special-bg: #7B3FA0; --bin-special-fg: #FFFFFF;
+
+  --shadow-1: 0 1px 2px rgba(31, 42, 36, 0.10);
+  --shadow-2: 0 4px 12px rgba(31, 42, 36, 0.12);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --color-bg: #16191A;
+    --color-surface: #1F2324;
+    --color-surface-2: #2A2F30;
+    --color-text: #ECEAE4;
+    --color-text-muted: #A5ABA6;
+    --color-border: #3A4042;
+    --color-border-strong: #7C8586;
+    --color-accent: #5FBF8A;
+    --color-accent-hover: #7BD1A0;
+    --color-on-accent: #0E1A13;
+    --color-accent-soft: #1E3328;
+    --color-warning-bg: #3A2A10;
+    --color-warning-text: #F5C77A;
+    --color-danger-bg: #3D1B18;
+    --color-danger-text: #F7A8A0;
+    --color-focus: #8AB4F8;
+    --bin-blue-bg: #6FA8F0;    --bin-blue-fg: #0B1A2E;
+    --bin-green-bg: #5FBF7F;   --bin-green-fg: #07200F;
+    --bin-yellow-bg: #F2C94C;  --bin-yellow-fg: #1F1A05;
+    --bin-red-bg: #F28B82;     --bin-red-fg: #2A0A07;
+    --bin-black-bg: #4A5054;   --bin-black-fg: #ECEAE4;
+    --bin-brown-bg: #C99A74;   --bin-brown-fg: #2A1608;
+    --bin-grey-bg: #A9B0BA;    --bin-grey-fg: #14181C;
+    --bin-special-bg: #C39BE0; --bin-special-fg: #20082F;
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.40);
+    --shadow-2: 0 4px 12px rgba(0, 0, 0, 0.45);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-bg: #16191A;
+  --color-surface: #1F2324;
+  --color-surface-2: #2A2F30;
+  --color-text: #ECEAE4;
+  --color-text-muted: #A5ABA6;
+  --color-border: #3A4042;
+  --color-border-strong: #7C8586;
+  --color-accent: #5FBF8A;
+  --color-accent-hover: #7BD1A0;
+  --color-on-accent: #0E1A13;
+  --color-accent-soft: #1E3328;
+  --color-warning-bg: #3A2A10;
+  --color-warning-text: #F5C77A;
+  --color-danger-bg: #3D1B18;
+  --color-danger-text: #F7A8A0;
+  --color-focus: #8AB4F8;
+  --bin-blue-bg: #6FA8F0;    --bin-blue-fg: #0B1A2E;
+  --bin-green-bg: #5FBF7F;   --bin-green-fg: #07200F;
+  --bin-yellow-bg: #F2C94C;  --bin-yellow-fg: #1F1A05;
+  --bin-red-bg: #F28B82;     --bin-red-fg: #2A0A07;
+  --bin-black-bg: #4A5054;   --bin-black-fg: #ECEAE4;
+  --bin-brown-bg: #C99A74;   --bin-brown-fg: #2A1608;
+  --bin-grey-bg: #A9B0BA;    --bin-grey-fg: #14181C;
+  --bin-special-bg: #C39BE0; --bin-special-fg: #20082F;
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.40);
+  --shadow-2: 0 4px 12px rgba(0, 0, 0, 0.45);
+}
+
+/* Theme-independent tokens */
+:root {
+  /* Type */
+  --font-sans: "Inter", "IBM Plex Sans Arabic", system-ui, -apple-system, "Segoe UI", Roboto, Tahoma, sans-serif;
+  --fs-sm: 0.875rem;   /* 14 */
+  --fs-base: 1rem;     /* 16 */
+  --fs-lg: 1.25rem;    /* 20 */
+  --fs-xl: 1.75rem;    /* 28 */
+  --fs-2xl: 2.5rem;    /* 40 */
+  --lh-body: 1.5;
+  --lh-body-ar: 1.75;
+  --lh-heading: 1.25;
+  --lh-heading-ar: 1.5;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+
+  /* Spacing: 8 px grid (4 px half-step) */
+  --space-0: 4px;
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 40px;
+  --space-6: 48px;
+  --space-8: 64px;
+
+  /* Shape and layout */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-pill: 999px;
+  --target-min: 48px;
+  --container-max: 720px;
+  --focus-width: 3px;
+  --focus-offset: 2px;
+
+  /* Motion: opacity/transform only */
+  --dur-fast: 150ms;
+  --dur-base: 250ms;
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+}

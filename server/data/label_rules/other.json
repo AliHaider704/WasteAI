@@ -1,0 +1,9 @@
+{"_path": "server/data/label_rules/other.json",
+ "wood": {"wood": 1.0}, "wooden": {"wood": 1.0}, "plank": {"wood": 1.0}, "lumber": {"wood": 1.0},
+ "timber": {"wood": 1.0}, "plywood": {"wood": 1.0}, "log": {"wood": 0.8, "organic_garden": 0.2}, "furniture": {"wood": 0.7, "general_residual": 0.3},
+ "brick": {"construction": 1.0}, "concrete": {"construction": 1.0}, "cement": {"construction": 1.0},
+ "tile": {"construction": 0.9}, "rubble": {"construction": 1.0}, "gravel": {"construction": 1.0}, "plaster": {"construction": 1.0},
+ "trash": {"general_residual": 1.0}, "garbage": {"general_residual": 1.0}, "waste": {"general_residual": 0.8},
+ "diaper": {"general_residual": 1.0}, "cigarette": {"general_residual": 1.0}, "cigarette butt": {"general_residual": 1.0},
+ "chewing gum": {"general_residual": 1.0}, "ceramic": {"general_residual": 1.0}, "porcelain": {"general_residual": 1.0},
+ "tissue": {"general_residual": 0.7, "paper": 0.3}, "sponge": {"general_residual": 1.0}, "rubber": {"general_residual": 0.9}}

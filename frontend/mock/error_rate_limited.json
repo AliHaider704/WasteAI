@@ -1,0 +1,8 @@
+{
+  "_path": "waste-ai/frontend/mock/error_rate_limited.json",
+  "error": {
+    "code": "rate_limited",
+    "message": "Too many requests. Please wait a moment and try again.",
+    "request_id": "e1b5a3c7-93d2-4e84-b6f0-9c4a7d1e8f04"
+  }
+}

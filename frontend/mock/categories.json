@@ -1,0 +1,162 @@
+{
+  "_path": "waste-ai/frontend/mock/categories.json",
+  "version": 1,
+  "categories": [
+    {
+      "id": "plastic_pet", "name": "PET plastic", "group": "plastics", "bin": "blue", "icon": "cup-soda",
+      "summary": "Clear drink and food bottles marked with resin code 1.",
+      "steps": ["Empty the bottle completely", "Rinse it quickly", "Put the cap back on", "Place it in the plastics bin"],
+      "warnings": []
+    },
+    {
+      "id": "plastic_hdpe", "name": "HDPE plastic", "group": "plastics", "bin": "blue", "icon": "milk",
+      "summary": "Milk jugs, detergent and shampoo bottles marked with resin code 2.",
+      "steps": ["Empty the container", "Rinse out any residue", "Keep the cap on", "Place it in the plastics bin"],
+      "warnings": []
+    },
+    {
+      "id": "plastic_pvc", "name": "PVC plastic", "group": "plastics", "bin": "blue", "icon": "pipette",
+      "summary": "Pipes, cling wrap and some packaging marked with resin code 3.",
+      "steps": ["Check with your local collector: PVC is often not accepted", "Remove any food or liquid residue", "Keep it apart from other plastics", "If not accepted, use the general waste bin"],
+      "warnings": []
+    },
+    {
+      "id": "plastic_ldpe", "name": "LDPE plastic", "group": "plastics", "bin": "blue", "icon": "shopping-bag",
+      "summary": "Soft film such as shopping bags and wrap, resin code 4.",
+      "steps": ["Shake out any contents", "Keep film plastic separate from rigid plastic", "Bundle bags together inside one bag", "Take it to a film collection point if available"],
+      "warnings": []
+    },
+    {
+      "id": "plastic_pp", "name": "PP plastic", "group": "plastics", "bin": "blue", "icon": "container",
+      "summary": "Food tubs, bottle caps and straws marked with resin code 5.",
+      "steps": ["Empty the tub", "Rinse off food residue", "Place it in the plastics bin"],
+      "warnings": []
+    },
+    {
+      "id": "plastic_ps", "name": "PS plastic", "group": "plastics", "bin": "blue", "icon": "utensils",
+      "summary": "Foam trays, cups and disposable cutlery marked with resin code 6.",
+      "steps": ["Check with your local collector: PS is often not accepted", "Remove food residue", "Do not crush foam into small pieces", "If not accepted, use the general waste bin"],
+      "warnings": []
+    },
+    {
+      "id": "plastic_other", "name": "Other plastic", "group": "plastics", "bin": "blue", "icon": "recycle",
+      "summary": "Mixed or multi-layer plastics marked with resin code 7.",
+      "steps": ["Check the label for a more specific type", "Empty and rinse it", "Ask your local collector whether code 7 is accepted"],
+      "warnings": []
+    },
+    {
+      "id": "plastic_unknown", "name": "Plastic (type unknown)", "group": "plastics", "bin": "blue", "icon": "box",
+      "summary": "Plastic item where the resin type cannot be told from the photo.",
+      "steps": ["Look for the resin code (a number 1 to 7) on the bottom", "Empty and rinse the item", "Put it in the plastics bin if it is a clean rigid item", "Film plastic goes separately"],
+      "warnings": []
+    },
+    {
+      "id": "paper", "name": "Paper", "group": "paper", "bin": "yellow", "icon": "file-text",
+      "summary": "Office paper, newspapers, magazines and clean paper bags.",
+      "steps": ["Keep it dry and clean", "Remove plastic covers and staples if easy", "Place it in the paper bin"],
+      "warnings": []
+    },
+    {
+      "id": "cardboard", "name": "Cardboard", "group": "paper", "bin": "yellow", "icon": "package",
+      "summary": "Shipping boxes and corrugated packaging.",
+      "steps": ["Remove tape and labels", "Flatten the box", "Keep it dry", "Greasy parts, such as pizza box bottoms, go to general waste"],
+      "warnings": []
+    },
+    {
+      "id": "carton_beverage", "name": "Beverage carton", "group": "paper", "bin": "yellow", "icon": "package-open",
+      "summary": "Milk and juice cartons made of layered paper, plastic and foil.",
+      "steps": ["Empty the carton", "Rinse and let it dry", "Flatten it and put the cap back", "Place it in the paper bin or a carton collection point"],
+      "warnings": []
+    },
+    {
+      "id": "glass", "name": "Glass", "group": "glass", "bin": "green", "icon": "wine",
+      "summary": "Glass bottles and jars.",
+      "steps": ["Empty and rinse the container", "Remove metal lids and caps", "Do not add ceramics, mirrors or light bulbs", "Wrap broken glass in paper before disposal"],
+      "warnings": ["Broken glass can cut: wrap it and handle it with care."]
+    },
+    {
+      "id": "metal_aluminum", "name": "Aluminum", "group": "metals", "bin": "grey", "icon": "beer",
+      "summary": "Drink cans, foil trays and aluminum lids.",
+      "steps": ["Empty the can", "Rinse it", "Crush it if you can to save space", "Place it in the metals bin"],
+      "warnings": []
+    },
+    {
+      "id": "metal_steel", "name": "Steel", "group": "metals", "bin": "grey", "icon": "wrench",
+      "summary": "Food cans, tools and steel containers.",
+      "steps": ["Empty and rinse food cans", "Remove paper labels if easy", "Place small items in the metals bin", "Take large items to a scrap metal collector"],
+      "warnings": []
+    },
+    {
+      "id": "metal_other", "name": "Other metal", "group": "metals", "bin": "grey", "icon": "cog",
+      "summary": "Copper, brass and mixed scrap metal.",
+      "steps": ["Remove any plastic or rubber parts", "Collect it separately from other waste", "Sell or give it to a scrap metal collector"],
+      "warnings": []
+    },
+    {
+      "id": "organic_food", "name": "Food waste", "group": "organic", "bin": "brown", "icon": "apple",
+      "summary": "Leftovers, peels, coffee grounds and spoiled food.",
+      "steps": ["Remove packaging and plastic", "Drain extra liquid", "Place it in the organic bin or compost", "Do not pour cooking oil into the bin"],
+      "warnings": []
+    },
+    {
+      "id": "organic_garden", "name": "Garden waste", "group": "organic", "bin": "brown", "icon": "leaf",
+      "summary": "Leaves, grass clippings and small branches.",
+      "steps": ["Remove plastic bags and ties", "Cut long branches into short pieces", "Compost it or use the organic bin"],
+      "warnings": []
+    },
+    {
+      "id": "ewaste_small", "name": "Small electronics", "group": "e-waste", "bin": "special", "icon": "smartphone",
+      "summary": "Phones, chargers, cables, remote controls and small gadgets.",
+      "steps": ["Remove batteries and dispose of them separately", "Delete personal data from devices", "Never put it in the general bin", "Take it to an e-waste collection point"],
+      "warnings": ["Electronics contain toxic materials. Check your local authorities for collection points."]
+    },
+    {
+      "id": "ewaste_large", "name": "Large appliances", "group": "e-waste", "bin": "special", "icon": "tv",
+      "summary": "Fridges, washing machines, TVs and computers.",
+      "steps": ["Do not break or open the appliance", "Keep it dry and upright", "Arrange a pickup or a drop-off at an e-waste point", "Ask the seller about take-back offers"],
+      "warnings": ["Fridges and ACs contain gases that harm the environment. Check your local authorities."]
+    },
+    {
+      "id": "battery", "name": "Batteries", "group": "e-waste", "bin": "special", "icon": "battery",
+      "summary": "Household, button and rechargeable batteries.",
+      "steps": ["Tape the terminals of lithium and 9V batteries", "Store them in a dry non-metal container", "Never put them in the general bin", "Take them to a battery collection point"],
+      "warnings": ["Batteries can start fires and leak toxic chemicals. Do not crush or burn them. Check your local authorities."]
+    },
+    {
+      "id": "textile", "name": "Textiles", "group": "other", "bin": "special", "icon": "shirt",
+      "summary": "Clothes, shoes, bedding and fabric.",
+      "steps": ["Donate items that are clean and wearable", "Bag worn or torn items separately", "Take them to a textile recycling point"],
+      "warnings": []
+    },
+    {
+      "id": "hazardous_chemical", "name": "Hazardous chemicals", "group": "other", "bin": "red", "icon": "flask-conical",
+      "summary": "Paint, solvents, pesticides, motor oil and cleaning chemicals.",
+      "steps": ["Keep it in the original container", "Do not mix different chemicals", "Never pour it down a drain or onto the ground", "Take it to a hazardous waste collection point"],
+      "warnings": ["Can be toxic, flammable or corrosive. Keep away from children and heat. Check your local authorities."]
+    },
+    {
+      "id": "medical", "name": "Medical waste", "group": "other", "bin": "red", "icon": "syringe",
+      "summary": "Sharps, expired medication and used masks.",
+      "steps": ["Put needles and sharps in a rigid, closed container", "Return unused medication to a pharmacy", "Seal used masks in a bag", "Never put sharps loose in the bin"],
+      "warnings": ["Sharps and medication can injure or poison people. Check your local authorities for safe disposal."]
+    },
+    {
+      "id": "wood", "name": "Wood", "group": "other", "bin": "brown", "icon": "tree-pine",
+      "summary": "Clean wood, pallets and furniture parts.",
+      "steps": ["Remove nails and metal parts", "Reuse or donate it if possible", "Collect painted or treated wood separately", "Take it to a wood collection point"],
+      "warnings": []
+    },
+    {
+      "id": "construction", "name": "Construction waste", "group": "other", "bin": "special", "icon": "brick-wall",
+      "summary": "Rubble, bricks, tiles and plasterboard.",
+      "steps": ["Keep it separate from household waste", "Sort metal and wood out first", "Arrange a skip or collection service", "Do not leave it on public land"],
+      "warnings": []
+    },
+    {
+      "id": "general_residual", "name": "General waste", "group": "other", "bin": "black", "icon": "trash-2",
+      "summary": "Items that cannot be recycled, reused or composted.",
+      "steps": ["Check that no recycling bin fits the item", "Bag it securely", "Place it in the general waste bin"],
+      "warnings": []
+    }
+  ]
+}

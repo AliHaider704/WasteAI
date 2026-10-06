@@ -1,0 +1,32 @@
+{
+  "_path": "waste-ai/contract/categories.json",
+  "version": 1,
+  "categories": [
+    { "id": "plastic_pet", "group": "plastics", "bin": "blue", "icon": "cup-soda" },
+    { "id": "plastic_hdpe", "group": "plastics", "bin": "blue", "icon": "milk" },
+    { "id": "plastic_pvc", "group": "plastics", "bin": "blue", "icon": "pipette" },
+    { "id": "plastic_ldpe", "group": "plastics", "bin": "blue", "icon": "shopping-bag" },
+    { "id": "plastic_pp", "group": "plastics", "bin": "blue", "icon": "container" },
+    { "id": "plastic_ps", "group": "plastics", "bin": "blue", "icon": "utensils" },
+    { "id": "plastic_other", "group": "plastics", "bin": "blue", "icon": "recycle" },
+    { "id": "plastic_unknown", "group": "plastics", "bin": "blue", "icon": "box" },
+    { "id": "paper", "group": "paper", "bin": "yellow", "icon": "file-text" },
+    { "id": "cardboard", "group": "paper", "bin": "yellow", "icon": "package" },
+    { "id": "carton_beverage", "group": "paper", "bin": "yellow", "icon": "package-open" },
+    { "id": "glass", "group": "glass", "bin": "green", "icon": "wine" },
+    { "id": "metal_aluminum", "group": "metals", "bin": "grey", "icon": "beer" },
+    { "id": "metal_steel", "group": "metals", "bin": "grey", "icon": "wrench" },
+    { "id": "metal_other", "group": "metals", "bin": "grey", "icon": "cog" },
+    { "id": "organic_food", "group": "organic", "bin": "brown", "icon": "apple" },
+    { "id": "organic_garden", "group": "organic", "bin": "brown", "icon": "leaf" },
+    { "id": "ewaste_small", "group": "e-waste", "bin": "special", "icon": "smartphone" },
+    { "id": "ewaste_large", "group": "e-waste", "bin": "special", "icon": "tv" },
+    { "id": "battery", "group": "e-waste", "bin": "special", "icon": "battery" },
+    { "id": "textile", "group": "other", "bin": "special", "icon": "shirt" },
+    { "id": "hazardous_chemical", "group": "other", "bin": "red", "icon": "flask-conical" },
+    { "id": "medical", "group": "other", "bin": "red", "icon": "syringe" },
+    { "id": "wood", "group": "other", "bin": "brown", "icon": "tree-pine" },
+    { "id": "construction", "group": "other", "bin": "special", "icon": "brick-wall" },
+    { "id": "general_residual", "group": "other", "bin": "black", "icon": "trash-2" }
+  ]
+}

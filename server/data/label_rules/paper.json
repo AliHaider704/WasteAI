@@ -1,0 +1,17 @@
+{"_path": "server/data/label_rules/paper.json",
+ "labels": {
+  "paper": {"paper": 1.0},
+  "newspaper": {"paper": 1.0},
+  "magazine": {"paper": 1.0},
+  "envelope": {"paper": 1.0},
+  "document": {"paper": 0.8},
+  "book": {"paper": 0.7},
+  "paper bag": {"paper": 1.0},
+  "cardboard": {"cardboard": 1.0},
+  "cardboard box": {"cardboard": 1.0},
+  "box": {"cardboard": 0.8, "paper": 0.2},
+  "carton": {"cardboard": 0.6, "carton_beverage": 0.4},
+  "milk carton": {"carton_beverage": 1.0},
+  "juice box": {"carton_beverage": 1.0},
+  "tetra pak": {"carton_beverage": 1.0}
+ }}

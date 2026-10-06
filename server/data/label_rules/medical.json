@@ -1,0 +1,6 @@
+{"_path": "server/data/label_rules/medical.json",
+ "syringe": {"medical": 1.0}, "needle": {"medical": 0.8, "metal_other": 0.2}, "injection": {"medical": 1.0},
+ "pill": {"medical": 1.0}, "pills": {"medical": 1.0}, "medicine": {"medical": 1.0}, "medication": {"medical": 1.0},
+ "capsule": {"medical": 0.9}, "blister pack": {"medical": 0.9}, "mask": {"medical": 0.9}, "face mask": {"medical": 1.0},
+ "surgical mask": {"medical": 1.0}, "glove": {"medical": 0.6, "general_residual": 0.4}, "bandage": {"medical": 1.0},
+ "first aid": {"medical": 1.0}, "pharmacy": {"medical": 0.9}, "thermometer": {"medical": 0.8, "ewaste_small": 0.2}}

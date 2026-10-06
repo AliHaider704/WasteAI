@@ -1,0 +1,52 @@
+{
+  "_path": "waste-ai/frontend/mock/classify_ok.json",
+  "request_id": "b3f1c0de-4a7e-4c1a-9d52-6e8f1a2b3c01",
+  "status": "ok",
+  "category": {
+    "id": "plastic_pet",
+    "name": "PET plastic",
+    "group": "plastics",
+    "confidence": 0.87
+  },
+  "alternatives": [
+    {
+      "id": "plastic_unknown",
+      "name": "Plastic (type unknown)",
+      "confidence": 0.09
+    }
+  ],
+  "agreement": "full",
+  "hazard": false,
+  "guidance": {
+    "bin": "blue",
+    "summary": "Clean PET bottles and containers are widely recycled.",
+    "steps": [
+      "Empty the bottle completely",
+      "Rinse it and let it drain",
+      "Remove the cap and put it back on loosely if your collector asks for it",
+      "Flatten it to save space"
+    ],
+    "warnings": []
+  },
+  "sources": [
+    {
+      "name": "local_onnx",
+      "ok": true,
+      "top": [
+        { "label": "plastic", "score": 0.91 },
+        { "label": "bottle", "score": 0.05 },
+        { "label": "glass", "score": 0.02 }
+      ]
+    },
+    {
+      "name": "azure",
+      "ok": true,
+      "top": [
+        { "label": "bottle", "score": 0.88 },
+        { "label": "plastic", "score": 0.74 },
+        { "label": "drink", "score": 0.52 }
+      ]
+    }
+  ],
+  "elapsed_ms": 1420
+}

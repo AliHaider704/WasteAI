@@ -1,0 +1,42 @@
+{
+  "_path": "waste-ai/frontend/mock/classify_uncertain.json",
+  "request_id": "c7a2d9e4-81b3-4f60-a1d7-3b9e5c4f7a02",
+  "status": "uncertain",
+  "category": null,
+  "alternatives": [
+    {
+      "id": "plastic_unknown",
+      "name": "Plastic (type unknown)",
+      "confidence": 0.34
+    },
+    {
+      "id": "paper",
+      "name": "Paper",
+      "confidence": 0.21
+    }
+  ],
+  "agreement": "none",
+  "hazard": false,
+  "guidance": null,
+  "sources": [
+    {
+      "name": "local_onnx",
+      "ok": true,
+      "top": [
+        { "label": "plastic", "score": 0.38 },
+        { "label": "cardboard", "score": 0.27 },
+        { "label": "paper", "score": 0.19 }
+      ]
+    },
+    {
+      "name": "azure",
+      "ok": true,
+      "top": [
+        { "label": "wrapper", "score": 0.41 },
+        { "label": "packaging", "score": 0.36 },
+        { "label": "paper", "score": 0.30 }
+      ]
+    }
+  ],
+  "elapsed_ms": 1685
+}

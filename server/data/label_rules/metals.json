@@ -1,0 +1,19 @@
+{"_path": "server/data/label_rules/metals.json",
+ "labels": {
+  "metal": {"metal_aluminum": 0.4, "metal_steel": 0.3, "metal_other": 0.3},
+  "aluminum": {"metal_aluminum": 1.0},
+  "aluminum can": {"metal_aluminum": 1.0},
+  "soda can": {"metal_aluminum": 1.0},
+  "beverage can": {"metal_aluminum": 1.0},
+  "drink can": {"metal_aluminum": 1.0},
+  "aluminum foil": {"metal_aluminum": 1.0},
+  "foil": {"metal_aluminum": 1.0},
+  "can": {"metal_aluminum": 0.5, "metal_steel": 0.4, "metal_other": 0.1},
+  "tin can": {"metal_steel": 1.0},
+  "tin": {"metal_steel": 0.7, "metal_other": 0.3},
+  "steel": {"metal_steel": 1.0},
+  "scrap metal": {"metal_steel": 0.4, "metal_other": 0.6},
+  "spoon": {"metal_steel": 0.7, "metal_other": 0.3},
+  "fork": {"metal_steel": 0.7, "metal_other": 0.3},
+  "knife": {"metal_steel": 0.7, "metal_other": 0.3}
+ }}
