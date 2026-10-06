@@ -35,7 +35,7 @@ async def classify(request: Request, image: UploadFile = File(...), lang: str = 
         )
     del raw
     try:
-        async with concurrency.slot():
+        async with concurrency.limiter.slot():
             return await get_orchestrator(request.app).run(data, lang, rid)
     except AllSourcesFailed:
         return error_response("all_sources_failed", 502, lang, rid)
@@ -44,4 +44,4 @@ async def classify(request: Request, image: UploadFile = File(...), lang: str = 
             return error_response("overloaded", 503, lang, rid, {"Retry-After": "2"})
         return error_response("internal_error", 500, lang, rid)
     finally:
-        del data
+        data.close()

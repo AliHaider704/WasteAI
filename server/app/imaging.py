@@ -94,3 +94,10 @@ def prepare(data: bytes | bytearray) -> PreparedImage:
     clean.thumbnail((MAX_SIDE, MAX_SIDE), Image.Resampling.LANCZOS)
     digest = hashlib.sha256(f"{clean.size}".encode() + clean.tobytes()).hexdigest()
     return PreparedImage(image=clean, sha256=digest)
+
+
+def to_jpeg(prepared, quality: int = 85) -> bytes:
+    """Encode a PreparedImage as JPEG bytes (for HTTP sources such as Azure)."""
+    buf = io.BytesIO()
+    prepared.image.save(buf, format="JPEG", quality=quality)
+    return buf.getvalue()

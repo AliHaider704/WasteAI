@@ -4,6 +4,7 @@ import os
 import httpx
 
 from app import quota
+from app.imaging import to_jpeg
 from app.sources.base import SourceResult  # assumed: SourceResult(name, ok, top)
 
 API_VERSION = "2023-10-01"
@@ -45,7 +46,9 @@ class VisionAzure:
     def _fail(self) -> SourceResult:
         return SourceResult(name=self.name, ok=False, top=[])
 
-    async def classify(self, data: bytes) -> SourceResult:
+    async def classify(self, data) -> SourceResult:
+        if hasattr(data, "image"):
+            data = to_jpeg(data)
         if not self.enabled or not quota.try_acquire():
             return self._fail()
         if self._client is None:

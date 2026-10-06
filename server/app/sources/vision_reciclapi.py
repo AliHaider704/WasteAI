@@ -3,6 +3,7 @@ import os
 
 import httpx
 
+from app.imaging import to_jpeg
 from app.sources.base import SourceResult  # assumed: SourceResult(name, ok, top)
 
 
@@ -42,7 +43,9 @@ class VisionReciclAPI:
     def enabled(self) -> bool:
         return bool(self.key and self.url)
 
-    async def classify(self, data: bytes) -> SourceResult:
+    async def classify(self, data) -> SourceResult:
+        if hasattr(data, "image"):
+            data = to_jpeg(data)
         if not self.enabled:
             return SourceResult(name=self.name, ok=False, top=[])
         if self._client is None:
