@@ -1,10 +1,7 @@
 // File: frontend/js/app.js
-<<<<<<< HEAD
 import "./errors.js";
 import { guard } from "./errors.js";
 import { getCategories } from "./api.js";
-=======
->>>>>>> 016ea12dbf0444af8711f3dcbb83f4c5eb9bebba
 import "./i18n.js";
 import "./theme.js";
 import "./upload.js";
