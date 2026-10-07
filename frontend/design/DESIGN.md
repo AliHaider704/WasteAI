@@ -28,9 +28,19 @@ Reason: the Plex pair shares x-heights, so `<bdi>` Latin tokens do not jump insi
 ## Shape and motif
 
 - Radius 4 px (chips, inputs), 8 px (cards), 999 px only on the three header toggles. No card shadow.
-- Motif: the stamped bin label, a bordered chip in the bin color rotated about -2 degrees (applied in M15).
+- Motif: the stamped bin label, a bordered chip in the bin color rotated about -2 degrees (applied in M15: every `.bin` chip, result card, Browse rows, one decorative row on Home).
 - Chips carry `1px solid var(--color-border-strong)` so yellow and black chips stay visible in both themes (F-22).
 
 ## Motion
 
 Opacity and transform only, inside `prefers-reduced-motion: no-preference` (M14b).
+
+## Layout (M15)
+
+- Result: stamped bin chip, then the serif category name as the one focal word, then confidence word, numbered steps (a real sequence), warnings, "Why?", feedback. Hazard warnings stay visible at any confidence.
+- Home: Scan is the large focal action, Upload secondary, Browse a quiet link; the only decoration is one row of stamped bin chips. No card grid.
+- Motion: chip stamp-down 160 ms once per result, Browse rows rise 4 px, confidence word cross-fades 150 ms.
+
+## Swap-the-logo test
+
+Swap the product name and the page still reads as bin signage: a bordered, bin-colored stamp tilted -2 degrees above one serif word, repeated on result, Browse and Home.
