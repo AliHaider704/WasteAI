@@ -14,6 +14,7 @@ TTL_SECONDS = 7 * 24 * 3600
 _SCHEMA = (
     "CREATE TABLE IF NOT EXISTS result_cache("
     "key TEXT PRIMARY KEY, result TEXT NOT NULL, ts INTEGER NOT NULL)",
+    "CREATE TABLE IF NOT EXISTS issued(request_id TEXT PRIMARY KEY, ts INTEGER NOT NULL)",
     "CREATE TABLE IF NOT EXISTS feedback("
     "request_id TEXT NOT NULL, correct_category_id TEXT NOT NULL, ts INTEGER NOT NULL)",
 )
@@ -64,9 +65,34 @@ def _put(key: str, result: dict) -> None:
         conn.close()
 
 
+def _record_issued(request_id: str) -> None:
+    conn = connect()
+    try:
+        conn.execute(
+            "INSERT OR REPLACE INTO issued(request_id, ts) VALUES(?,?)",
+            (request_id, int(time.time())),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def _is_issued(request_id: str) -> bool:
+    conn = connect()
+    try:
+        row = conn.execute(
+            "SELECT 1 FROM issued WHERE request_id=? AND ts>=?",
+            (request_id, int(time.time()) - TTL_SECONDS),
+        ).fetchone()
+        return row is not None
+    finally:
+        conn.close()
+
+
 def _purge() -> int:
     conn = connect()
     try:
+        conn.execute("DELETE FROM issued WHERE ts < ?", (int(time.time()) - TTL_SECONDS,))
         cur = conn.execute(
             "DELETE FROM result_cache WHERE ts < ?", (int(time.time()) - TTL_SECONDS,)
         )
@@ -97,3 +123,19 @@ async def purge_expired() -> int:
         return await asyncio.to_thread(_purge)
     except sqlite3.Error:
         return 0
+
+
+async def record_issued(request_id: str) -> None:
+    """Remember a request_id the server returned with a result (feedback allow-list)."""
+    try:
+        await asyncio.to_thread(_record_issued, request_id)
+    except sqlite3.Error:
+        pass
+
+
+async def is_issued(request_id: str) -> bool:
+    """True if the server issued this id within the last 7 days."""
+    try:
+        return await asyncio.to_thread(_is_issued, request_id)
+    except sqlite3.Error:
+        return False

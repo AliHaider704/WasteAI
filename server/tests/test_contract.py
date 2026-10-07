@@ -83,8 +83,8 @@ def test_error_message_localized():
 
 
 def test_feedback():
-    ok = client.post("/api/v1/feedback", json={"request_id": "x", "correct_category_id": "glass"})
-    assert ok.status_code == 204
+    unknown = client.post("/api/v1/feedback", json={"request_id": "x", "correct_category_id": "glass"})
+    assert unknown.status_code == 422
     assert client.post("/api/v1/feedback", json={}).status_code == 422
 
 

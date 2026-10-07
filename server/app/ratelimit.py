@@ -51,3 +51,6 @@ class IPLimiter:
 
 
 ip_limiter = IPLimiter(10, 60.0)
+
+# Separate bucket for /feedback: 10 per minute per IP.
+feedback_limiter = IPLimiter(10, 60.0)
