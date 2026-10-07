@@ -246,6 +246,11 @@ function buildOk(result) {
   const meta = catalog.find((c) => c.id === cat.id);
   const g = meta ? { ...result.guidance, summary: meta.summary, steps: meta.steps, warnings: meta.warnings } : result.guidance;
   const card = el("article", "result__card");
+  if (g && g.bin) {
+    const stamp = el("div", "result__meta result__stamp");
+    stamp.append(binChip(g.bin));
+    card.append(stamp);
+  }
   const head = el("div", "result__head");
   const icon = iconNode(meta && meta.icon);
   if (icon) head.append(icon);
@@ -255,11 +260,6 @@ function buildOk(result) {
   conf.dataset.level = level;
   head.append(conf);
   card.append(head);
-  if (g && g.bin) {
-    const meta2 = el("div", "result__meta");
-    meta2.append(binChip(g.bin));
-    card.append(meta2);
-  }
   card.append(guidanceBlocks(g));
   const warn = warningsBlock(g && g.warnings, result.hazard);
   if (warn) card.append(warn);
