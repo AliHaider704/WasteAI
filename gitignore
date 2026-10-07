@@ -1,4 +1,3 @@
-# .gitignore
 .env
 *.onnx
 docs/Server_Blueprint.md
