@@ -109,11 +109,11 @@
     "tv10": {
       "labels": [
         "battery",
-        "biological",
         "cardboard",
         "clothes",
         "glass",
         "metal",
+        "organic",
         "paper",
         "plastic",
         "shoes",
