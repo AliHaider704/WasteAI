@@ -94,4 +94,4 @@ class VisionAzure:
             top = top_labels(resp.json())
         except (httpx.HTTPError, ValueError, KeyError):
             return self._fail()
-        return SourceResult(name=self.name, ok=bool(top), top=top)
+        return SourceResult(name=self.name, ok=True, top=top)
