@@ -1,4 +1,4 @@
-# server/app/main.py
+# File: server/app/main.py
 """FastAPI entry point: uvicorn app.main:app --port 8100"""
 import uuid
 

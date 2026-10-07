@@ -1,4 +1,4 @@
-# server/app/db.py
+# File: server/app/db.py
 import os
 import sqlite3
 import threading

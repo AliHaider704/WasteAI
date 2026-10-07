@@ -1,4 +1,4 @@
-# server/app/errors.py
+# File: server/app/errors.py
 """Stable error codes (ARCHITECTURE section 4) with ar/en messages."""
 from fastapi import Request
 from fastapi.responses import JSONResponse

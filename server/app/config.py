@@ -1,4 +1,4 @@
-# server/app/config.py
+# File: server/app/config.py
 """Application settings, loaded from environment / .env."""
 from functools import lru_cache
 from pathlib import Path

@@ -1,4 +1,4 @@
-# scripts/check_lines.sh
+# File: scripts/check_lines.sh
 #!/usr/bin/env bash
 # Fails if any tracked text file exceeds 500 lines.
 set -euo pipefail

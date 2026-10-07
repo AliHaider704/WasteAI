@@ -1,4 +1,4 @@
-# server/app/orchestrator.py
+# File: server/app/orchestrator.py
 import asyncio
 import inspect
 import time
@@ -126,7 +126,7 @@ class Orchestrator:
             "hazard": hazard_id is not None,
             "guidance": guidance,
             "sources": [
-                {"name": n, "ok": ok, "top": [{"label": l, "score": round(s, 4)} for l, s in p[:3]]}
+                {"name": n, "ok": ok, "top": [{"label": lb, "score": round(s, 4)} for lb, s in p[:3]]}
                 for n, ok, p in results
             ],
             "elapsed_ms": int((time.perf_counter() - t0) * 1000),

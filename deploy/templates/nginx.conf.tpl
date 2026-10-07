@@ -1,4 +1,4 @@
-# deploy/templates/nginx.conf.tpl
+# File: deploy/templates/nginx.conf.tpl
 # Own server block for wasteai. Certbot (--nginx) adds the 443/SSL parts later.
 server {
     listen 80;

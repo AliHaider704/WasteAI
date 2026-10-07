@@ -1,4 +1,4 @@
-# server/eval/README.md
+<!-- File: server/eval/README.md -->
 Model evaluation for Phase A2 (decides D-009 / D-011). Runs on the **dev PC only**; never add torch/ultralytics to `server/requirements.txt`.
 
 ## Setup

@@ -1,4 +1,4 @@
-# server/app/aggregator.py
+# File: server/app/aggregator.py
 """Combine per-source category scores into one decision (TECH-SPEC section 5)."""
 from __future__ import annotations
 

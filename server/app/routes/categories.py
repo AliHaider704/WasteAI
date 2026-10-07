@@ -1,4 +1,4 @@
-# server/app/routes/categories.py
+# File: server/app/routes/categories.py
 from fastapi import APIRouter
 
 from app import catalog

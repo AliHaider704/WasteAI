@@ -1,10 +1,10 @@
-# server/app/concurrency.py
+# File: server/app/concurrency.py
 """Global inference limiter: 2 slots, wait up to 5 s, then 503 `overloaded`."""
 from __future__ import annotations
 
 import asyncio
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from typing import AsyncIterator
 
 MAX_CONCURRENT = 2
 MAX_WAIT_S = 5.0
@@ -24,7 +24,7 @@ class Limiter:
     async def slot(self) -> AsyncIterator[None]:
         try:
             await asyncio.wait_for(self._sem.acquire(), timeout=self._wait_s)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             raise OverloadedError() from None
         try:
             yield

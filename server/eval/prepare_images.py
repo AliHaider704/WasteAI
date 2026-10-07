@@ -1,4 +1,4 @@
-# server/eval/prepare_images.py
+# File: server/eval/prepare_images.py
 """Prepare eval photos like production: strip EXIF, resize <= 1024 px, JPEG q85.
 
 Input:  eval_photos/<category_id>/*.jpg|png|webp|heic-converted

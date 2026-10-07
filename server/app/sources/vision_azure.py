@@ -1,4 +1,4 @@
-# server/app/sources/vision_azure.py
+# File: server/app/sources/vision_azure.py
 import os
 
 import httpx

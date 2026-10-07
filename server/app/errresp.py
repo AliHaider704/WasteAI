@@ -1,4 +1,4 @@
-# server/app/errresp.py
+# File: server/app/errresp.py
 from fastapi.responses import JSONResponse
 
 MESSAGES = {

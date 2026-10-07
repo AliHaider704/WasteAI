@@ -1,4 +1,4 @@
-# server/app/sources/vision_local.py
+# File: server/app/sources/vision_local.py
 """Local ONNX image classifier: loaded once, 1 thread, top-3 labels."""
 from __future__ import annotations
 
@@ -60,7 +60,7 @@ class VisionLocal(Source):
             self._bind()
 
     @classmethod
-    def from_env(cls) -> "VisionLocal":
+    def from_env(cls) -> VisionLocal:
         labels, size, norm = load_labels(os.environ.get("MODEL_LABELS_PATH", DEFAULT_LABELS_PATH))
         return cls(os.environ.get("MODEL_PATH"), labels, size, norm)
 

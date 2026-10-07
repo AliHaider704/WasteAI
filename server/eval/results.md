@@ -1,4 +1,4 @@
-# server/eval/results.md
+<!-- File: server/eval/results.md -->
 Status: **NOT RUN YET.** No numbers below are measured; fill them from `runs/*.md`. Do not pick a winner from published accuracy (D-009).
 
 ## Comparison (our photos, 1 thread, CPU)

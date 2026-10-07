@@ -1,4 +1,4 @@
-# server/app/deps.py
+# File: server/app/deps.py
 """Shared FastAPI dependencies."""
 from typing import Annotated, Literal
 

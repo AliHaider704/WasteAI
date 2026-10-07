@@ -1,4 +1,4 @@
-# server/pyproject.toml
+# File: server/pyproject.toml
 [project]
 name = "wasteai-server"
 version = "1.0.0"

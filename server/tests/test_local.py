@@ -1,4 +1,4 @@
-# server/tests/test_local.py
+# File: server/tests/test_local.py
 import asyncio
 import json
 
@@ -71,7 +71,8 @@ def test_load_missing_file_raises():
 
 def test_load_labels(tmp_path):
     p = tmp_path / "labels.json"
-    p.write_text(json.dumps({"active": "m", "models": {"m": {"labels": LABELS, "size": 160, "norm": "unit"}}}))
+    model = {"labels": LABELS, "size": 160, "norm": "unit"}
+    p.write_text(json.dumps({"active": "m", "models": {"m": model}}))
     assert load_labels(p) == (LABELS, 160, "unit")
     p.write_text(json.dumps({"active": None, "models": {}}))
     with pytest.raises(LocalModelError):

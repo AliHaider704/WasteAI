@@ -1,4 +1,4 @@
-# server/tests/test_rules.py
+# File: server/tests/test_rules.py
 import json
 from pathlib import Path
 
