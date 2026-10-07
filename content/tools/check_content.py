@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 # File: content/tools/check_content.py
->>>>>>> 016ea12dbf0444af8711f3dcbb83f4c5eb9bebba
 """Validate guidance content and UI strings. Run from anywhere: python3 content/tools/check_content.py
 
 Checks: category ID coverage vs contract/categories.json, ar/en parity, 3-5 steps, hazard warnings,
