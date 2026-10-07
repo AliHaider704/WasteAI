@@ -99,6 +99,17 @@ class Orchestrator:
             return {"id": cid, "name": cats.get(cid, {}).get("name", cid),
                     "confidence": round(score, 2)}
 
+        reason: list[str] = []
+        why_id = d.category_id if is_ok else d.hazard_id
+        if why_id:
+            targets = [why_id]
+            if d.fallback:  # group default: explain through the two ranked categories
+                targets = [c for c, _ in d.alternatives]
+            for name, _ok, pairs in results:
+                for t in targets:
+                    reason += [f"{name}:{lb}>{t}" for lb in mapper.matching_labels(pairs, t)]
+        if d.fallback:
+            reason.append("group_fallback")
         guide_id = d.category_id if is_ok else d.hazard_id
         guidance = None
         if guide_id:
@@ -121,6 +132,7 @@ class Orchestrator:
             "agreement": d.agreement,
             "hazard": d.hazard,
             "guidance": guidance,
+            "reason": reason,
             "sources": [
                 {"name": n, "ok": ok, "top": [{"label": lb, "score": round(s, 4)} for lb, s in p[:3]]}
                 for n, ok, p in results

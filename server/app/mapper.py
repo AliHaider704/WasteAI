@@ -47,3 +47,9 @@ def map_labels(top: list[tuple[str, float]], rules: dict | None = None) -> dict[
                 scores[cid] = scores.get(cid, 0.0) + w * s
     total = sum(scores.values())
     return {c: v / total for c, v in scores.items()} if total > 0 else {}
+
+
+def matching_labels(top: list[tuple[str, float]], category_id: str, rules: dict | None = None) -> list[str]:
+    """Raw labels whose rules feed category_id (rule ids for the "why" list, no generated text)."""
+    rules = load_rules() if rules is None else rules
+    return [lb for lb, _ in top if any(category_id in w for w in _weights(lb, rules))]

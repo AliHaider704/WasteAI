@@ -40,6 +40,7 @@ class ClassifyResponse(BaseModel):
     agreement: Literal["full", "partial", "none", "single_source"]
     hazard: bool
     guidance: Guidance | None
+    reason: list[str] = Field(default_factory=list)
     sources: list[SourceResult]
     elapsed_ms: int
 

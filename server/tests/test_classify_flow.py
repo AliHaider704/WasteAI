@@ -71,7 +71,7 @@ def test_miss_then_hit(env):
 
 
 def test_uncertain(env):
-    env["install"]([("plastic bottle", 0.30)])
+    env["install"]([("bottle", 0.30)])  # glass vs plastics: no group fallback
     body = _post(env["client"], (1, 2, 3)).json()
     assert body["status"] == "uncertain" and body["category"] is None
 
