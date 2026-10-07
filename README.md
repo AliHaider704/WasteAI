@@ -174,10 +174,16 @@ See `CONTRIBUTING.md`. Rules: files under 500 lines, free and open-source depend
 
 ## License
 
-TBD (decided after the model and dataset license check, D-011 and D-016).
+Not added yet. The proposal is MIT (D-016, status proposed). The local model `emilyyy04/trash_classifier` is listed as MIT on its model card only, and its training data is undocumented (D-011). The `LICENSE` file is added once the owner closes D-016.
 
 ## Credits
 
-Local model: `emilyyy04/trash_classifier`, converted to ONNX (D-011).
-Fonts (SIL Open Font License, each with its `OFL.txt` in `frontend/assets/fonts/`): IBM Plex Sans, IBM Plex Sans Arabic, Newsreader, Noto Naskh Arabic.
-Icons: Lucide (ISC) for interface glyphs; the category pictograms are drawn for this project.
+| Item | Source | License |
+| --- | --- | --- |
+| Local classifier | `emilyyy04/trash_classifier`, converted to ONNX (D-011) | MIT on the model card only; training data undocumented |
+| Cloud vision | Azure AI Vision, free tier F0 (second source) | Service terms |
+| Fonts | IBM Plex Sans, IBM Plex Sans Arabic, Newsreader, Noto Naskh Arabic (`frontend/assets/fonts/`, each with its `OFL.txt`) | SIL Open Font License 1.1 |
+| Interface icons | Lucide (`frontend/assets/icons.svg`) | ISC |
+| Category pictograms | Drawn for this project (`frontend/assets/category-icons.svg`) | Project license, once chosen |
+
+Arabic guidance, labels and interface strings were written by Claude and have not had a native-reader review yet. The hazard and medical text is the first to review.
