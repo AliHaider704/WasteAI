@@ -39,11 +39,34 @@
   background: var(--color-accent, #1f5d3a);
   border-color: var(--color-accent, #1f5d3a);
   color: var(--color-on-accent, #fff);
+  font-weight: 600;
+}
+
+/* Interaction states. Hover never carries meaning alone: pressed chips keep weight, disabled keeps dashed border. */
+.btn:active, .icon-btn:active, .chip:active { background: var(--color-accent-soft, #8882); border-color: var(--color-accent, currentColor); }
+.btn--primary:active, .chip[aria-pressed="true"]:active { background: var(--color-accent-hover, #174a2d); border-color: var(--color-accent-hover, #174a2d); }
+.btn:disabled, .icon-btn:disabled, .chip:disabled, .btn[aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  border-style: dashed;
+}
+.input:disabled { opacity: 0.6; cursor: not-allowed; border-style: dashed; }
+@media (hover: hover) {
+  .input:hover:not(:disabled) { border-color: var(--color-border-strong); }
+  .btn:hover:not(:disabled), .icon-btn:hover:not(:disabled), .chip:hover:not(:disabled) {
+    background: var(--color-surface-2, #8881);
+    border-color: var(--color-border-strong, currentColor);
+  }
+  .btn--primary:hover:not(:disabled), .chip[aria-pressed="true"]:hover:not(:disabled) {
+    background: var(--color-accent-hover, #174a2d);
+    border-color: var(--color-accent-hover, #174a2d);
+  }
+  .card__link:hover, .brand:hover { text-decoration: underline; }
 }
 .input { inline-size: 100%; padding-inline: 1rem; }
 
 .btn:focus-visible, .icon-btn:focus-visible, .chip:focus-visible, .input:focus-visible,
-.brand:focus-visible, .card__link:focus-visible, h1:focus-visible {
+.brand:focus-visible, .card__link:focus-visible, select:focus-visible, summary:focus-visible, h1:focus-visible {
   outline: 3px solid var(--color-focus);
   outline-offset: 2px;
 }
@@ -65,6 +88,17 @@ h1:focus-visible { outline-offset: 4px; }
 .card__title { margin: 0; font-size: 1.25rem; font-weight: 600; }
 .card__summary { margin: 0; }
 .card__meta { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+
+/* Capture preview and live video: reserved box so the layout does not shift when the image arrives. */
+.capture__media {
+  display: block;
+  inline-size: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 0.75rem;
+  background: var(--color-surface-2, #8882);
+}
+.capture__media[hidden] { display: none; }
 
 @media (prefers-reduced-motion: no-preference) {
   .btn, .icon-btn, .chip { transition: background-color 150ms ease-out, border-color 150ms ease-out; }

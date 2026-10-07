@@ -53,6 +53,8 @@ function build() {
   ui.img = document.createElement("img");
   ui.img.className = "capture__media";
   ui.img.alt = t("capture.preview_alt");
+  ui.img.width = 4; // ratio hint; CSS sets aspect-ratio (no layout shift)
+  ui.img.height = 3;
   ui.progress = document.createElement("progress"); // no value = calm indeterminate bar
   ui.progress.className = "capture__progress";
   ui.status = el("p", "muted capture__status");

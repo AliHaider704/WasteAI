@@ -232,6 +232,8 @@ function photoColumn() {
     img.className = "result__photo";
     img.src = store.photoUrl;
     img.alt = t("result.photo_alt");
+    img.width = 4; // intrinsic ratio hint; CSS sets aspect-ratio (no layout shift)
+    img.height = 3;
     col.append(img);
   }
   return col;
