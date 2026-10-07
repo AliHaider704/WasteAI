@@ -15,7 +15,7 @@
   "browse.title": "Categories",
   "browse.search": "Search categories",
   "browse.filter": "Filter by group",
-  "browse.empty": "No categories match.",
+  "browse.empty": "No category matches your search",
   "browse.error": "Could not load categories.",
   "browse.count": "{n} categories",
   "group.all": "All",
@@ -91,6 +91,11 @@
   "agreement.none": "Sources disagree",
   "agreement.single_source": "Only one source answered",
   "source.local_onnx": "On-device model",
-  "source.azure": "Azure Vision",
-  "source.reciclapi": "ReciclAPI"
+  "source.azure": "Cloud vision service",
+  "source.reciclapi": "Recycling database",
+  "why.other_label": "Another label detected",
+  "browse.clear": "Clear filters",
+  "browse.retry": "Retry",
+  "feedback.catalog_error": "Could not load the category list",
+  "feedback.choose": "Choose a category"
 }

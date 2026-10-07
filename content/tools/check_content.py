@@ -17,7 +17,7 @@ HAZARD_PREFIX = "ewaste_"
 MAX_LINES = 500
 ARABIC = re.compile(r"[\u0600-\u06FF]")
 KEY_RE = re.compile(
-    r'["\']((?:app|nav|ctl|home|result|browse|group|bin|capture|camera|upload|loading|error|feedback|agreement|source)'
+    r'["\']((?:why|app|nav|ctl|home|result|browse|group|bin|capture|camera|upload|loading|error|feedback|agreement|source)'
     r"\.[A-Za-z0-9_.\-]+)[\"']"
 )
 errors = []
@@ -142,6 +142,7 @@ def check_text_rules():
     allow = load_json(ROOT / "content" / "tools" / "allowlist.json") or {}
     allowed = set(allow.get("tokens", [])) | set(allow.get("brands", []))
     files = [f"frontend/i18n/{lang}.json" for lang in LANGS] + [f"content/guidance.{lang}.json" for lang in LANGS]
+    files += [f"frontend/i18n/labels.{lang}.json" for lang in LANGS]
     for rel in files:
         data = load_json(ROOT / rel)
         lang = "ar" if ".ar." in rel or rel.endswith("/ar.json") else "en"
@@ -159,6 +160,36 @@ def check_text_rules():
                     err(f"{rel}: Latin letters outside <bdi> allow-list: {text[:50]!r}")
 
 
+def rule_labels():
+    found = set()
+    for path in sorted((ROOT / "server" / "data" / "label_rules").glob("*.json")):
+        data = load_json(path)
+        if isinstance(data, dict):
+            found |= set(data.get("labels", {}))
+    stop = load_json(ROOT / "server" / "data" / "azure_stoplist.json") or {}
+    return found | set(stop.get("stop", []))
+
+
+def check_labels():
+    dicts = {}
+    for lang in LANGS:
+        data = load_json(ROOT / "frontend" / "i18n" / f"labels.{lang}.json")
+        if isinstance(data, dict):
+            dicts[lang] = {k: v for k, v in data.items() if not k.startswith("_")}
+    if len(dicts) != 2:
+        return
+    for lang, d in dicts.items():
+        for key in sorted(rule_labels() - set(d)):
+            err(f"labels.{lang}: no translation for rule label '{key}'")
+        for key, value in d.items():
+            if not isinstance(value, str) or not value.strip():
+                err(f"labels.{lang}: '{key}' is empty")
+            elif lang == "ar" and not ARABIC.search(value):
+                err(f"labels.ar: '{key}' has no Arabic letters")
+    if set(dicts["ar"]) != set(dicts["en"]):
+        err("labels: ar/en keys differ")
+
+
 def check_line_limits():
     paths = [ROOT / "content" / f"guidance.{lang}.json" for lang in LANGS]
     paths += [ROOT / "frontend" / "i18n" / f"{lang}.json" for lang in LANGS] + [Path(__file__)]
@@ -174,6 +205,7 @@ def main():
     check_parity(ids, ar, en)
     check_i18n()
     check_text_rules()
+    check_labels()
     check_line_limits()
     if errors:
         print(f"FAILED: {len(errors)} problem(s)")

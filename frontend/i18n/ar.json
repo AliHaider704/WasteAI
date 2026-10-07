@@ -15,7 +15,7 @@
   "browse.title": "الفئات",
   "browse.search": "ابحث في الفئات",
   "browse.filter": "تصفية حسب المجموعة",
-  "browse.empty": "لا توجد فئات مطابقة.",
+  "browse.empty": "لا توجد فئة تطابق بحثك",
   "browse.error": "تعذّر تحميل الفئات.",
   "browse.count": "{n} فئة",
   "group.all": "الكل",
@@ -91,6 +91,11 @@
   "agreement.none": "المصادر مختلفة",
   "agreement.single_source": "أجاب مصدر واحد فقط",
   "source.local_onnx": "النموذج المحلي",
-  "source.azure": "<bdi dir=\"ltr\">Azure Vision</bdi>",
-  "source.reciclapi": "<bdi dir=\"ltr\">ReciclAPI</bdi>"
+  "source.azure": "خدمة الرؤية السحابية",
+  "source.reciclapi": "قاعدة بيانات إعادة التدوير",
+  "why.other_label": "تسمية أخرى",
+  "browse.clear": "مسح عوامل التصفية",
+  "browse.retry": "إعادة المحاولة",
+  "feedback.catalog_error": "تعذر تحميل قائمة الفئات",
+  "feedback.choose": "اختر فئة"
 }
