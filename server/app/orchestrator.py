@@ -36,7 +36,7 @@ async def _call(name: str, src, data: bytes):
         if inspect.isawaitable(res):
             res = await asyncio.wait_for(res, TIMEOUT)
         pairs = _pairs(_get(res, "top", []))
-        return name, bool(_get(res, "ok", False)) and bool(pairs), pairs
+        return name, bool(_get(res, "ok", False)), pairs
     except Exception:  # a failing source is skipped, never fatal
         return name, False, []
 
@@ -77,7 +77,21 @@ class Orchestrator:
             if scores:
                 usable[name] = scores
         if not usable:
-            raise AllSourcesFailed
+            return {
+                "request_id": request_id,
+                "status": "uncertain",
+                "category": None,
+                "alternatives": [],
+                "agreement": "none",
+                "hazard": False,
+                "guidance": None,
+                "sources": [
+                    {"name": n, "ok": ok,
+                     "top": [{"label": lb, "score": round(sc, 4)} for lb, sc in pairs[:3]]}
+                    for n, ok, pairs in results
+                ],
+                "elapsed_ms": int((time.perf_counter() - t0) * 1000),
+            }
         d = aggregator.decide(usable)
         is_ok = d.status == "ok"
 
