@@ -145,11 +145,12 @@ def find_candidates() -> list:
     terms = ("garbage", "waste", "trash", "recycl", "trashnet", "ecovision", "wastewise",
              "rootstrap", "waste-classification", "garbage-classification", "litter", "recyclable")
     for term in terms:
-        url = f"https://huggingface.co/api/models?search={term}&limit=50&full=true"
-        try:
-            models = jget(url)
-        except Exception:
-            continue
+        models = []
+        for extra in ("&filter=onnx", ""):
+            try:
+                models += jget(f"https://huggingface.co/api/models?search={term}&limit=100&full=true{extra}")
+            except Exception:
+                pass
         for m in models:
             mid = m.get("id") or m.get("modelId")
             files = [s["rfilename"] for s in m.get("siblings", [])]
