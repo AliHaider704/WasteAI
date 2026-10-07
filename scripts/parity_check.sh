@@ -26,6 +26,7 @@ fi
 if [ -z "$PY" ]; then
   if [ -x "$APP/.venv/bin/python" ]; then PY="$APP/.venv/bin/python"
   elif [ -x "$ROOT/server/.venv/bin/python" ]; then PY="$ROOT/server/.venv/bin/python"
+  elif [ -x "$ROOT/server/.venv/Scripts/python.exe" ]; then PY="$ROOT/server/.venv/Scripts/python.exe"
   else PY="$(command -v python3 || true)"; fi
 fi
 ENV_FILE="$APP/server/.env"
