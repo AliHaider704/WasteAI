@@ -1,6 +1,22 @@
 {"_path": "server/data/label_rules/textiles.json",
- "clothes": {"textile": 1.0}, "clothing": {"textile": 1.0}, "shirt": {"textile": 1.0}, "t-shirt": {"textile": 1.0},
- "jeans": {"textile": 1.0}, "trousers": {"textile": 1.0}, "dress": {"textile": 1.0}, "jacket": {"textile": 1.0},
- "textile": {"textile": 1.0}, "fabric": {"textile": 1.0}, "cloth": {"textile": 1.0}, "towel": {"textile": 1.0},
- "sock": {"textile": 1.0}, "shoes": {"textile": 1.0}, "shoe": {"textile": 1.0}, "sneaker": {"textile": 1.0},
- "bag": {"textile": 0.6, "general_residual": 0.4}, "blanket": {"textile": 1.0}}
+ "labels": {
+  "clothes": {"textile": 1.0},
+  "clothing": {"textile": 1.0},
+  "shirt": {"textile": 1.0},
+  "t-shirt": {"textile": 1.0},
+  "jeans": {"textile": 1.0},
+  "trousers": {"textile": 1.0},
+  "dress": {"textile": 1.0},
+  "jacket": {"textile": 1.0},
+  "textile": {"textile": 1.0},
+  "fabric": {"textile": 1.0},
+  "cloth": {"textile": 1.0},
+  "towel": {"textile": 1.0},
+  "sock": {"textile": 1.0},
+  "shoes": {"textile": 1.0},
+  "shoe": {"textile": 1.0},
+  "sneaker": {"textile": 1.0},
+  "bag": {"textile": 0.6, "general_residual": 0.4},
+  "blanket": {"textile": 1.0}
+ }
+}

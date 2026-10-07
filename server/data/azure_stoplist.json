@@ -1,0 +1,8 @@
+{
+ "_path": "server/data/azure_stoplist.json",
+ "stop": [
+  "indoor", "outdoor", "table", "floor", "wall", "text", "design", "no person",
+  "person", "human face", "ceiling", "furniture", "room", "building", "sky",
+  "ground", "surface", "close-up", "still life", "wood grain", "plant"
+ ]
+}

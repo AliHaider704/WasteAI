@@ -1,5 +1,8 @@
 # File: server/app/sources/vision_azure.py
+import json
 import os
+from functools import lru_cache
+from pathlib import Path
 
 import httpx
 
@@ -10,14 +13,38 @@ from app.sources.base import SourceResult  # assumed: SourceResult(name, ok, top
 API_VERSION = "2023-10-01"
 
 
-def top3(body: dict) -> list[dict]:
+STOPLIST_PATH = Path(
+    os.getenv("AZURE_STOPLIST_PATH", Path(__file__).resolve().parents[2] / "data" / "azure_stoplist.json")
+)
+
+
+@lru_cache(maxsize=1)
+def load_stoplist() -> frozenset[str]:
+    """Generic Azure tags that carry no waste information (data/azure_stoplist.json)."""
+    try:
+        data = json.loads(STOPLIST_PATH.read_text("utf-8"))
+    except (OSError, ValueError):
+        return frozenset()
+    return frozenset(str(w).strip().lower() for w in data.get("stop", []))
+
+
+def top_labels(body: dict, limit: int = 10) -> list[dict]:
+    """Tags and object tags, generic ones removed, best `limit` by confidence."""
+    stop = load_stoplist()
     scores: dict[str, float] = {}
+
+    def add(t: dict) -> None:
+        name = str(t["name"])
+        if name.strip().lower() in stop:
+            return
+        scores[name] = max(scores.get(name, 0.0), float(t["confidence"]))
+
     for t in (body.get("tagsResult") or {}).get("values", []):
-        scores[t["name"]] = max(scores.get(t["name"], 0.0), float(t["confidence"]))
+        add(t)
     for o in (body.get("objectsResult") or {}).get("values", []):
         for t in o.get("tags", []):
-            scores[t["name"]] = max(scores.get(t["name"], 0.0), float(t["confidence"]))
-    best = sorted(scores.items(), key=lambda kv: -kv[1])[:3]
+            add(t)
+    best = sorted(scores.items(), key=lambda kv: -kv[1])[:limit]
     return [{"label": k, "score": round(v, 4)} for k, v in best]
 
 
@@ -64,7 +91,7 @@ class VisionAzure:
                 },
             )
             resp.raise_for_status()
-            top = top3(resp.json())
+            top = top_labels(resp.json())
         except (httpx.HTTPError, ValueError, KeyError):
             return self._fail()
         return SourceResult(name=self.name, ok=bool(top), top=top)
