@@ -1,4 +1,4 @@
-// PATH: waste-ai/frontend/js/theme.js
+// File: frontend/js/theme.js
 // Theme: follows prefers-color-scheme until the user toggles; the choice is then saved.
 // tokens.css: no data-theme = follow the system; data-theme="light" or "dark" forces that theme.
 

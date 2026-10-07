@@ -1,0 +1,19 @@
+{
+  "_path": "content/tools/allowlist.json",
+  "tokens": [
+    "PET",
+    "HDPE",
+    "PVC",
+    "LDPE",
+    "PP",
+    "PS",
+    "JPEG",
+    "PNG",
+    "WebP",
+    "MB"
+  ],
+  "brands": [
+    "Azure Vision",
+    "ReciclAPI"
+  ]
+}

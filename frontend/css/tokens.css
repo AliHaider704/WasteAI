@@ -1,4 +1,5 @@
-/* PATH: waste-ai/frontend/css/tokens.css
+/* File: frontend/css/tokens.css */
+/*
    Design tokens. Light = warm paper, Dark = graphite. One deep-green accent.
    Theme: data-theme="light|dark" on <html>; default follows prefers-color-scheme.
    All colors are 6-digit hex (the preview page reads them to verify AA contrast). */

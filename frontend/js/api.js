@@ -1,4 +1,4 @@
-// PATH: waste-ai/frontend/js/api.js
+// File: frontend/js/api.js
 // API client with a MOCK switch. Mock mode is ON by default until sync point S1.
 // Switch without editing code: ?mock=0 uses the real backend. In mock mode,
 // ?scenario=ok|uncertain|hazard|rate_limited|image_too_large|all_sources_failed picks the response.

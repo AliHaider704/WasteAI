@@ -1,5 +1,5 @@
 {
-  "_path": "waste-ai/frontend/mock/error_all_sources_failed.json",
+  "_path": "frontend/mock/error_all_sources_failed.json",
   "error": {
     "code": "all_sources_failed",
     "message": "We could not analyze this photo right now. Please try again.",

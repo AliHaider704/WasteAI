@@ -1,4 +1,4 @@
-// PATH: waste-ai/frontend/js/i18n.js
+// File: frontend/js/i18n.js
 // Language detection, persistence, <html lang/dir>, and text translation.
 // Translates every [data-i18n="key"] node and [data-i18n-attr="attr:key;attr2:key2"] attributes.
 // Other modules read text through window.__i18n[key] (set here) and re-render on "i18n:change".

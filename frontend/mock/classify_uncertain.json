@@ -1,5 +1,5 @@
 {
-  "_path": "waste-ai/frontend/mock/classify_uncertain.json",
+  "_path": "frontend/mock/classify_uncertain.json",
   "request_id": "c7a2d9e4-81b3-4f60-a1d7-3b9e5c4f7a02",
   "status": "uncertain",
   "category": null,

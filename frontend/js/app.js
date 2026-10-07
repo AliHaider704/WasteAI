@@ -1,4 +1,4 @@
-// PATH: waste-ai/frontend/js/app.js
+// File: frontend/js/app.js
 import "./i18n.js";
 import "./theme.js";
 import "./upload.js";

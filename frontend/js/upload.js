@@ -1,4 +1,4 @@
-// PATH: waste-ai/frontend/js/upload.js
+// File: frontend/js/upload.js
 // Capture / upload flow: camera or file -> resize -> preview (retake) -> Analyze -> result.
 // Builds its own panel inside the home view. Requires one line in app.js: import "./upload.js";
 // All text is looked up by key (window.__i18n, provided by i18n.js in M5); the key is shown until then.

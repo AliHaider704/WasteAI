@@ -1,3 +1,4 @@
+# File: content/tools/check_content.py
 """Validate guidance content and UI strings. Run from anywhere: python3 content/tools/check_content.py
 
 Checks: category ID coverage vs contract/categories.json, ar/en parity, 3-5 steps, hazard warnings,
@@ -121,6 +122,43 @@ def check_i18n():
         err(f"i18n: key '{key}' is used in the frontend but missing from en.json")
 
 
+BDI = re.compile(r'<bdi dir="ltr">([^<]*)</bdi>')
+EMOJI = re.compile("[\U0001F300-\U0001FAFF\u2600-\u27BF]")
+
+
+def strings(node):
+    if isinstance(node, str):
+        yield node
+    elif isinstance(node, dict):
+        for key, value in node.items():
+            if not key.startswith("_"):
+                yield from strings(value)
+    elif isinstance(node, list):
+        for value in node:
+            yield from strings(value)
+
+
+def check_text_rules():
+    allow = load_json(ROOT / "content" / "tools" / "allowlist.json") or {}
+    allowed = set(allow.get("tokens", [])) | set(allow.get("brands", []))
+    files = [f"frontend/i18n/{lang}.json" for lang in LANGS] + [f"content/guidance.{lang}.json" for lang in LANGS]
+    for rel in files:
+        data = load_json(ROOT / rel)
+        lang = "ar" if ".ar." in rel or rel.endswith("/ar.json") else "en"
+        for text in strings(data):
+            if "..." in text or "\u2014" in text or EMOJI.search(text):
+                err(f"{rel}: no '...', em dash or emoji allowed: {text[:50]!r}")
+            if lang == "en" and ARABIC.search(text):
+                err(f"{rel}: Arabic letters in an English file: {text[:50]!r}")
+            if lang == "ar":
+                for token in BDI.findall(text):
+                    if token not in allowed:
+                        err(f"{rel}: '{token}' is not in content/tools/allowlist.json")
+                rest = re.sub(r"\{\w+\}", "", BDI.sub("", text))
+                if re.search(r"[A-Za-z]", rest):
+                    err(f"{rel}: Latin letters outside <bdi> allow-list: {text[:50]!r}")
+
+
 def check_line_limits():
     paths = [ROOT / "content" / f"guidance.{lang}.json" for lang in LANGS]
     paths += [ROOT / "frontend" / "i18n" / f"{lang}.json" for lang in LANGS] + [Path(__file__)]
@@ -135,6 +173,7 @@ def main():
     en = check_guidance("en", ids)
     check_parity(ids, ar, en)
     check_i18n()
+    check_text_rules()
     check_line_limits()
     if errors:
         print(f"FAILED: {len(errors)} problem(s)")

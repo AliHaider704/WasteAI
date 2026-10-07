@@ -1,5 +1,5 @@
 {
-  "_path": "waste-ai/frontend/mock/classify_ok.json",
+  "_path": "frontend/mock/classify_ok.json",
   "request_id": "b3f1c0de-4a7e-4c1a-9d52-6e8f1a2b3c01",
   "status": "ok",
   "category": {

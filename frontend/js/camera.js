@@ -1,4 +1,4 @@
-// PATH: waste-ai/frontend/js/camera.js
+// File: frontend/js/camera.js
 // getUserMedia wrapper. Failures are thrown as CameraError carrying an i18n key,
 // so the caller can show a message and fall back to the file picker.
 

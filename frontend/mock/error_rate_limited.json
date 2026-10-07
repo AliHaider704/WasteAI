@@ -1,5 +1,5 @@
 {
-  "_path": "waste-ai/frontend/mock/error_rate_limited.json",
+  "_path": "frontend/mock/error_rate_limited.json",
   "error": {
     "code": "rate_limited",
     "message": "Too many requests. Please wait a moment and try again.",

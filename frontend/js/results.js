@@ -1,4 +1,4 @@
-// PATH: waste-ai/frontend/js/results.js
+// File: frontend/js/results.js
 // Result UI: ok / uncertain / hazard states, "Why?" panel, feedback, aria-live announcement.
 // Needs in app.js: import "./results.js";   and in index.html: <link rel="stylesheet" href="css/results.css">
 // All text is looked up by key via window.__i18n (M5); the key itself is shown until then.
