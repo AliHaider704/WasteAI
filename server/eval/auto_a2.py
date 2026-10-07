@@ -45,7 +45,7 @@ PHOTOS = SERVER / "eval_photos"
 CACHE = SERVER / "eval" / "_cache"
 UA = {"User-Agent": "WasteAI-eval/1.0 (A2 model evaluation script)"}
 PER_CAT = 8
-MAX_MODELS = 10
+MAX_MODELS = 25
 MAX_MB = 150
 PERMISSIVE = ("apache-2.0", "mit", "bsd", "cc-by-4.0", "cc0-1.0", "unlicense")
 
@@ -142,8 +142,10 @@ def map_label(label: str) -> list:
 
 def find_candidates() -> list:
     seen, out = set(), []
-    for term in ("garbage", "waste", "trash", "recycl"):
-        url = f"https://huggingface.co/api/models?search={term}&filter=onnx&limit=30&full=true"
+    terms = ("garbage", "waste", "trash", "recycl", "trashnet", "ecovision", "wastewise",
+             "rootstrap", "waste-classification", "garbage-classification", "litter", "recyclable")
+    for term in terms:
+        url = f"https://huggingface.co/api/models?search={term}&limit=50&full=true"
         try:
             models = jget(url)
         except Exception:
@@ -158,6 +160,7 @@ def find_candidates() -> list:
             lic = next((t.split(":", 1)[1] for t in m.get("tags", []) if t.startswith("license:")), "unknown")
             pref = [f for f in onnx if f.split("/")[-1] == "model.onnx"] or [f for f in onnx if "quant" not in f] or onnx
             out.append({"id": mid, "file": pref[0], "license": lic.lower()})
+    print(f"   found {len(out)} models with an .onnx file and config.json")
     return out[:MAX_MODELS]
 
 
@@ -218,16 +221,16 @@ def evaluate(path: Path, labels: list, size_hint, mean, std, photos) -> dict | N
     so.intra_op_num_threads = 1
     try:
         sess = ort.InferenceSession(str(path), so, providers=["CPUExecutionProvider"])
-    except Exception:
+    except Exception as e:
+        print(f"   reason: session failed: {str(e)[:150]}")
         return None
     rss = (proc.memory_info().rss - before) / 1e6
     inp = sess.get_inputs()[0]
     shp = inp.shape
     if len(shp) != 4:
+        print(f"   reason: input shape {shp} is not an image tensor")
         return None
-    layout = "nchw" if shp[1] == 3 else "nhwc" if shp[3] == 3 else None
-    if layout is None:
-        return None
+    layout = "nhwc" if shp[3] == 3 and shp[1] != 3 else "nchw"
     dim = shp[2] if layout == "nchw" else shp[1]
     size = dim if isinstance(dim, int) else (size_hint or 224)
     best = None
@@ -241,6 +244,7 @@ def evaluate(path: Path, labels: list, size_hint, mean, std, photos) -> dict | N
                 out = sess.run(None, {inp.name: x})[0].reshape(-1).astype(np.float64)
                 times.append((time.perf_counter() - t0) * 1000)
                 if len(out) != len(labels):
+                    print(f"   reason: output size {len(out)} != {len(labels)} labels")
                     return None
                 p = softmax(out) if abs(out.sum() - 1) > 1e-3 or out.min() < 0 else out
                 top = np.argsort(-p)[:3]
@@ -248,7 +252,8 @@ def evaluate(path: Path, labels: list, size_hint, mean, std, photos) -> dict | N
                 ok1 += hit[0]
                 ok3 += any(hit)
                 n += 1
-        except Exception:
+        except Exception as e:
+            print(f"   reason: run failed: {str(e)[:150]}")
             return None
         r = {"top1": ok1 / n, "top3": ok3 / n, "p50": float(np.median(times)), "rss": rss,
              "size": size, "norm": "imagenet" if mean == [0.485, 0.456, 0.406] else "custom",
@@ -287,8 +292,8 @@ def main() -> int:
         except Exception:
             print(f"   skip {c['id']}: no id2label")
             continue
-        if sum(bool(map_label(x)) for x in labels) < 3:
-            print(f"   skip {c['id']}: labels not mappable")
+        if sum(bool(map_label(x)) for x in labels) < 2:
+            print(f"   skip {c['id']}: labels not mappable: {labels[:6]}")
             continue
         url = f"{base}/{c['file']}"
         path = CACHE / f"{slug}.onnx"
