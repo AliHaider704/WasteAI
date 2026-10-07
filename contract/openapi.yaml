@@ -194,11 +194,6 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/FeedbackRequest"
-            examples:
-              glass:
-                value:
-                  request_id: b3f1c0de-5a3e-4c58-9d0b-2f7a6c1e8a10
-                  correct_category_id: glass
       responses:
         "204":
           description: Feedback stored. No body.
@@ -208,6 +203,31 @@ paths:
           $ref: "#/components/responses/RateLimited"
         "500":
           $ref: "#/components/responses/InternalError"
+  /log:
+    post:
+      tags: [classification]
+      operationId: postClientLog
+      summary: Client event sink
+      description: Detail is cut to 200 characters, control characters removed. 20 per minute per IP.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [level, event]
+              properties:
+                level: {type: string, enum: [debug, info, warning, error]}
+                event: {type: string, pattern: "^[a-z0-9_.]{1,64}$"}
+                request_id: {type: string, maxLength: 64}
+                detail: {type: string, maxLength: 2000}
+      responses:
+        "204":
+          description: Logged. No body.
+        "422":
+          $ref: "#/components/responses/InvalidRequest"
+        "429":
+          $ref: "#/components/responses/RateLimited"
 components:
   parameters:
     Lang:

@@ -7,6 +7,7 @@ from fastapi import APIRouter, File, Request, UploadFile
 from app import cache, concurrency, imaging
 from app.deps import client_ip
 from app.errors import build_error
+from app.logging_setup import note_result
 from app.orchestrator import AllSourcesFailed, get_orchestrator
 from app.ratelimit import ip_limiter
 
@@ -17,6 +18,7 @@ MAX_BYTES = 2 * 1024 * 1024
 @router.post("/classify")
 async def classify(request: Request, image: UploadFile = File(...), lang: str = "en"):
     rid = str(uuid.uuid4())
+    request.state.request_id = rid
     if lang not in ("ar", "en"):
         return build_error("invalid_request", "en", rid)
     wait = ip_limiter.check(client_ip(request))
@@ -40,6 +42,7 @@ async def classify(request: Request, image: UploadFile = File(...), lang: str = 
         hit["request_id"] = rid
         hit["elapsed_ms"] = int((time.perf_counter() - t0) * 1000)
         await cache.record_issued(rid)
+        note_result(request, hit)
         return hit
     try:
         async with concurrency.limiter.slot():
@@ -47,6 +50,7 @@ async def classify(request: Request, image: UploadFile = File(...), lang: str = 
         if result.get("status") in ("ok", "uncertain"):
             await cache.put(key, result)
             await cache.record_issued(rid)
+        note_result(request, result)
         return result
     except AllSourcesFailed:
         return build_error("all_sources_failed", lang, rid)

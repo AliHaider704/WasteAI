@@ -1,5 +1,7 @@
 # File: server/app/main.py
 """FastAPI entry point: uvicorn app.main:app --port 8100"""
+import logging
+import time
 import uuid
 from contextlib import asynccontextmanager
 
@@ -11,8 +13,9 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from app import cache
 from app.config import get_settings
 from app.errors import AppError, error_response
+from app.logging_setup import setup_logging
 from app.orchestrator import get_orchestrator
-from app.routes import categories, classify, feedback, health
+from app.routes import categories, classify, feedback, health, log
 
 SECURITY_HEADERS = {
     "Content-Security-Policy": (
@@ -25,6 +28,8 @@ SECURITY_HEADERS = {
     "Permissions-Policy": "camera=(self), microphone=(), geolocation=()",
 }
 
+setup_logging(get_settings().log_level)
+ACCESS_LOG = logging.getLogger("wasteai.access")
 
 
 @asynccontextmanager
@@ -47,7 +52,25 @@ app.add_middleware(CORSMiddleware, allow_origins=[], allow_methods=["GET", "POST
 @app.middleware("http")
 async def add_request_id_and_headers(request: Request, call_next):
     request.state.request_id = str(uuid.uuid4())
-    response = await call_next(request)
+    t0 = time.perf_counter()
+    status = 500
+    try:
+        response = await call_next(request)
+        status = response.status_code
+    finally:
+        route = getattr(request.scope.get("route"), "path", "unmatched")
+        ACCESS_LOG.log(
+            logging.ERROR if status >= 500 else logging.INFO,
+            "request",
+            extra={
+                "event": "request",
+                "request_id": request.state.request_id,
+                "route": route,
+                "status": status,
+                "elapsed_ms": int((time.perf_counter() - t0) * 1000),
+                "source_status": getattr(request.state, "source_status", None),
+            },
+        )
     for k, v in SECURITY_HEADERS.items():
         response.headers.setdefault(k, v)
     return response
@@ -73,5 +96,5 @@ async def _unexpected(request: Request, exc: Exception):
     return error_response(request, "internal_error")
 
 
-for module in (health, categories, classify, feedback):
+for module in (health, categories, classify, feedback, log):
     app.include_router(module.router, prefix="/api/v1")
