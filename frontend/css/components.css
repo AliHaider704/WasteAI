@@ -34,7 +34,7 @@
   color: var(--color-on-accent, #fff);
   font-weight: 600;
 }
-.chip { padding-inline: 1rem; border-radius: 999px; }
+.chip { padding-inline: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--color-border-strong); }
 .chip[aria-pressed="true"] {
   background: var(--color-accent, #1f5d3a);
   border-color: var(--color-accent, #1f5d3a);
@@ -44,7 +44,7 @@
 
 .btn:focus-visible, .icon-btn:focus-visible, .chip:focus-visible, .input:focus-visible,
 .brand:focus-visible, .card__link:focus-visible, h1:focus-visible {
-  outline: 3px solid var(--focus-ring-color, var(--color-accent, #1f5d3a));
+  outline: 3px solid var(--color-focus);
   outline-offset: 2px;
 }
 h1:focus { outline: none; }

@@ -1,36 +1,81 @@
 /* File: frontend/css/base.css */
 /*
    Fonts, reset, typography, focus ring, utilities. Logical properties only.
-   Load after tokens.css. Font files live in ../assets/fonts/ (see fonts/README note in session). */
+   Load after tokens.css. Font files live in ../assets/fonts/<family>/ with OFL.txt (D-020). */
 
 @font-face {
-  font-family: "Inter";
-  src: url("../assets/fonts/Inter-Variable.woff2") format("woff2");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "IBM Plex Sans Arabic";
-  src: url("../assets/fonts/IBMPlexSansArabic-Regular.woff2") format("woff2");
+  font-family: "Plex Sans";
+  src: url("../assets/fonts/plex-sans/ibm-plex-sans-latin-400-normal.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "IBM Plex Sans Arabic";
-  src: url("../assets/fonts/IBMPlexSansArabic-Medium.woff2") format("woff2");
+  font-family: "Plex Sans";
+  src: url("../assets/fonts/plex-sans/ibm-plex-sans-latin-500-normal.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "IBM Plex Sans Arabic";
-  src: url("../assets/fonts/IBMPlexSansArabic-SemiBold.woff2") format("woff2");
+  font-family: "Plex Sans";
+  src: url("../assets/fonts/plex-sans/ibm-plex-sans-latin-600-normal.woff2") format("woff2");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
+@font-face {
+  font-family: "Plex Sans Arabic";
+  src: url("../assets/fonts/plex-sans-arabic/ibm-plex-sans-arabic-arabic-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Plex Sans Arabic";
+  src: url("../assets/fonts/plex-sans-arabic/ibm-plex-sans-arabic-arabic-500-normal.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Plex Sans Arabic";
+  src: url("../assets/fonts/plex-sans-arabic/ibm-plex-sans-arabic-arabic-600-normal.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Newsreader";
+  src: url("../assets/fonts/newsreader/newsreader-latin-500-normal.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Newsreader";
+  src: url("../assets/fonts/newsreader/newsreader-latin-600-normal.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Noto Naskh Arabic";
+  src: url("../assets/fonts/noto-naskh-arabic/noto-naskh-arabic-arabic-500-normal.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Noto Naskh Arabic";
+  src: url("../assets/fonts/noto-naskh-arabic/noto-naskh-arabic-arabic-600-normal.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+/* size-adjust fallbacks: limit layout shift while web fonts load */
+@font-face { font-family: "Plex Sans Fallback"; src: local("Arial"), local("Helvetica"); size-adjust: 100%; ascent-override: 93%; descent-override: 25%; }
+@font-face { font-family: "Noto Naskh Arabic Fallback"; src: local("Tahoma"), local("Arial"); size-adjust: 96%; }
 
 /* Reset */
 *, *::before, *::after { box-sizing: border-box; }
@@ -53,7 +98,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 html[lang="ar"] body { line-height: var(--lh-body-ar); }
-html[lang="ar"] { --font-sans: "IBM Plex Sans Arabic", "Inter", system-ui, "Segoe UI", Tahoma, sans-serif; }
+html[lang="ar"] { --font-sans: "Plex Sans Arabic", "Plex Sans", "Plex Sans Fallback", system-ui, "Segoe UI", Tahoma, sans-serif; }
 
 /* Typography */
 h1, h2, h3, h4 {
