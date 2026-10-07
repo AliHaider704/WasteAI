@@ -67,3 +67,14 @@ body {
 @media (min-width: 1440px) {
   .app-main { padding-block-start: 4rem; }
 }
+
+/* ---- M15 (D3 kraft and ink) ---- */
+/* Home: Scan is the one focal action; Upload is secondary; Browse is a quiet link. */
+.actions > .btn--primary { min-block-size: 4rem; font-size: 1.25rem; }
+.actions > a.btn { background: transparent; border-color: transparent; text-decoration: underline; justify-content: center; }
+/* The only home decoration: one row of stamped bin chips. */
+.stamps { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-block-start: 2rem; }
+
+/* Motif: the stamped bin label, about -2deg, same angle in LTR and RTL. */
+.bin { transform: rotate(-2deg); border-radius: var(--radius-sm); }
+.bin { padding-block: 0.125rem; }
