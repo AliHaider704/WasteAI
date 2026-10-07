@@ -13,6 +13,7 @@ UNIT=wasteai.service
 UNIT_DST="/etc/systemd/system/$UNIT"
 NGX_AV=/etc/nginx/sites-available/wasteai
 NGX_EN=/etc/nginx/sites-enabled/wasteai
+NGX_SNIP=/etc/nginx/snippets/wasteai-headers.conf
 PORT=8100
 DOMAIN="${WASTEAI_DOMAIN:-}"
 EMAIL="${CERTBOT_EMAIL:-}"
@@ -81,7 +82,7 @@ cmd_stop_containers() {
 cmd_rollback() {
   log "rolling back (app dir, .env, data and certificates are kept)"
   sudo systemctl disable --now "$UNIT" 2>/dev/null || true
-  sudo rm -f "$UNIT_DST" "$NGX_EN" "$NGX_AV"
+  sudo rm -f "$UNIT_DST" "$NGX_EN" "$NGX_AV" "$NGX_SNIP"
   sudo systemctl daemon-reload
   if sudo nginx -t; then sudo systemctl reload nginx; else die "nginx -t failed, check manually"; fi
   state_set rolled_back "$(date -u +%FT%TZ)"
@@ -160,23 +161,66 @@ install_unit() {
   sudo systemctl restart "$UNIT"   # our own service only
 }
 
+# Save the previous content of $2 in $STATE_DIR (first change only), then install $1 over it.
+put_conf() {
+  local src="$1" dst="$2" prev
+  prev="$STATE_DIR/$(basename "$dst").prev"
+  if sudo cmp -s "$src" "$dst" 2>/dev/null; then return 1; fi
+  if [ -f "$dst" ]; then sudo cp -f "$dst" "$prev"; else sudo rm -f "$prev"; fi
+  sudo install -m 644 "$src" "$dst"
+}
+
+restore_conf() {
+  local dst="$1" prev
+  prev="$STATE_DIR/$(basename "$dst").prev"
+  if [ -f "$prev" ]; then sudo install -m 644 "$prev" "$dst"; else sudo rm -f "$dst"; fi
+}
+
+# Render the server block: TLS listen + redirect when the certificate and Certbot support files exist.
+render_nginx() {
+  local tpl listen redirect le=/etc/letsencrypt
+  tpl="$(<"$REPO/deploy/templates/nginx.conf.tpl")"
+  if sudo test -f "$le/live/$DOMAIN/fullchain.pem" && sudo test -f "$le/options-ssl-nginx.conf" \
+     && sudo test -f "$le/ssl-dhparams.pem"; then
+    listen="listen 443 ssl;
+    listen [::]:443 ssl;
+    ssl_certificate $le/live/$DOMAIN/fullchain.pem;
+    ssl_certificate_key $le/live/$DOMAIN/privkey.pem;
+    include $le/options-ssl-nginx.conf;
+    ssl_dhparam $le/ssl-dhparams.pem;"
+    redirect="server {
+    listen 80;
+    listen [::]:80;
+    server_name $DOMAIN;
+    return 301 https://\$host\$request_uri;
+}"
+  else
+    listen="listen 80;
+    listen [::]:80;"
+    redirect=""
+  fi
+  tpl="${tpl//__LISTEN__/$listen}"
+  tpl="${tpl//__REDIRECT__/$redirect}"
+  tpl="${tpl//__DOMAIN__/$DOMAIN}"
+  tpl="${tpl//__APP__/$APP}"
+  tpl="${tpl//__PORT__/$PORT}"
+  printf '%s\n' "$tpl"
+}
+
 install_nginx() {
-  if [ -f "$NGX_AV" ] && sudo grep -q 'managed by Certbot' "$NGX_AV"; then
-    log "nginx block already managed by Certbot, left unchanged"; return 0
-  fi
   local t; t="$(mktemp)"
-  sed "s|__DOMAIN__|$DOMAIN|g;s|__APP__|$APP|g;s|__PORT__|$PORT|g" "$REPO/deploy/templates/nginx.conf.tpl" >"$t"
-  if ! sudo cmp -s "$t" "$NGX_AV"; then
-    sudo install -m 644 "$t" "$NGX_AV"
-    state_set nginx_installed "$(date -u +%FT%TZ)"
-  fi
+  sudo install -d /etc/nginx/snippets "$STATE_DIR"
+  render_nginx >"$t"
+  put_conf "$REPO/deploy/templates/wasteai-headers.conf.tpl" "$NGX_SNIP" && state_set nginx_snippet "$(date -u +%FT%TZ)" || true
+  put_conf "$t" "$NGX_AV" && state_set nginx_installed "$(date -u +%FT%TZ)" || true
   rm -f "$t"
   sudo ln -sf "$NGX_AV" "$NGX_EN"
   if sudo nginx -t; then
-    sudo systemctl reload nginx
+    sudo systemctl reload nginx   # reload only, never restart
   else
-    sudo rm -f "$NGX_EN" "$NGX_AV"
-    die "nginx -t failed; our block removed, nothing reloaded"
+    restore_conf "$NGX_AV"; restore_conf "$NGX_SNIP"
+    sudo nginx -t && sudo systemctl reload nginx || true
+    die "nginx -t failed; previous wasteai config restored"
   fi
 }
 
@@ -214,6 +258,7 @@ cmd_install() {
   install_unit
   install_nginx
   setup_certbot
+  install_nginx   # again: renders the TLS block once the certificate exists
   health_check
   fix_owner || log "WARNING: ownership not clean, run --fix-owner"
   state_set ram_after_mb "$(avail_mb)"
