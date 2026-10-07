@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-WEIGHTS = {"local_onnx": 0.6, "azure": 0.4, "reciclapi": 0.2}
+WEIGHTS = {"local_onnx": 0.6, "azure": 0.4, "reciclapi": 0.2, "llm": 0.3}
 # Baseline values (A5/A7a, before A14): TEMPERATURE 1.0, OK_MIN 0.65,
 # SINGLE_OK_MIN 0.80, HAZARD_MIN 0.35. Change only from field data
 # (scripts/fit_temperature.py) and record before/after in DECISIONS.

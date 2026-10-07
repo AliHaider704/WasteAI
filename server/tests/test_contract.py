@@ -26,7 +26,7 @@ def test_health():
     r = client.get("/api/v1/health")
     assert r.status_code == 200
     body = r.json()
-    assert body["status"] == "ok" and set(body["sources"]) == {"local_onnx", "azure", "reciclapi"}
+    assert body["status"] == "ok" and set(body["sources"]) == {"local_onnx", "azure", "reciclapi", "llm"}
     assert r.headers["x-content-type-options"] == "nosniff"
     assert "camera=(self)" in r.headers["permissions-policy"]
 
@@ -38,7 +38,10 @@ def test_categories_shape():
 
 
 class _FakeOrchestrator:
-    async def run(self, data, lang, request_id):
+    def llm_active(self):
+        return False
+
+    async def run(self, data, lang, request_id, allow_cloud_llm=False):
         return {
             "request_id": request_id,
             "status": "ok",

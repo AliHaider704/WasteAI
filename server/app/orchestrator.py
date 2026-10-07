@@ -5,6 +5,7 @@ import time
 
 from app import aggregator, catalog, mapper
 from app.sources.vision_azure import VisionAzure
+from app.sources.vision_llm import VisionLLM
 from app.sources.vision_reciclapi import VisionReciclAPI
 
 TIMEOUT = 6.0
@@ -48,8 +49,8 @@ def _hazard_warning(cats: dict) -> list[str]:
 
 
 class Orchestrator:
-    def __init__(self, local, azure: VisionAzure, recicl: VisionReciclAPI) -> None:
-        self.local, self.azure, self.recicl = local, azure, recicl
+    def __init__(self, local, azure: VisionAzure, recicl: VisionReciclAPI, llm=None) -> None:
+        self.local, self.azure, self.recicl, self.llm = local, azure, recicl, llm
         self.sources = []
         if local is not None:
             self.sources.append(("local_onnx", local))
@@ -63,9 +64,13 @@ class Orchestrator:
             "local_onnx": "up" if self.local is not None else "down",
             "azure": self.azure.status(),
             "reciclapi": "up" if self.recicl.enabled else "disabled",
+            "llm": self.llm.status() if self.llm is not None else "disabled",
         }
 
-    async def run(self, data: bytes, lang: str, request_id: str) -> dict:
+    def llm_active(self) -> bool:
+        return self.llm is not None and bool(self.llm.enabled)
+
+    async def run(self, data, lang: str, request_id: str, allow_cloud_llm: bool = False) -> dict:
         t0 = time.perf_counter()
         results = await asyncio.gather(*[_call(n, s, data) for n, s in self.sources])
         if not any(ok for _, ok, _ in results):
@@ -73,6 +78,15 @@ class Orchestrator:
         cats = catalog.by_id(lang)
         usable = {}
         for name, ok, pairs in results:
+            scores = mapper.map_labels(pairs) if ok else {}
+            if scores:
+                usable[name] = scores
+        first = aggregator.decide(usable) if usable else None
+        # Tiebreaker: flag on + per-photo consent + unclear first pass; never after a hazard.
+        if (allow_cloud_llm and self.llm_active() and not (first and first.hazard)
+                and (first is None or first.status != "ok" or first.agreement == "none")):
+            name, ok, pairs = await _call("llm", self.llm, data)
+            results.append((name, ok, pairs))
             scores = mapper.map_labels(pairs) if ok else {}
             if scores:
                 usable[name] = scores
@@ -150,7 +164,8 @@ def build_orchestrator() -> Orchestrator:
         local.load()
     except Exception:
         local = None
-    return Orchestrator(local, VisionAzure.from_env(), VisionReciclAPI.from_env())
+    return Orchestrator(local, VisionAzure.from_env(), VisionReciclAPI.from_env(),
+                        VisionLLM.from_env())
 
 
 def get_orchestrator(app) -> Orchestrator:

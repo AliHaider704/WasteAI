@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     azure_vision_key: str = ""
     reciclapi_key: str = ""
     log_level: str = "INFO"
+    llm_tiebreaker_enabled: bool = False
+    llm_daily_cap: int = 20
     max_image_bytes: int = 2 * 1024 * 1024
     contract_dir: Path = REPO_ROOT / "contract"
     content_dir: Path = REPO_ROOT / "content"

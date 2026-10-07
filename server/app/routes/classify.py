@@ -2,7 +2,7 @@
 import time
 import uuid
 
-from fastapi import APIRouter, File, Request, UploadFile
+from fastapi import APIRouter, File, Form, Request, UploadFile
 
 from app import cache, concurrency, imaging
 from app.deps import client_ip
@@ -16,11 +16,14 @@ MAX_BYTES = 2 * 1024 * 1024
 
 
 @router.post("/classify")
-async def classify(request: Request, image: UploadFile = File(...), lang: str = "en"):
+async def classify(request: Request, image: UploadFile = File(...), lang: str = "en",
+                   allow_cloud_llm: int = Form(0)):
     rid = str(uuid.uuid4())
     request.state.request_id = rid
     if lang not in ("ar", "en"):
         return build_error("invalid_request", "en", rid)
+    if allow_cloud_llm not in (0, 1):
+        return build_error("invalid_request", lang, rid)
     wait = ip_limiter.check(client_ip(request))
     if wait:
         return build_error("rate_limited", lang, rid, {"Retry-After": str(wait)})
@@ -35,7 +38,9 @@ async def classify(request: Request, image: UploadFile = File(...), lang: str = 
         )
     del raw
     t0 = time.perf_counter()
-    key = cache.make_key(data.sha256.encode(), lang)
+    orch = get_orchestrator(request.app)
+    use_llm = allow_cloud_llm == 1 and orch.llm_active()
+    key = cache.make_key(data.sha256.encode(), lang + ("|llm" if use_llm else ""))
     hit = await cache.get(key)
     if hit is not None:
         data.close()
@@ -46,7 +51,7 @@ async def classify(request: Request, image: UploadFile = File(...), lang: str = 
         return hit
     try:
         async with concurrency.limiter.slot():
-            result = await get_orchestrator(request.app).run(data, lang, rid)
+            result = await orch.run(data, lang, rid, use_llm)
         if result.get("status") in ("ok", "uncertain"):
             await cache.put(key, result)
             await cache.record_issued(rid)

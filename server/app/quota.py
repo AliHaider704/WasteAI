@@ -32,3 +32,31 @@ def try_acquire() -> bool:
         (_period(), SOURCE),
     )
     return True
+
+
+LLM_SOURCE = "llm"
+
+
+def _day() -> str:
+    return time.strftime("%Y-%m-%d", time.gmtime())
+
+
+def llm_used() -> int:
+    row = db.query_one("SELECT count FROM quota WHERE period=? AND source=?", (_day(), LLM_SOURCE))
+    return int(row[0]) if row else 0
+
+
+def llm_exhausted(cap: int) -> bool:
+    return llm_used() >= cap
+
+
+def llm_try_acquire(cap: int) -> bool:
+    """Reserve one LLM call against the daily hard cap."""
+    if llm_exhausted(cap):
+        return False
+    db.execute(
+        "INSERT INTO quota(period, source, count) VALUES(?,?,1) "
+        "ON CONFLICT(period, source) DO UPDATE SET count = count + 1",
+        (_day(), LLM_SOURCE),
+    )
+    return True
