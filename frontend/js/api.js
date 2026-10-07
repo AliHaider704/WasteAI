@@ -1,7 +1,9 @@
-// PATH: waste-ai/frontend/js/api.js
+// File: frontend/js/api.js
 // API client with a MOCK switch. Mock mode is ON by default until sync point S1.
 // Switch without editing code: ?mock=0 uses the real backend. In mock mode,
 // ?scenario=ok|uncertain|hazard|rate_limited|image_too_large|all_sources_failed picks the response.
+
+import { log } from "./log.js";
 
 const params = new URLSearchParams(location.search);
 export const MOCK = params.get("mock") === "1";
@@ -10,6 +12,9 @@ const MOCK_BASE = "mock/";
 const MOCK_DELAY_MS = 900;
 const TIMEOUT_MS = 20000;
 const MOCK_RETRY_AFTER_S = 30;
+const RETRIES = 3; // idempotent GETs only
+const BACKOFF_BASE_MS = 500;
+const BACKOFF_CAP_MS = 8000;
 
 const SCENARIOS = {
   ok: "classify_ok",
@@ -57,6 +62,26 @@ export const store = { result: null, photoUrl: null };
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// Error body is not our JSON (for example the Nginx HTML 413 page): map by status (B-08).
+function codeFromStatus(status) {
+  if (status === 413) return "image_too_large";
+  if (status === 429) return "rate_limited";
+  return "internal_error";
+}
+
+function retryAfterSeconds(res) {
+  const n = Number(res.headers.get("Retry-After"));
+  return Number.isFinite(n) && n > 0 ? Math.ceil(n) : null;
+}
+
+// Only server-side or network failures are logged; user mistakes (4xx) are not.
+function logFailure(err, url) {
+  if (err.status === 0 || err.status >= 500) {
+    const path = String(url).split("?")[0];
+    log("api_error", { requestId: err.requestId, detail: `${err.code} ${err.status} ${path}` });
+  }
+}
+
 async function request(url, options = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
@@ -64,7 +89,9 @@ async function request(url, options = {}) {
   try {
     res = await fetch(url, { ...options, signal: controller.signal });
   } catch (err) {
-    throw new ApiError(err && err.name === "AbortError" ? "timeout" : "network_error");
+    const e = new ApiError(err && err.name === "AbortError" ? "timeout" : "network_error");
+    logFailure(e, url);
+    throw e;
   } finally {
     clearTimeout(timer);
   }
@@ -77,14 +104,44 @@ async function request(url, options = {}) {
   }
   if (!res.ok) {
     const e = body && body.error;
-    throw new ApiError(e && e.code ? e.code : "internal_error", {
+    const code = e && e.code ? e.code : codeFromStatus(res.status);
+    const apiErr = new ApiError(code, {
       status: res.status,
       requestId: e && e.request_id ? e.request_id : null,
-      retryAfter: Number(res.headers.get("Retry-After")) || null,
+      retryAfter: retryAfterSeconds(res),
     });
+    logFailure(apiErr, url);
+    throw apiErr;
   }
-  if (body === null) throw new ApiError("internal_error", { status: res.status });
+  if (body === null) {
+    const e = new ApiError("internal_error", { status: res.status });
+    logFailure(e, url);
+    throw e;
+  }
   return body;
+}
+
+function retryable(err) {
+  if (!(err instanceof ApiError)) return false;
+  return err.status === 0 || err.status === 429 || err.status === 502 || err.status === 503 || err.status === 504;
+}
+
+// Exponential backoff with full jitter: random(0, min(cap, base * 2^attempt)).
+function backoffMs(attempt) {
+  return Math.random() * Math.min(BACKOFF_CAP_MS, BACKOFF_BASE_MS * 2 ** attempt);
+}
+
+// Idempotent GETs only. POSTs never go through here.
+async function requestWithRetry(url, options = {}) {
+  for (let attempt = 0; ; attempt += 1) {
+    try {
+      return await request(url, options);
+    } catch (err) {
+      if (attempt >= RETRIES || !retryable(err)) throw err;
+      const serverWait = err.retryAfter ? Math.min(err.retryAfter * 1000, BACKOFF_CAP_MS) : 0;
+      await sleep(Math.max(serverWait, backoffMs(attempt)));
+    }
+  }
 }
 
 // Mock files hold error bodies with HTTP 200, so convert them to the same ApiError.
@@ -98,7 +155,7 @@ function throwIfMockError(body) {
   });
 }
 
-/** POST /classify. `blob` is the resized JPEG. Resolves with the contract response. */
+/** POST /classify. `blob` is the resized JPEG. Never auto-retried. */
 export async function classify(blob, lang) {
   if (MOCK) {
     const file = SCENARIOS[params.get("scenario")] || SCENARIOS.ok;
@@ -110,10 +167,16 @@ export async function classify(blob, lang) {
   return request(`${API_BASE}/classify?lang=${encodeURIComponent(lang)}`, { method: "POST", body: form });
 }
 
-/** GET /categories. */
+/** GET /categories (retried with backoff). */
 export async function getCategories(lang) {
   if (MOCK) return request(`${MOCK_BASE}categories.json`);
-  return request(`${API_BASE}/categories?lang=${encodeURIComponent(lang)}`);
+  return requestWithRetry(`${API_BASE}/categories?lang=${encodeURIComponent(lang)}`);
+}
+
+/** GET /health (retried with backoff). */
+export async function getHealth() {
+  if (MOCK) return { status: "ok" };
+  return requestWithRetry(`${API_BASE}/health`);
 }
 
 /** POST /feedback (used by the results UI in M4). Resolves with null on success (204). */

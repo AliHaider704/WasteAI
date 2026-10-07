@@ -1,4 +1,7 @@
-// PATH: waste-ai/frontend/js/app.js
+// File: frontend/js/app.js
+import "./errors.js";
+import { guard } from "./errors.js";
+import { getCategories } from "./api.js";
 import "./i18n.js";
 import "./theme.js";
 import "./upload.js";
@@ -8,7 +11,6 @@ import "./audio.js";
 // M3 wires scan/upload, M4 fills #result-root, M5 provides window.__i18n and lang/theme, M6 sound.
 
 const ROUTES = ["home", "browse", "result"];
-const MOCK_URL = "mock/categories.json"; // S1: switch to /api/v1/categories?lang=
 const state = { categories: [], group: "all", query: "", loaded: false };
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -21,7 +23,7 @@ function currentRoute() {
 }
 
 let firstRender = true;
-function renderRoute() {
+function renderRouteUnsafe() {
   const name = currentRoute();
   document.querySelectorAll(".view").forEach((view) => {
     view.hidden = view.dataset.view !== name;
@@ -35,11 +37,13 @@ function renderRoute() {
   firstRender = false;
 }
 
+function renderRoute() {
+  guard(currentRoute(), renderRouteUnsafe);
+}
+
 async function loadCategories() {
   try {
-    const res = await fetch(MOCK_URL);
-    if (!res.ok) throw new Error(String(res.status));
-    const data = await res.json();
+    const data = await getCategories(document.documentElement.lang || "en"); // retries with backoff
     state.categories = Array.isArray(data.categories) ? data.categories : [];
     state.loaded = true;
     $("#browse-error").hidden = true;

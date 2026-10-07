@@ -1,9 +1,10 @@
-// PATH: waste-ai/frontend/js/upload.js
+// File: frontend/js/upload.js
 // Capture / upload flow: camera or file -> resize -> preview (retake) -> Analyze -> result.
 // Builds its own panel inside the home view. Requires one line in app.js: import "./upload.js";
 // All text is looked up by key (window.__i18n, provided by i18n.js in M5); the key is shown until then.
 
 import { classify, ApiError, store } from "./api.js";
+import { log } from "./log.js";
 import { isCameraSupported, startCamera, stopCamera, grabFrame } from "./camera.js";
 
 const MAX_SIDE = 1024;
@@ -11,7 +12,7 @@ const JPEG_QUALITY = 0.85;
 const BACKGROUND = "#fff"; // flattens transparent PNG/WebP before JPEG encoding
 
 const t = (key) => (window.__i18n && window.__i18n[key]) || key;
-const state = { mode: "idle", stream: null, blob: null, url: null, source: null, session: 0 };
+const state = { mode: "idle", stream: null, blob: null, url: null, source: null, session: 0, pending: false, cooldown: null };
 const ui = {};
 
 function el(tag, className, key) {
@@ -118,6 +119,7 @@ function releasePhoto() {
 
 function closePanel(restoreFocus) {
   state.session += 1;
+  stopCountdown();
   releaseCamera();
   releasePhoto();
   say("");
@@ -248,17 +250,54 @@ async function takePhoto() {
 
 // ---------- analyze ----------
 
+// 429: disable Analyze and show a visible countdown from Retry-After (F-04).
+function stopCountdown() {
+  if (state.cooldown) clearInterval(state.cooldown);
+  state.cooldown = null;
+  if (ui.analyze) ui.analyze.disabled = false;
+}
+
+function startCountdown(seconds) {
+  stopCountdown();
+  let left = Math.max(1, Math.min(Math.ceil(seconds) || 30, 600));
+  const session = state.session;
+  ui.analyze.disabled = true;
+  const tick = () => {
+    if (session !== state.session) return stopCountdown();
+    if (left <= 0) {
+      stopCountdown();
+      say("countdown.ready");
+      ui.analyze.focus();
+      return;
+    }
+    ui.status.dataset.i18n = "";
+    ui.status.textContent = t("countdown.wait").replace("{n}", String(left));
+    left -= 1;
+  };
+  tick();
+  state.cooldown = setInterval(tick, 1000);
+}
+
 async function analyze() {
-  if (!state.blob || state.mode !== "preview") return;
+  if (!state.blob || state.mode !== "preview" || state.pending || state.cooldown) return; // F-19
+  state.pending = true;
   setMode("loading");
   say("loading.analyzing");
   try {
     const result = await classify(state.blob, document.documentElement.lang || "en");
     finish(result);
   } catch (err) {
-    setMode("preview");
-    say(err instanceof ApiError ? err.i18nKey : "error.unknown");
-    ui.analyze.focus();
+    setMode("preview"); // keeps the photo preview
+    if (err instanceof ApiError) {
+      if (err.code === "rate_limited") startCountdown(err.retryAfter || 30);
+      else say(err.i18nKey);
+    } else {
+      log("analyze_error", { detail: err && err.message });
+      say("error.unknown");
+    }
+    if (!state.cooldown) ui.analyze.focus();
+  } finally {
+    state.pending = false;
   }
 }
 
