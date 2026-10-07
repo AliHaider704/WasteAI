@@ -1,4 +1,4 @@
-# server/eval/run_eval.py
+# File: server/eval/run_eval.py
 """Evaluate one ONNX candidate on our own photos. Dev PC only (onnxruntime, numpy, Pillow).
 
 Example:
@@ -17,7 +17,10 @@ import onnxruntime as ort
 from PIL import Image
 
 GROUPS = {
-    "plastics": "plastic_pet plastic_hdpe plastic_pvc plastic_ldpe plastic_pp plastic_ps plastic_other plastic_unknown",
+    "plastics": (
+        "plastic_pet plastic_hdpe plastic_pvc plastic_ldpe plastic_pp plastic_ps "
+        "plastic_other plastic_unknown"
+    ),
     "paper": "paper cardboard carton_beverage",
     "glass": "glass",
     "metals": "metal_aluminum metal_steel metal_other",
@@ -118,7 +121,7 @@ def main() -> None:
         top = np.argsort(-p)[:3]
         names = [labels[i] if i < len(labels) else f"#{i}" for i in top]
         cats = [set(lmap.get(nm, [])) for nm in names]
-        unmapped |= {nm for nm, c in zip(names, cats) if not c}
+        unmapped |= {nm for nm, c in zip(names, cats, strict=True) if not c}
         ok1 = true in cats[0]
         ok3 = any(true in c for c in cats)
         gok = GROUP_OF.get(true) in {GROUP_OF[c] for c in cats[0] if c in GROUP_OF}
@@ -135,10 +138,11 @@ def main() -> None:
     lines = [
         f"## {a.name}",
         "",
-        f"| photos | top-1 | top-3 | top-1 group | p50 ms | p95 ms | RSS MB | ONNX MB | load s |",
+        "| photos | top-1 | top-3 | top-1 group | p50 ms | p95 ms | RSS MB | ONNX MB | load s |",
         "|---|---|---|---|---|---|---|---|---|",
         f"| {n} | {t1/n:.1%} | {t3/n:.1%} | {g1/n:.1%} | {np.percentile(lat_a, 50):.0f} | "
-        f"{np.percentile(lat_a, 95):.0f} | {rss_after:.0f} (peak {rss_mb():.0f}) | {size_mb:.1f} | {load_s:.1f} |",
+        f"{np.percentile(lat_a, 95):.0f} | {rss_after:.0f} (peak {rss_mb():.0f}) | "
+        f"{size_mb:.1f} | {load_s:.1f} |",
         "",
         "| category | n | top-1 | top-3 |",
         "|---|---|---|---|",

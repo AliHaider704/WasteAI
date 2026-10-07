@@ -1,103 +1,88 @@
-# WasteAI
+<!-- File: README.md -->
+# AI Waste Segregation System
 
-Live site: https://wasteai.duckdns.org/
+Take or upload a photo of a waste item and get the waste category, the right bin, and clear disposal steps. Arabic (RTL) and English, light and dark themes, works on phones, tablets and desktops.
 
-WasteAI is a web app that tells you how to dispose of an item. Upload a photo and it returns a waste category and disposal instructions.
+> **This is a guidance tool, not a legal authority.** Hazardous and medical waste always carry a "check your local authorities" note.
 
-> **Status:** under active development.
-> Built as coursework in the Department of Artificial Intelligence, College of Science, Alkafeel University.
+## Screenshots
+<!-- TODO(M16): add ar/en and light/dark screenshots in docs/img/ -->
 
----
+## Features
+- Camera capture or photo upload (drag and drop supported)
+- 26 categories: plastics by resin code, paper, glass, metals, organic, e-waste, batteries, textiles, hazardous, medical, and more
+- Honest confidence: High / Medium / Not sure, with two alternatives when unsure
+- "Why?" panel showing the labels from each source
+- "This is wrong?" feedback to improve the rules
+- Calm optional sound design (synthesized in the browser, no audio files)
+- Accessible: WCAG AA contrast, keyboard navigation, reduced-motion support
+- Private: photos are never stored; buffers are deleted right after analysis
 
-## Overview
+## How it works
+```
+Browser -> Nginx (HTTPS) -> FastAPI -> local ONNX model + Azure AI Vision (+ optional ReciclAPI)
+                                    -> rule-based mapper -> aggregator -> localized result
+```
+No generative AI is used for classification. Labels from the sources are mapped to our categories with transparent JSON rules (`server/data/label_rules/`), then combined. See `docs/ARCHITECTURE.md`.
 
-Most people aren't sure which bin an item goes in, and wrong guesses end up contaminating recycling. WasteAI uses a computer vision model to sort items into five categories (recyclable, organic, hazardous, general, e-waste) and shows disposal instructions for each.
+## Accuracy
+Measured on our own field test of real photos. No marketing claims.
 
-Features:
+| Metric | Result |
+|---|---|
+| Photos tested | TBD (S3 field test) |
+| Top-1 accuracy | TBD |
+| "Not sure" rate | TBD |
+| Hazard categories recall | TBD |
 
-* Classify an item from an uploaded image or a text description.
-* A reference section covering segregation rules, recycling symbols, and ways to cut waste.
+Full report: `docs/FIELD_TEST_REPORT.md`. Weak spots: plastic resin types cannot be seen reliably, so the default is "Plastic (type unknown)" unless a label says otherwise.
 
-## Authors
-
-Ali Haidar and Muhammad Najm, Department of Artificial Intelligence, College of Science, Alkafeel University.
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-| --- | --- |
-| Frontend | React / Next.js, Tailwind CSS |
-| Backend | Node.js (Express) or Python (FastAPI) |
-| Database | PostgreSQL or MongoDB |
-| ML | TensorFlow or PyTorch, OpenCV |
-
----
-
-## Getting Started
-
-### Prerequisites
-
-* Node.js 18 or newer
-* npm or yarn
-* PostgreSQL or MongoDB, depending on your configuration
-
-### Setup
-
-1. Clone the repository:
-
+## Quick start (development)
 ```bash
-   git clone https://github.com/your-username/waste-ai.git
-   cd waste-ai
+git clone <REPO_URL> && cd <REPO>
+# Server
+cd server && python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env        # set MODEL_PATH, optional AZURE_VISION_KEY
+uvicorn app.main:app --port 8100
+# Frontend (no build step)
+cd ../frontend && python3 -m http.server 8000
+```
+Open `http://localhost:8000`. The camera needs HTTPS or `localhost`. Until the server runs, the frontend can use `frontend/mock/` data.
+
+## Deployment
+One idempotent script for an Ubuntu 24.04 server: `bash deploy/install.sh`. Flags: `--status`, `--rollback`, `--fix-owner`, `--stop-containers`. Details: `docs/DEPLOYMENT.md`.
+
+## Configuration
+| Variable | Purpose |
+|---|---|
+| `MODEL_PATH` | Local ONNX model file |
+| `AZURE_VISION_ENDPOINT`, `AZURE_VISION_KEY` | Azure AI Vision (free F0 tier); disabled if empty |
+| `RECICLAPI_KEY` | Optional third source; off by default |
+| `MODEL_URL`, `MODEL_SHA256` | Used by the installer to download the model |
+
+Secrets live only in `.env` (git-ignored).
+
+## Project structure
+```
+server/    FastAPI service, sources, mapper, aggregator, tests
+frontend/  Vanilla ES modules, CSS tokens, i18n, mock data
+content/   Disposal guidance (ar, en)
+contract/  Frozen API contract (OpenAPI, categories, errors)
+deploy/    Installer and templates
+scripts/   Repository checks and field test
+docs/      Architecture, decisions, deployment, field test
+sessions/  Phase plans and session history
 ```
 
-2. Copy the example environment files:
+## Privacy
+Images are processed in memory and discarded. Only the result JSON is cached (7 days, keyed by image hash). Feedback stores the request ID and the chosen category. No accounts, no tracking.
 
-```bash
-   cp server/.env.example server/.env
-   cp client/.env.example client/.env
-```
+## Contributing
+See `CONTRIBUTING.md`. Rules: files <= 500 lines, free and open-source dependencies only, all UI text in i18n files, RTL-safe CSS.
 
-3. Fill in `server/.env`:
+## License
+TBD (decided in Phase M16 after the model and dataset license check, D-011).
 
-```env
-   PORT=5000
-   DATABASE_URL=mongodb://localhost:27017/wasteai
-   JWT_SECRET=your_jwt_secret_key
-   ML_MODEL_ENDPOINT=http://localhost:8000/predict
-```
-
-### Run locally
-
-1. Install dependencies in both folders:
-
-```bash
-   cd server && npm install
-   cd ../client && npm install
-```
-
-2. Start the backend:
-
-```bash
-   cd server
-   npm run dev
-```
-
-3. In a second terminal, start the frontend:
-
-```bash
-   cd client
-   npm run dev
-```
-
-4. Open http://localhost:3000.
-
-## Roadmap
-
-- [x] Project structure and backend API setup
-- [ ] ML image classification integration
-- [ ] User dashboard and search history
-- [ ] Admin panel for content management
-- [ ] Mobile layout and PWA support
-- [ ] Multi-language support
+## Credits
+Models, datasets, fonts and icons (Lucide, ISC) with their licenses: filled in Phase M16.

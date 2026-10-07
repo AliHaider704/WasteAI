@@ -1,4 +1,4 @@
-# server/app/schemas.py
+# File: server/app/schemas.py
 """Pydantic models matching the frozen contract (ARCHITECTURE sections 3-4)."""
 from typing import Literal
 

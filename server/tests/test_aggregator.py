@@ -1,4 +1,4 @@
-# server/tests/test_aggregator.py
+# File: server/tests/test_aggregator.py
 from app.aggregator import GROUP_OF, decide
 
 

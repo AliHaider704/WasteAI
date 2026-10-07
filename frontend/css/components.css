@@ -1,4 +1,4 @@
-/* PATH: waste-ai/frontend/css/components.css */
+/* File: frontend/css/components.css */
 /* Every interactive control is at least 48px tall/wide. Colors fall back if a token is missing. */
 .icon { inline-size: 1.5rem; block-size: 1.5rem; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 

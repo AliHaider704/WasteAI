@@ -1,4 +1,4 @@
-# server/app/cache.py
+# File: server/app/cache.py
 """SQLite result cache: SHA-256 of resized image + lang, TTL 7 days, JSON only."""
 from __future__ import annotations
 

@@ -1,14 +1,17 @@
-# server/app/main.py
+# File: server/app/main.py
 """FastAPI entry point: uvicorn app.main:app --port 8100"""
 import uuid
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from app import cache
 from app.config import get_settings
 from app.errors import AppError, error_response
+from app.orchestrator import get_orchestrator
 from app.routes import categories, classify, feedback, health
 
 SECURITY_HEADERS = {
@@ -21,7 +24,20 @@ SECURITY_HEADERS = {
     "Permissions-Policy": "camera=(self), microphone=(), geolocation=()",
 }
 
-app = FastAPI(title="Waste AI", version=get_settings().app_version, docs_url=None, redoc_url=None)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Startup: build the orchestrator (loads the model if active), purge old cache rows."""
+    get_orchestrator(app)
+    await cache.purge_expired()
+    yield
+
+
+app = FastAPI(
+    title="Waste AI", version=get_settings().app_version,
+    docs_url=None, redoc_url=None, lifespan=lifespan,
+)
 
 # Same-origin only: no cross-origin origins are allowed.
 app.add_middleware(CORSMiddleware, allow_origins=[], allow_methods=["GET", "POST"])

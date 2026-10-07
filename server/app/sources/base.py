@@ -1,4 +1,4 @@
-# server/app/sources/base.py
+# File: server/app/sources/base.py
 """Common interface for classification sources (local ONNX, Azure, ReciclAPI)."""
 from __future__ import annotations
 

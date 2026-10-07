@@ -1,4 +1,4 @@
-# server/app/imaging.py
+# File: server/app/imaging.py
 """Image safety + preprocessing: magic bytes, decode, resize, strip EXIF, wipe buffers."""
 from __future__ import annotations
 

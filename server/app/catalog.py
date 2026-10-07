@@ -1,4 +1,4 @@
-# server/app/catalog.py
+# File: server/app/catalog.py
 import json
 import os
 from functools import lru_cache

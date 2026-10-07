@@ -1,4 +1,4 @@
-// PATH: waste-ai/frontend/js/audio.js
+// File: frontend/js/audio.js
 // Calm optional sound: synthesized Web Audio cues (no audio files) and optional speech of the category name.
 // - AudioContext is created only after a user gesture.
 // - Sound is ON by default and OFF once the user mutes (saved in localStorage, wrapped in try/catch).

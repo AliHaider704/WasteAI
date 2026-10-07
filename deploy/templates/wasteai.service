@@ -1,4 +1,4 @@
-# deploy/templates/wasteai.service
+# File: deploy/templates/wasteai.service
 [Unit]
 Description=AI Waste Segregation API (wasteai)
 After=network.target

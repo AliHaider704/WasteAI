@@ -1,5 +1,5 @@
 {
-  "_path": "waste-ai/frontend/mock/error_image_too_large.json",
+  "_path": "frontend/mock/error_image_too_large.json",
   "error": {
     "code": "image_too_large",
     "message": "Image must be 2 MB or less.",

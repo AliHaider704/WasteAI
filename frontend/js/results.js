@@ -1,9 +1,10 @@
-// PATH: waste-ai/frontend/js/results.js
+// File: frontend/js/results.js
 // Result UI: ok / uncertain / hazard states, "Why?" panel, feedback, aria-live announcement.
 // Needs in app.js: import "./results.js";   and in index.html: <link rel="stylesheet" href="css/results.css">
 // All text is looked up by key via window.__i18n (M5); the key itself is shown until then.
 
 import { store, getCategories, sendFeedback, ApiError } from "./api.js";
+import { loadLabels, labelFor } from "./labels.js";
 
 const t = (key) => (window.__i18n && window.__i18n[key]) || key;
 const HIGH = 0.8;   // confidence in words: >= HIGH -> high, >= MEDIUM -> medium, else not sure
@@ -17,9 +18,9 @@ live.className = "visually-hidden";
 live.setAttribute("role", "status");
 let catalog = [];
 let catalogLang = null;
+let whyOpen = false; // keeps the "Why?" panel state across re-renders
 
 if (root) {
-  root.setAttribute("aria-live", "off");
   root.before(live);
 }
 
@@ -66,7 +67,7 @@ function iconNode(name) {
   svg.setAttribute("class", "icon result__icon");
   svg.setAttribute("aria-hidden", "true");
   const use = document.createElementNS(SVG_NS, "use");
-  use.setAttribute("href", `assets/icons.svg#${name}`);
+  use.setAttribute("href", `assets/category-icons.svg#${name}`);
   svg.append(use);
   return svg;
 }
@@ -85,7 +86,7 @@ async function loadCatalog() {
     catalog = Array.isArray(data.categories) ? data.categories : [];
     catalogLang = lang;
   } catch (err) {
-    // feedback form and icons are optional; the result still renders
+    if (catalogLang !== lang) catalog = []; // never show a list in the wrong language
   }
   return catalog;
 }
@@ -121,6 +122,8 @@ function warningsBlock(list, hazard) {
 
 function whyPanel(result) {
   const details = el("details", "result__why");
+  details.open = whyOpen;
+  details.addEventListener("toggle", () => { whyOpen = details.open; });
   details.append(el("summary", null, "result.why"));
   const dl = el("dl", "result__facts");
   dl.append(el("dt", null, "result.agreement"), el("dd", null, `agreement.${result.agreement}`));
@@ -131,7 +134,7 @@ function whyPanel(result) {
     li.append(el("strong", null, `source.${src.name}`));
     li.append(document.createTextNode(" "));
     if (src.ok && src.top && src.top.length) {
-      li.append(txt("span", "result__labels", src.top.map((l) => `${l.label} ${Math.round(l.score * 100)}%`).join(", ")));
+      li.append(txt("span", "result__labels", src.top.map((l) => `${labelFor(l.label)} ${Math.round(l.score * 100)}%`).join(", ")));
     } else {
       li.append(el("span", "muted", "result.source_failed"));
     }
@@ -142,7 +145,6 @@ function whyPanel(result) {
 }
 
 function feedbackBlock(result, selectedId) {
-  if (!catalog.length) return null;
   const wrap = el("div", "result__feedback");
   const open = button("result.wrong", "btn");
   open.setAttribute("aria-expanded", "false");
@@ -152,34 +154,74 @@ function feedbackBlock(result, selectedId) {
   const select = document.createElement("select");
   select.className = "input";
   select.id = "feedback-select";
+  select.name = "correct_category_id";
   label.htmlFor = select.id;
-  catalog.forEach((c) => {
-    const option = document.createElement("option");
-    option.value = c.id;
-    option.textContent = c.name;
-    option.selected = c.id === selectedId;
-    select.append(option);
-  });
   const send = button("result.send", "btn btn--primary");
+  const retry = button("browse.retry", "btn");
+  retry.hidden = true;
   const msg = el("p", "muted");
   msg.setAttribute("role", "status");
+  let pending = false;
+
+  async function fill() {
+    await loadCatalog();
+    select.replaceChildren();
+    if (!catalog.length) {
+      setKey(msg, "feedback.catalog_error");
+      retry.hidden = false;
+      send.disabled = true;
+      return;
+    }
+    msg.textContent = "";
+    msg.removeAttribute("data-i18n");
+    retry.hidden = true;
+    send.disabled = pending;
+    if (!selectedId) {
+      const ph = document.createElement("option");
+      ph.value = "";
+      ph.dataset.i18n = "feedback.choose";
+      ph.textContent = t("feedback.choose");
+      ph.selected = true;
+      select.append(ph);
+    }
+    const groups = new Map();
+    catalog.forEach((c) => {
+      if (!groups.has(c.group)) {
+        const og = document.createElement("optgroup");
+        og.label = t(`group.${c.group}`);
+        groups.set(c.group, og);
+        select.append(og);
+      }
+      const option = document.createElement("option");
+      option.value = c.id;
+      option.textContent = c.name;
+      option.selected = c.id === selectedId;
+      groups.get(c.group).append(option);
+    });
+  }
+
   open.addEventListener("click", () => {
     form.hidden = !form.hidden;
     open.setAttribute("aria-expanded", String(!form.hidden));
     if (!form.hidden) select.focus();
   });
+  retry.addEventListener("click", fill);
   send.addEventListener("click", async () => {
+    if (pending || !select.value) return;
+    pending = true;
     send.disabled = true;
     try {
       await sendFeedback(result.request_id, select.value);
       setKey(msg, "feedback.thanks");
     } catch (err) {
+      pending = false;
       send.disabled = false;
       setKey(msg, err instanceof ApiError ? err.i18nKey : "error.unknown");
     }
   });
-  form.append(label, select, send, msg);
+  form.append(label, select, send, retry, msg);
   wrap.append(open, form);
+  fill();
   return wrap;
 }
 
@@ -200,12 +242,12 @@ function photoColumn() {
 function buildOk(result) {
   const cat = result.category;
   const meta = catalog.find((c) => c.id === cat.id);
-  const g = result.guidance;
+  const g = meta ? { ...result.guidance, summary: meta.summary, steps: meta.steps, warnings: meta.warnings } : result.guidance;
   const card = el("article", "result__card");
   const head = el("div", "result__head");
   const icon = iconNode(meta && meta.icon);
   if (icon) head.append(icon);
-  head.append(txt("h2", "result__name", cat.name));
+  head.append(txt("h2", "result__name", meta ? meta.name : cat.name));
   const level = confidenceLevel(cat.confidence);
   const conf = el("span", "result__confidence", `result.confidence.${level}`);
   conf.dataset.level = level;
@@ -220,8 +262,7 @@ function buildOk(result) {
   const warn = warningsBlock(g && g.warnings, result.hazard);
   if (warn) card.append(warn);
   card.append(whyPanel(result));
-  const fb = feedbackBlock(result, cat.id);
-  if (fb) card.append(fb);
+  card.append(feedbackBlock(result, cat.id));
   return card;
 }
 
@@ -245,7 +286,8 @@ function buildUncertain(result) {
     chosen.setAttribute("aria-live", "polite");
     alts.forEach((alt) => {
       const li = el("li");
-      const b = txt("button", "btn", alt.name);
+      const altMeta = catalog.find((c) => c.id === alt.id);
+      const b = txt("button", "btn", altMeta ? altMeta.name : alt.name);
       b.type = "button";
       b.addEventListener("click", () => chooseAlternative(result, alt, chosen, list));
       li.append(b);
@@ -260,7 +302,7 @@ function buildUncertain(result) {
   card.append(tips);
   const again = el("a", "btn btn--primary", "result.try_again");
   again.href = "#/";
-  card.append(again, whyPanel(result));
+  card.append(again, whyPanel(result), feedbackBlock(result, null));
   return card;
 }
 
@@ -306,7 +348,9 @@ async function show() {
     live.textContent = "";
     return;
   }
-  await loadCatalog();
+  await Promise.all([loadCatalog(), loadLabels()]);
+  const prev = root.querySelector(".result__why");
+  if (prev) whyOpen = prev.open;
   const layout = el("div", "result result--reveal");
   layout.append(photoColumn(), result.status === "uncertain" || !result.category ? buildUncertain(result) : buildOk(result));
   root.replaceChildren(layout);
@@ -314,6 +358,9 @@ async function show() {
 }
 
 document.addEventListener("wasteai:result", show);
+document.addEventListener("i18n:change", () => {
+  if (store.result && root && root.firstChild) show(); // re-render from the catalog, no new /classify call
+});
 window.addEventListener("hashchange", () => {
   if (/^#\/?result/.test(location.hash) && root && !root.firstChild) show();
 });

@@ -1,4 +1,4 @@
-# server/tests/test_imaging.py
+# File: server/tests/test_imaging.py
 import asyncio
 import io
 

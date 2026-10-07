@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+# File: content/tools/check_content.py
+>>>>>>> 016ea12dbf0444af8711f3dcbb83f4c5eb9bebba
 """Validate guidance content and UI strings. Run from anywhere: python3 content/tools/check_content.py
 
 Checks: category ID coverage vs contract/categories.json, ar/en parity, 3-5 steps, hazard warnings,
@@ -16,7 +20,7 @@ HAZARD_PREFIX = "ewaste_"
 MAX_LINES = 500
 ARABIC = re.compile(r"[\u0600-\u06FF]")
 KEY_RE = re.compile(
-    r'["\']((?:app|nav|ctl|home|result|browse|group|bin|capture|camera|upload|loading|error|feedback|agreement|source)'
+    r'["\']((?:why|app|nav|ctl|home|result|browse|group|bin|capture|camera|upload|loading|error|feedback|agreement|source)'
     r"\.[A-Za-z0-9_.\-]+)[\"']"
 )
 errors = []
@@ -121,6 +125,74 @@ def check_i18n():
         err(f"i18n: key '{key}' is used in the frontend but missing from en.json")
 
 
+BDI = re.compile(r'<bdi dir="ltr">([^<]*)</bdi>')
+EMOJI = re.compile("[\U0001F300-\U0001FAFF\u2600-\u27BF]")
+
+
+def strings(node):
+    if isinstance(node, str):
+        yield node
+    elif isinstance(node, dict):
+        for key, value in node.items():
+            if not key.startswith("_"):
+                yield from strings(value)
+    elif isinstance(node, list):
+        for value in node:
+            yield from strings(value)
+
+
+def check_text_rules():
+    allow = load_json(ROOT / "content" / "tools" / "allowlist.json") or {}
+    allowed = set(allow.get("tokens", [])) | set(allow.get("brands", []))
+    files = [f"frontend/i18n/{lang}.json" for lang in LANGS] + [f"content/guidance.{lang}.json" for lang in LANGS]
+    files += [f"frontend/i18n/labels.{lang}.json" for lang in LANGS]
+    for rel in files:
+        data = load_json(ROOT / rel)
+        lang = "ar" if ".ar." in rel or rel.endswith("/ar.json") else "en"
+        for text in strings(data):
+            if "..." in text or "\u2014" in text or EMOJI.search(text):
+                err(f"{rel}: no '...', em dash or emoji allowed: {text[:50]!r}")
+            if lang == "en" and ARABIC.search(text):
+                err(f"{rel}: Arabic letters in an English file: {text[:50]!r}")
+            if lang == "ar":
+                for token in BDI.findall(text):
+                    if token not in allowed:
+                        err(f"{rel}: '{token}' is not in content/tools/allowlist.json")
+                rest = re.sub(r"\{\w+\}", "", BDI.sub("", text))
+                if re.search(r"[A-Za-z]", rest):
+                    err(f"{rel}: Latin letters outside <bdi> allow-list: {text[:50]!r}")
+
+
+def rule_labels():
+    found = set()
+    for path in sorted((ROOT / "server" / "data" / "label_rules").glob("*.json")):
+        data = load_json(path)
+        if isinstance(data, dict):
+            found |= set(data.get("labels", {}))
+    stop = load_json(ROOT / "server" / "data" / "azure_stoplist.json") or {}
+    return found | set(stop.get("stop", []))
+
+
+def check_labels():
+    dicts = {}
+    for lang in LANGS:
+        data = load_json(ROOT / "frontend" / "i18n" / f"labels.{lang}.json")
+        if isinstance(data, dict):
+            dicts[lang] = {k: v for k, v in data.items() if not k.startswith("_")}
+    if len(dicts) != 2:
+        return
+    for lang, d in dicts.items():
+        for key in sorted(rule_labels() - set(d)):
+            err(f"labels.{lang}: no translation for rule label '{key}'")
+        for key, value in d.items():
+            if not isinstance(value, str) or not value.strip():
+                err(f"labels.{lang}: '{key}' is empty")
+            elif lang == "ar" and not ARABIC.search(value):
+                err(f"labels.ar: '{key}' has no Arabic letters")
+    if set(dicts["ar"]) != set(dicts["en"]):
+        err("labels: ar/en keys differ")
+
+
 def check_line_limits():
     paths = [ROOT / "content" / f"guidance.{lang}.json" for lang in LANGS]
     paths += [ROOT / "frontend" / "i18n" / f"{lang}.json" for lang in LANGS] + [Path(__file__)]
@@ -135,6 +207,8 @@ def main():
     en = check_guidance("en", ids)
     check_parity(ids, ar, en)
     check_i18n()
+    check_text_rules()
+    check_labels()
     check_line_limits()
     if errors:
         print(f"FAILED: {len(errors)} problem(s)")

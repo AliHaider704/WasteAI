@@ -1,5 +1,5 @@
 {
-  "_path": "waste-ai/contract/categories.json",
+  "_path": "contract/categories.json",
   "version": 1,
   "categories": [
     { "id": "plastic_pet", "group": "plastics", "bin": "blue", "icon": "cup-soda" },

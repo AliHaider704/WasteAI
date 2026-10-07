@@ -1,6 +1,10 @@
 {"_path": "server/data/label_rules/plastics.json",
  "labels": {
   "plastic": {"plastic_unknown": 1.0},
+  "polycarbonate": {"plastic_other": 1.0},
+  "acrylic": {"plastic_other": 0.8, "plastic_unknown": 0.2},
+  "melamine": {"plastic_other": 0.9, "plastic_unknown": 0.1},
+  "plastic other": {"plastic_other": 1.0},
   "plastic bottle": {"plastic_pet": 0.6, "plastic_unknown": 0.4},
   "pet bottle": {"plastic_pet": 1.0},
   "water bottle": {"plastic_pet": 0.5, "plastic_unknown": 0.5},

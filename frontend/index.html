@@ -1,6 +1,6 @@
-<!-- PATH: waste-ai/frontend/index.html -->
+<!-- File: frontend/index.html -->
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en" dir="ltr" data-i18n-pending>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,6 +11,9 @@
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/results.css">
+  <link rel="preload" as="fetch" crossorigin href="i18n/ar.json">
+  <link rel="preload" as="fetch" crossorigin href="i18n/en.json">
+  <noscript><link rel="stylesheet" href="css/noscript.css"></noscript>
   <script type="module" src="js/app.js"></script>
 </head>
 <body>
@@ -59,7 +62,7 @@
 
     <section class="view" data-view="result" aria-labelledby="result-title" hidden>
       <h1 id="result-title" tabindex="-1" data-i18n="result.title">Result</h1>
-      <div id="result-root" aria-live="polite"></div>
+      <div id="result-root"></div>
       <a class="btn" href="#/" data-i18n="nav.back">Back</a>
     </section>
 
@@ -67,13 +70,19 @@
       <h1 id="browse-title" tabindex="-1" data-i18n="browse.title">Categories</h1>
       <div class="field">
         <label class="visually-hidden" for="browse-search" data-i18n="browse.search">Search categories</label>
-        <input id="browse-search" class="input" type="search" autocomplete="off">
+        <input id="browse-search" class="input" name="q" type="search" inputmode="search" autocomplete="off">
       </div>
       <div id="browse-groups" class="chips" role="group" aria-label="Filter by group" data-i18n-attr="aria-label:browse.filter"></div>
       <p id="browse-count" class="muted" aria-live="polite"></p>
       <ul id="browse-list" class="cards"></ul>
-      <p id="browse-empty" class="muted" hidden data-i18n="browse.empty">No categories match.</p>
-      <p id="browse-error" class="muted" hidden data-i18n="browse.error">Could not load categories.</p>
+      <div id="browse-empty" class="muted" hidden>
+        <p data-i18n="browse.empty">No category matches your search.</p>
+        <button id="browse-clear" class="btn" type="button" data-i18n="browse.clear">Clear filters</button>
+      </div>
+      <div id="browse-error" class="muted" hidden role="alert">
+        <p data-i18n="browse.error">Could not load categories.</p>
+        <button id="browse-retry" class="btn" type="button" data-i18n="browse.retry">Retry</button>
+      </div>
     </section>
 
   </main>

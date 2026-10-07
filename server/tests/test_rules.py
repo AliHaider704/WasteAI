@@ -1,4 +1,4 @@
-# server/tests/test_rules.py
+# File: server/tests/test_rules.py
 import json
 from pathlib import Path
 
@@ -18,9 +18,8 @@ FIXTURES = {
 def _load() -> dict[str, dict[str, float]]:
     rules: dict[str, dict[str, float]] = {}
     for f in sorted(RULES_DIR.glob("*.json")):
-        for label, cats in json.loads(f.read_text(encoding="utf-8")).items():
-            if label.startswith("_"):
-                continue
+        data = json.loads(f.read_text(encoding="utf-8"))
+        for label, cats in data["labels"].items():
             slot = rules.setdefault(label.lower(), {})
             for c, w in cats.items():
                 slot[c] = slot.get(c, 0.0) + w
