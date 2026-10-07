@@ -17,7 +17,7 @@ HAZARD_PREFIX = "ewaste_"
 MAX_LINES = 500
 ARABIC = re.compile(r"[\u0600-\u06FF]")
 KEY_RE = re.compile(
-    r'["\']((?:why|app|nav|ctl|home|result|browse|group|bin|capture|camera|upload|loading|error|feedback|agreement|source)'
+    r'["\']((?:why|app|nav|ctl|home|result|browse|group|bin|capture|camera|upload|loading|error|feedback|agreement|source|consent)'
     r"\.[A-Za-z0-9_.\-]+)[\"']"
 )
 errors = []
