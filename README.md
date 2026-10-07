@@ -22,6 +22,8 @@ Features:
 
 Ali Haidar and Muhammad Najm, Department of Artificial Intelligence, College of Science, Alkafeel University.
 
+---
+
 ## Tech Stack
 
 | Layer | Technology |
@@ -31,22 +33,7 @@ Ali Haidar and Muhammad Najm, Department of Artificial Intelligence, College of 
 | Database | PostgreSQL or MongoDB |
 | ML | TensorFlow or PyTorch, OpenCV |
 
-## Repository Structure
-
-```text
-waste-ai/
-├── client/              # Frontend (React/Next.js)
-│   ├── public/          # Static assets
-│   └── src/             # Components, pages, API handlers
-├── server/              # Backend API
-│   ├── controllers/     # Route controllers
-│   ├── models/          # Database schemas
-│   ├── routes/          # API endpoints
-│   └── services/        # ML model integration and business logic
-├── .env.example         # Environment variable template
-├── README.md
-└── package.json
-```
+---
 
 ## Getting Started
 
