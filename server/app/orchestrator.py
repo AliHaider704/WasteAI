@@ -3,17 +3,12 @@ import asyncio
 import inspect
 import time
 
-from app import catalog, mapper
+from app import aggregator, catalog, mapper
 from app.sources.vision_azure import VisionAzure
 from app.sources.vision_reciclapi import VisionReciclAPI
 
 TIMEOUT = 6.0
-WEIGHTS = {"local_onnx": 0.6, "azure": 0.4, "reciclapi": 0.3}
-OK_MIN, SINGLE_MIN, HAZARD_MIN = 0.65, 0.80, 0.35
-FALLBACK_WARN = {
-    "en": "Check with your local authorities for correct disposal.",
-    "ar": "تحقق من الجهات المحلية لمعرفة طريقة التخلص الصحيحة.",
-}
+ALT_SHOWN = 2
 
 
 class AllSourcesFailed(Exception):
@@ -46,14 +41,10 @@ async def _call(name: str, src, data: bytes):
         return name, False, []
 
 
-def _agreement(usable: dict, cats: dict) -> str:
-    if len(usable) < 2:
-        return "single_source"
-    tops = [max(s, key=s.get) for s in usable.values()]
-    if len(set(tops)) == 1:
-        return "full"
-    groups = {cats.get(t, {}).get("group") for t in tops}
-    return "partial" if len(groups) == 1 else "none"
+def _hazard_warning(cats: dict) -> list[str]:
+    """Generic hazard note, taken from the content files (never hard-coded here)."""
+    ref = cats.get("hazardous_chemical", {}).get("warnings", [])
+    return ref[-1:]
 
 
 class Orchestrator:
@@ -85,45 +76,36 @@ class Orchestrator:
             scores = mapper.map_labels(pairs) if ok else {}
             if scores:
                 usable[name] = scores
-        total_w = sum(WEIGHTS[n] for n in usable)
-        comb: dict[str, float] = {}
-        for n, s in usable.items():
-            for c, v in s.items():
-                comb[c] = comb.get(c, 0.0) + WEIGHTS[n] / total_w * v
-        ranked = sorted(comb.items(), key=lambda kv: -kv[1])
-        agreement = _agreement(usable, cats) if usable else "none"
-        top_id, top_score = ranked[0] if ranked else (None, 0.0)
-        is_ok = top_id is not None and top_score >= OK_MIN and (
-            agreement in ("full", "partial")
-            or (agreement == "single_source" and top_score >= SINGLE_MIN)
-        )
+        if not usable:
+            raise AllSourcesFailed
+        d = aggregator.decide(usable)
+        is_ok = d.status == "ok"
 
         def brief(cid: str, score: float) -> dict:
             return {"id": cid, "name": cats.get(cid, {}).get("name", cid),
                     "confidence": round(score, 2)}
 
-        hazard_id = next((c for c, v in ranked[:2] if catalog.is_hazard(c) and v >= HAZARD_MIN), None)
-        guide_id = top_id if is_ok else hazard_id
+        guide_id = d.category_id if is_ok else d.hazard_id
         guidance = None
         if guide_id:
             g = cats.get(guide_id, {})
             warnings = list(g.get("warnings", []))
-            if hazard_id and not warnings:
-                warnings = [FALLBACK_WARN[lang]]
+            if d.hazard_id and not warnings:
+                warnings = _hazard_warning(cats)
             guidance = {"bin": g.get("bin", "special"), "summary": g.get("summary", ""),
                         "steps": g.get("steps", []), "warnings": warnings}
         category = None
         if is_ok:
-            category = {**brief(top_id, top_score), "group": cats.get(top_id, {}).get("group", "")}
-            category = {"id": category["id"], "name": category["name"],
-                        "group": category["group"], "confidence": category["confidence"]}
+            category = {"id": d.category_id, "name": cats.get(d.category_id, {}).get("name", d.category_id),
+                        "group": cats.get(d.category_id, {}).get("group", ""),
+                        "confidence": round(d.confidence, 2)}
         return {
             "request_id": request_id,
             "status": "ok" if is_ok else "uncertain",
             "category": category,
-            "alternatives": [brief(c, v) for c, v in (ranked[1:3] if is_ok else ranked[:2])],
-            "agreement": agreement,
-            "hazard": hazard_id is not None,
+            "alternatives": [brief(c, v) for c, v in d.alternatives[:ALT_SHOWN]],
+            "agreement": d.agreement,
+            "hazard": d.hazard,
             "guidance": guidance,
             "sources": [
                 {"name": n, "ok": ok, "top": [{"label": lb, "score": round(s, 4)} for lb, s in p[:3]]}

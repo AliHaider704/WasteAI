@@ -79,7 +79,7 @@ def test_classify_missing_file_and_bad_lang():
 
 def test_error_message_localized():
     r = client.post("/api/v1/classify?lang=ar", files={"image": ("a.txt", b"x" * 20, "text/plain")})
-    assert r.json()["error"]["message"].startswith("استخدم")
+    assert r.json()["error"]["message"].startswith("الصيغ")
 
 
 def test_feedback():

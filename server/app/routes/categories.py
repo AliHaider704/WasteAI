@@ -2,7 +2,7 @@
 from fastapi import APIRouter
 
 from app import catalog
-from app.errresp import error_response
+from app.errors import build_error
 
 router = APIRouter()
 
@@ -10,5 +10,5 @@ router = APIRouter()
 @router.get("/categories")
 def categories(lang: str = "en"):
     if lang not in ("ar", "en"):
-        return error_response("invalid_request", 422, "en")
+        return build_error("invalid_request", "en")
     return {"version": 1, "categories": catalog.load_categories(lang)}
