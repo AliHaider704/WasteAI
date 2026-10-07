@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# PATH: waste-ai/content/tools/check_content.py
 """Validate guidance content and UI strings. Run from anywhere: python3 content/tools/check_content.py
 
 Checks: category ID coverage vs contract/categories.json, ar/en parity, 3-5 steps, hazard warnings,
