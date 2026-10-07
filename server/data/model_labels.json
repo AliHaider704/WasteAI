@@ -1,34 +1,173 @@
 {
   "_path": "server/data/model_labels.json",
   "_note": "Label sets are typical id2label orders. VERIFY each against the chosen model's config.json before use. Map: model label -> our category IDs (contract/categories.json). plastic_* resin types are never inferred from the picture.",
-  "active": null,
+  "active": "tv10",
   "label_sets": {
     "trashnet6": {
-      "labels": ["cardboard", "glass", "metal", "paper", "plastic", "trash"],
+      "labels": [
+        "cardboard",
+        "glass",
+        "metal",
+        "paper",
+        "plastic",
+        "trash"
+      ],
       "map": {
-        "cardboard": ["cardboard"],
-        "glass": ["glass"],
-        "metal": ["metal_aluminum", "metal_steel", "metal_other"],
-        "paper": ["paper"],
-        "plastic": ["plastic_unknown", "plastic_pet", "plastic_hdpe", "plastic_pvc", "plastic_ldpe", "plastic_pp", "plastic_ps", "plastic_other"],
-        "trash": ["general_residual"]
+        "cardboard": [
+          "cardboard"
+        ],
+        "glass": [
+          "glass"
+        ],
+        "metal": [
+          "metal_aluminum",
+          "metal_steel",
+          "metal_other"
+        ],
+        "paper": [
+          "paper"
+        ],
+        "plastic": [
+          "plastic_unknown",
+          "plastic_pet",
+          "plastic_hdpe",
+          "plastic_pvc",
+          "plastic_ldpe",
+          "plastic_pp",
+          "plastic_ps",
+          "plastic_other"
+        ],
+        "trash": [
+          "general_residual"
+        ]
       }
     },
     "garbage12": {
-      "labels": ["battery", "biological", "brown-glass", "cardboard", "clothes", "green-glass", "metal", "paper", "plastic", "shoes", "trash", "white-glass"],
+      "labels": [
+        "battery",
+        "biological",
+        "brown-glass",
+        "cardboard",
+        "clothes",
+        "green-glass",
+        "metal",
+        "paper",
+        "plastic",
+        "shoes",
+        "trash",
+        "white-glass"
+      ],
       "map": {
-        "battery": ["battery"],
-        "biological": ["organic_food", "organic_garden"],
-        "brown-glass": ["glass"],
-        "green-glass": ["glass"],
-        "white-glass": ["glass"],
-        "cardboard": ["cardboard"],
-        "clothes": ["textile"],
-        "shoes": ["textile"],
-        "metal": ["metal_aluminum", "metal_steel", "metal_other"],
-        "paper": ["paper"],
-        "plastic": ["plastic_unknown", "plastic_pet", "plastic_hdpe", "plastic_pvc", "plastic_ldpe", "plastic_pp", "plastic_ps", "plastic_other"],
-        "trash": ["general_residual"]
+        "battery": [
+          "battery"
+        ],
+        "biological": [
+          "organic_food",
+          "organic_garden"
+        ],
+        "brown-glass": [
+          "glass"
+        ],
+        "green-glass": [
+          "glass"
+        ],
+        "white-glass": [
+          "glass"
+        ],
+        "cardboard": [
+          "cardboard"
+        ],
+        "clothes": [
+          "textile"
+        ],
+        "shoes": [
+          "textile"
+        ],
+        "metal": [
+          "metal_aluminum",
+          "metal_steel",
+          "metal_other"
+        ],
+        "paper": [
+          "paper"
+        ],
+        "plastic": [
+          "plastic_unknown",
+          "plastic_pet",
+          "plastic_hdpe",
+          "plastic_pvc",
+          "plastic_ldpe",
+          "plastic_pp",
+          "plastic_ps",
+          "plastic_other"
+        ],
+        "trash": [
+          "general_residual"
+        ]
+      }
+    },
+    "tv10": {
+      "labels": [
+        "battery",
+        "biological",
+        "cardboard",
+        "clothes",
+        "glass",
+        "metal",
+        "paper",
+        "plastic",
+        "shoes",
+        "trash"
+      ],
+      "size": 224,
+      "norm": "imagenet"
+    },
+    "office8": {
+      "labels": [
+        "battery",
+        "biological",
+        "cardboard",
+        "glass",
+        "metal",
+        "paper",
+        "plastic",
+        "trash"
+      ],
+      "map": {
+        "battery": [
+          "battery"
+        ],
+        "biological": [
+          "organic_food",
+          "organic_garden"
+        ],
+        "cardboard": [
+          "cardboard"
+        ],
+        "glass": [
+          "glass"
+        ],
+        "metal": [
+          "metal_aluminum",
+          "metal_steel",
+          "metal_other"
+        ],
+        "paper": [
+          "paper"
+        ],
+        "plastic": [
+          "plastic_unknown",
+          "plastic_pet",
+          "plastic_hdpe",
+          "plastic_pvc",
+          "plastic_ldpe",
+          "plastic_pp",
+          "plastic_ps",
+          "plastic_other"
+        ],
+        "trash": [
+          "general_residual"
+        ]
       }
     }
   }

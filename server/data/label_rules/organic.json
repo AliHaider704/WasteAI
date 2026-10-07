@@ -1,28 +1,80 @@
-{"_path": "server/data/label_rules/organic.json",
+{
+ "_path": "server/data/label_rules/organic.json",
  "labels": {
-  "food": {"organic_food": 1.0},
-  "fruit": {"organic_food": 1.0},
-  "vegetable": {"organic_food": 1.0},
-  "banana": {"organic_food": 1.0},
-  "apple": {"organic_food": 1.0},
-  "orange": {"organic_food": 0.9},
-  "bread": {"organic_food": 1.0},
-  "meal": {"organic_food": 0.9},
-  "leftovers": {"organic_food": 1.0},
-  "peel": {"organic_food": 1.0},
-  "biological": {"organic_food": 1.0},
-  "meat": {"organic_food": 1.0},
-  "egg": {"organic_food": 0.9},
-  "eggshell": {"organic_food": 1.0},
-  "coffee grounds": {"organic_food": 1.0},
-  "leaf": {"organic_garden": 1.0},
-  "leaves": {"organic_garden": 1.0},
-  "grass": {"organic_garden": 1.0},
-  "plant": {"organic_garden": 0.9},
-  "branch": {"organic_garden": 1.0},
-  "twig": {"organic_garden": 1.0},
-  "flower": {"organic_garden": 1.0},
-  "garden": {"organic_garden": 0.8},
-  "prunings": {"organic_garden": 1.0}
+  "food": {
+   "organic_food": 1.0
+  },
+  "fruit": {
+   "organic_food": 1.0
+  },
+  "vegetable": {
+   "organic_food": 1.0
+  },
+  "banana": {
+   "organic_food": 1.0
+  },
+  "apple": {
+   "organic_food": 1.0
+  },
+  "orange": {
+   "organic_food": 0.9
+  },
+  "bread": {
+   "organic_food": 1.0
+  },
+  "meal": {
+   "organic_food": 0.9
+  },
+  "leftovers": {
+   "organic_food": 1.0
+  },
+  "peel": {
+   "organic_food": 1.0
+  },
+  "biological": {
+   "organic_food": 1.0
+  },
+  "meat": {
+   "organic_food": 1.0
+  },
+  "egg": {
+   "organic_food": 0.9
+  },
+  "eggshell": {
+   "organic_food": 1.0
+  },
+  "coffee grounds": {
+   "organic_food": 1.0
+  },
+  "leaf": {
+   "organic_garden": 1.0
+  },
+  "leaves": {
+   "organic_garden": 1.0
+  },
+  "grass": {
+   "organic_garden": 1.0
+  },
+  "plant": {
+   "organic_garden": 0.9
+  },
+  "branch": {
+   "organic_garden": 1.0
+  },
+  "twig": {
+   "organic_garden": 1.0
+  },
+  "flower": {
+   "organic_garden": 1.0
+  },
+  "garden": {
+   "organic_garden": 0.8
+  },
+  "prunings": {
+   "organic_garden": 1.0
+  },
+  "organic": {
+   "organic_food": 1.0
+  }
  }
 }
