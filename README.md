@@ -51,7 +51,7 @@ Full report: `docs/FIELD_TEST_REPORT.md`. Weak spot: plastic resin types cannot 
 
 ## Authors
 
-Ali Haidar and Muhammad Najm, Department of Artificial Intelligence, College of Science, Alkafeel University.
+Ali Hayder and Muhammad Najm, Department of Artificial Intelligence, College of Science, Alkafeel University.
 
 ---
 
