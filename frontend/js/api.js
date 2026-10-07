@@ -156,7 +156,7 @@ function throwIfMockError(body) {
 }
 
 /** POST /classify. `blob` is the resized JPEG. Never auto-retried. */
-export async function classify(blob, lang) {
+export async function classify(blob, lang, allowCloudLlm = false) {
   if (MOCK) {
     const file = SCENARIOS[params.get("scenario")] || SCENARIOS.ok;
     await sleep(MOCK_DELAY_MS);
@@ -164,6 +164,7 @@ export async function classify(blob, lang) {
   }
   const form = new FormData();
   form.append("image", blob, "photo.jpg");
+  form.append("allow_cloud_llm", allowCloudLlm ? "1" : "0");
   return request(`${API_BASE}/classify?lang=${encodeURIComponent(lang)}`, { method: "POST", body: form });
 }
 

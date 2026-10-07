@@ -5,6 +5,7 @@
 
 import { classify, ApiError, store } from "./api.js";
 import { log } from "./log.js";
+import { createConsent } from "./consent.js";
 import { isCameraSupported, startCamera, stopCamera, grabFrame } from "./camera.js";
 
 const MAX_SIDE = 1024;
@@ -67,12 +68,13 @@ function build() {
   ui.cancel = el("button", "btn", "capture.cancel");
   [ui.shutter, ui.pick, ui.retake, ui.analyze, ui.cancel].forEach((b) => (b.type = "button"));
 
+  ui.consent = createConsent();
   const buttons = el("div", "actions");
   buttons.append(ui.shutter, ui.analyze, ui.retake, ui.pick, ui.cancel);
 
   ui.fileCapture = fileInput(true);
   ui.fileGallery = fileInput(false);
-  ui.panel.append(title, ui.video, ui.img, ui.progress, ui.status, buttons, ui.fileCapture, ui.fileGallery);
+  ui.panel.append(title, ui.video, ui.img, ui.progress, ui.status, ui.consent.node, buttons, ui.fileCapture, ui.fileGallery);
   ui.home.append(ui.panel);
   return true;
 }
@@ -104,6 +106,7 @@ function setMode(mode) {
   ["shutter", "pick", "retake", "analyze", "cancel"].forEach((name) => {
     ui[name].hidden = !cfg.buttons.includes(name);
   });
+  ui.consent.setVisible(mode === "preview");
   ui.panel.setAttribute("aria-busy", String(mode === "loading" || mode === "processing"));
 }
 
@@ -116,6 +119,7 @@ function releasePhoto() {
   if (state.url) URL.revokeObjectURL(state.url);
   state.url = null;
   state.blob = null;
+  ui.consent.reset();
   ui.img.removeAttribute("src");
 }
 
@@ -286,7 +290,7 @@ async function analyze() {
   setMode("loading");
   say("loading.analyzing");
   try {
-    const result = await classify(state.blob, document.documentElement.lang || "en");
+    const result = await classify(state.blob, document.documentElement.lang || "en", ui.consent.isChecked());
     finish(result);
   } catch (err) {
     setMode("preview"); // keeps the photo preview
