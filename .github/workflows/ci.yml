@@ -1,6 +1,8 @@
 # File: .github/workflows/ci.yml
 name: ci
 on: [push, pull_request]
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 jobs:
   checks:
     runs-on: ubuntu-latest
@@ -9,11 +11,26 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install -r server/requirements.txt pytest ruff pyyaml openapi-spec-validator httpx
-      - run: cd server && ruff check .
-      - run: cd server && pytest -q
-      - run: python3 scripts/check_paths.py
-      - run: bash scripts/check_lines.sh
-      - run: python3 scripts/check_hygiene.py
-      - run: python3 content/tools/check_content.py
-      - run: python3 content/tools/check_tokens.py
+      - run: pip install -r server/requirements.txt pytest==8.3.4 ruff==0.8.6 pyyaml openapi-spec-validator==0.7.1 httpx==0.28.1
+      # Every check runs even if an earlier one fails, so one run shows all problems.
+      - name: ruff
+        if: always()
+        run: cd server && ruff check .
+      - name: pytest
+        if: always()
+        run: cd server && pytest -q
+      - name: path headers
+        if: always()
+        run: python3 scripts/check_paths.py
+      - name: line limit
+        if: always()
+        run: bash scripts/check_lines.sh
+      - name: hygiene
+        if: always()
+        run: python3 scripts/check_hygiene.py
+      - name: content
+        if: always()
+        run: python3 content/tools/check_content.py
+      - name: tokens
+        if: always()
+        run: python3 content/tools/check_tokens.py

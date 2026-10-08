@@ -93,8 +93,10 @@ h1:focus-visible { outline-offset: 4px; }
 .capture__media {
   display: block;
   inline-size: 100%;
+  block-size: auto; /* the img height="3" hint is a presentational style (3px) and beats aspect-ratio without this */
   aspect-ratio: 4 / 3;
-  object-fit: cover;
+  max-block-size: 70vh;
+  object-fit: contain; /* show the whole photo exactly as it will be sent, no cropping */
   border-radius: 0.75rem;
   background: var(--color-surface-2, #8882);
 }
