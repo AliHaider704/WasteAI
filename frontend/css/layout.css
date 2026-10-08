@@ -78,3 +78,16 @@ body {
 /* Motif: the stamped bin label, about -2deg, same angle in LTR and RTL. */
 .bin { transform: rotate(-2deg); border-radius: var(--radius-sm); }
 .bin { padding-block: 0.125rem; }
+
+/* ---- Compact, dynamic header (mobile) ---- */
+.app-header { transition: transform 0.25s ease, box-shadow 0.25s ease; will-change: transform; }
+.app-header.is-hidden { transform: translateY(-100%); }
+.app-header.is-scrolled { box-shadow: var(--shadow-1, 0 1px 2px #0002); }
+@media (max-width: 767px) {
+  .app-header__inner { padding-block: 0.25rem; padding-inline: 0.75rem; gap: 0.5rem; }
+  .app-header .brand { min-block-size: 2.5rem; font-size: 0.875rem; line-height: 1.25; min-inline-size: 0; }
+  .toolbar { gap: 0.25rem; }
+  .app-header .icon-btn { min-block-size: 2.5rem; min-inline-size: 2.5rem; border-radius: 0.625rem; }
+  .app-header .icon-btn .icon { inline-size: 1.25rem; block-size: 1.25rem; }
+}
+@media (prefers-reduced-motion: reduce) { .app-header { transition: none; } }
