@@ -216,7 +216,14 @@ function card(item, index) {
   body.append(name, meta);
   const tags = el("div", "batch__tags");
   const bin = r && r.guidance && r.guidance.bin;
-  if (bin) { const b = el("span", `bin bin--${bin}`); b.textContent = t(`bin.${bin}`); tags.append(b); }
+  if (bin) { // same behaviour as the bin chips on Home and Browse: bininfo.js opens the bin dialog
+    const b = el("button", `bin bin--${bin}`);
+    b.type = "button";
+    b.dataset.binInfo = bin;
+    b.setAttribute("aria-haspopup", "dialog");
+    b.textContent = t(`bin.${bin}`);
+    tags.append(b);
+  }
   if (r && r.hazard) { const h = el("span", "batch__hazard"); h.textContent = t("batch.hazard"); tags.append(h); }
   if (tags.children.length) body.append(tags);
   li.append(img, body);
