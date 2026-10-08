@@ -2,7 +2,7 @@
 import "./errors.js";
 import { guard } from "./errors.js";
 import { getCategories } from "./api.js";
-import { getLang, t, whenReady } from "./i18n.js";
+import { getLang, setRich, t, whenReady } from "./i18n.js";
 import "./theme.js";
 import "./upload.js";
 import "./results.js";
@@ -121,12 +121,12 @@ function renderList() {
     li.className = "card";
     const title = document.createElement("h2");
     title.className = "card__title";
-    title.textContent = cat.name;
+    setRich(title, cat.name);
     li.append(title);
     if (cat.summary) {
       const p = document.createElement("p");
       p.className = "card__summary";
-      p.textContent = cat.summary;
+      setRich(p, cat.summary);
       li.append(p);
     }
     const meta = document.createElement("div");

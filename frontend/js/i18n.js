@@ -63,7 +63,7 @@ export function t(key, vars) {
   const dict = window.__i18n || {};
   let text = dict[key];
   if (text === undefined) {
-    if (!missing.has(key)) {
+    if (window.__i18n && !missing.has(key)) {
       missing.add(key);
       log("i18n_missing_key", { level: "warning", detail: String(key) });
     }
@@ -100,6 +100,29 @@ export async function setLanguage(lang, { persist = true } = {}) {
   if (persist) save(target);
   translateDocument();
   document.dispatchEvent(new CustomEvent("i18n:change", { detail: { lang: target, dir: document.documentElement.dir } }));
+}
+
+const BDI = /<bdi dir="ltr">(.*?)<\/bdi>/g;
+
+/** Sets server text on a node; only <bdi dir="ltr">...</bdi> becomes an element, everything else stays plain text. */
+export function setRich(node, text) {
+  const s = String(text ?? "");
+  node.replaceChildren();
+  let last = 0;
+  for (const m of s.matchAll(BDI)) {
+    if (m.index > last) node.append(s.slice(last, m.index));
+    const b = document.createElement("bdi");
+    b.dir = "ltr";
+    b.textContent = m[1];
+    node.append(b);
+    last = m.index + m[0].length;
+  }
+  if (last < s.length) node.append(s.slice(last));
+}
+
+/** Same text without the bdi markup (for <option> and attributes). */
+export function plain(text) {
+  return String(text ?? "").replace(BDI, "$1");
 }
 
 /** Promise that resolves after the first dictionary is applied. */

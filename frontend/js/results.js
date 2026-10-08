@@ -5,8 +5,8 @@
 
 import { store, getCategories, sendFeedback, ApiError } from "./api.js";
 import { loadLabels, labelFor } from "./labels.js";
+import { plain, setRich, t } from "./i18n.js";
 
-const t = (key) => (window.__i18n && window.__i18n[key]) || key;
 const HIGH = 0.8;   // confidence in words: >= HIGH -> high, >= MEDIUM -> medium, else not sure
 const MEDIUM = 0.65;
 const SVG_NS = "http://www.w3.org/2000/svg";
@@ -39,7 +39,7 @@ function el(tag, className, key) {
 function txt(tag, className, text) {
   const node = document.createElement(tag);
   if (className) node.className = className;
-  node.textContent = text;
+  setRich(node, text);
   return node;
 }
 
@@ -194,7 +194,7 @@ function feedbackBlock(result, selectedId) {
       }
       const option = document.createElement("option");
       option.value = c.id;
-      option.textContent = c.name;
+      option.textContent = plain(c.name);
       option.selected = c.id === selectedId;
       groups.get(c.group).append(option);
     });
