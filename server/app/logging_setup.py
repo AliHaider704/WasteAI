@@ -10,7 +10,7 @@ import json
 import logging
 import re
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 FIELDS = (
     "request_id", "route", "status", "elapsed_ms", "source_status",
@@ -27,7 +27,7 @@ def clean(text: str, limit: int) -> str:
 class JSONFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         data: dict = {
-            "ts": datetime.fromtimestamp(record.created, timezone.utc).isoformat(timespec="milliseconds"),
+            "ts": datetime.fromtimestamp(record.created, UTC).isoformat(timespec="milliseconds"),
             "level": record.levelname.lower(),
             "event": getattr(record, "event", None) or "log",
         }

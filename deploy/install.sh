@@ -1,7 +1,7 @@
 # File: deploy/install.sh
 #!/usr/bin/env bash
 # Idempotent installer for wasteai on the shared EC2 host. No Docker. Never restarts nginx/docker/afplbot.
-# Usage: bash deploy/install.sh --domain <SUBDOMAIN> [--email you@x.com]
+# Usage: bash deploy/install.sh --domain <SUBDOMAIN> [--email <EMAIL>]
 #        bash deploy/install.sh --status | --rollback | --fix-owner | --stop-containers
 set -euo pipefail
 

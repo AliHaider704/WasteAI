@@ -18,3 +18,6 @@ ignore = ["B008"]
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
+
+[tool.ruff.lint.per-file-ignores]
+"eval/*" = ["E501", "E741"]  # one-off evaluation scripts, not served code

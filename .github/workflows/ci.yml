@@ -1,0 +1,19 @@
+# File: .github/workflows/ci.yml
+name: ci
+on: [push, pull_request]
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r server/requirements.txt pytest ruff pyyaml openapi-spec-validator httpx
+      - run: cd server && ruff check .
+      - run: cd server && pytest -q
+      - run: python3 scripts/check_paths.py
+      - run: bash scripts/check_lines.sh
+      - run: python3 scripts/check_hygiene.py
+      - run: python3 content/tools/check_content.py
+      - run: python3 content/tools/check_tokens.py

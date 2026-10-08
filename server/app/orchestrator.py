@@ -23,7 +23,7 @@ def _get(obj, key, default=None):
 def _pairs(top) -> list[tuple[str, float]]:
     out = []
     for t in top or []:
-        if isinstance(t, (tuple, list)):
+        if isinstance(t, tuple | list):
             out.append((str(t[0]), float(t[1])))
         else:
             out.append((str(_get(t, "label", "")), float(_get(t, "score", 0.0))))

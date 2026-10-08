@@ -8,3 +8,7 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 server/data/app.db
+server/data/*.db
+server/data/*.db-*
+*.zip
+server/eval_photos/

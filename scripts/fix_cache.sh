@@ -1,7 +1,7 @@
-#!/bin/bash
 # File: scripts/fix_cache.sh
-# One-shot: no-cache for static files in Nginx, merge-marker guard, deploy, verify, push.
+#!/bin/bash
 set -u
+: "${EMAIL:?set EMAIL=<your address> before running}"
 cd ~/WasteAI || exit 1
 T=deploy/templates/nginx.conf.tpl
 
@@ -29,7 +29,7 @@ grep -n 'Cache-Control' "$T"
 # add_header in a location drops inherited ones, so the snippet is included in the same block (already is).
 
 echo "== 3) deploy"
-bash deploy/install.sh --domain wasteai.duckdns.org --email samsfuddhcdhfe@gmail.com
+bash deploy/install.sh --domain wasteai.duckdns.org --email "$EMAIL"
 
 echo "== 4) verify from outside"
 U=https://wasteai.duckdns.org

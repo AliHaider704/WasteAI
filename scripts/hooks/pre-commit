@@ -1,0 +1,4 @@
+#!/bin/sh
+# File: scripts/hooks/pre-commit
+# Optional. Install: cp scripts/hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+python3 scripts/check_hygiene.py && python3 scripts/check_paths.py && bash scripts/check_lines.sh
