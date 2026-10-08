@@ -104,15 +104,9 @@ button.bin:focus-visible { outline: 3px solid var(--color-focus); outline-offset
 }
 @media (prefers-reduced-motion: reduce) { button.bin { transition: none; } }
 
-/* ---- Desktop (>=768px): "Browse categories" moves below the bins; mobile order is unchanged ---- */
+/* ---- Desktop: same order as mobile (Scan, Upload, Browse, then bins), single column ---- */
 @media (min-width: 768px) {
-  .view[data-view="home"] { display: flex; flex-direction: column; }
-  .view[data-view="home"] > .actions { display: contents; }
-  .view[data-view="home"] > .actions > .btn--primary { order: 1; margin-block-start: 1rem; }
-  .view[data-view="home"] > .actions > button.btn:not(.btn--primary) { order: 2; margin-block-start: 0.75rem; }
-  .view[data-view="home"] > .stamps__hint { order: 3; }
-  .view[data-view="home"] > .stamps { order: 4; }
-  .view[data-view="home"] > .actions > a.btn { order: 5; align-self: flex-start; margin-block-start: 1.5rem; }
+  .view[data-view="home"] .actions { grid-template-columns: 1fr; }
 }
 
 /* ---- Desktop scale: 15px base, ~640px reading column, smaller focal button & h1 (standard desktop UI proportions) ---- */
