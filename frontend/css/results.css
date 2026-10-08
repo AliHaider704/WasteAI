@@ -119,3 +119,19 @@
   .cards > li { animation: row-rise 200ms ease-out both; }
   .result__confidence { animation: word-fade 150ms ease-out both; }
 }
+
+/* Photo stays pinned while the details scroll. Phones: compact strip; the offset follows the hide-on-scroll header. */
+@media (max-width: 899px) {
+  .result { display: flex; flex-direction: column; }
+  .result__media {
+    position: sticky; inset-block-start: 3.5rem; z-index: 3;
+    padding-block: 0.5rem; background: var(--color-bg);
+  }
+  .result__photo { max-block-size: 8rem; aspect-ratio: auto; }
+  body:has(.app-header.is-hidden) .result__media { inset-block-start: 0; }
+}
+@media (min-width: 900px) {
+  .result__media { inset-block-start: 5rem; }
+  body:has(.app-header.is-hidden) .result__media { inset-block-start: 1rem; }
+}
+@media (prefers-reduced-motion: no-preference) { .result__media { transition: inset-block-start 0.25s ease; } }

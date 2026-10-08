@@ -55,7 +55,10 @@ function button(key, className) {
 }
 
 function binChip(bin) {
-  const chip = el("span", `bin bin--${bin}`);
+  const chip = el("button", `bin bin--${bin}`); // opens the bin dialog (bininfo.js), like Home and Browse
+  chip.type = "button";
+  chip.dataset.binInfo = bin;
+  chip.setAttribute("aria-haspopup", "dialog");
   chip.dataset.i18n = `bin.${bin}`;
   chip.textContent = t(`bin.${bin}`);
   return chip;
