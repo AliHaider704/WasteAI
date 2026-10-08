@@ -151,8 +151,11 @@ function renderList() {
     }
     const meta = document.createElement("div");
     meta.className = "card__meta";
-    const chip = document.createElement("span");
+    const chip = document.createElement("button");
+    chip.type = "button";
     chip.className = `bin bin--${cat.bin}`;
+    chip.dataset.binInfo = cat.bin; // opens the same bin dialog as on Home (handled in bininfo.js)
+    chip.setAttribute("aria-haspopup", "dialog");
     chip.textContent = t(`bin.${cat.bin}`);
     meta.append(chip);
     li.append(meta);
