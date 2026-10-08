@@ -1,5 +1,7 @@
 <!-- File: README.md -->
-# WasteAI
+# WasteAI — Intelligent Waste Sorting Assistant
+
+Arabic: نظام فصل النفايات باستخدام الذكاء الاصطناعي (D-029, proposed).
 
 Live site: https://wasteai.duckdns.org/
 
