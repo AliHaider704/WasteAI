@@ -3,6 +3,8 @@
 // Translates every [data-i18n="key"] node and [data-i18n-attr="attr:key;attr2:key2"] attributes.
 // Other modules read text through window.__i18n[key] (set here) and re-render on "i18n:change".
 
+import { log } from "./log.js";
+
 const SUPPORTED = ["ar", "en"];
 const DEFAULT_LANG = "en";
 const RTL_LANGS = new Set(["ar"]);
@@ -54,10 +56,19 @@ export function getLang() {
   return current || document.documentElement.lang || DEFAULT_LANG;
 }
 
-/** Looks up a key; "{n}"-style placeholders are filled from `vars`. Falls back to the key. */
+const missing = new Set();
+
+/** Looks up a key; "{n}"-style placeholders are filled from `vars`. A missing key returns "" (never the raw id) and is logged once. */
 export function t(key, vars) {
   const dict = window.__i18n || {};
-  let text = dict[key] !== undefined ? dict[key] : key;
+  let text = dict[key];
+  if (text === undefined) {
+    if (!missing.has(key)) {
+      missing.add(key);
+      log("i18n_missing_key", { level: "warning", detail: String(key) });
+    }
+    return "";
+  }
   if (vars) Object.keys(vars).forEach((name) => (text = text.split(`{${name}}`).join(String(vars[name]))));
   return text;
 }
@@ -89,6 +100,11 @@ export async function setLanguage(lang, { persist = true } = {}) {
   if (persist) save(target);
   translateDocument();
   document.dispatchEvent(new CustomEvent("i18n:change", { detail: { lang: target, dir: document.documentElement.dir } }));
+}
+
+/** Promise that resolves after the first dictionary is applied. */
+export function whenReady() {
+  return ready;
 }
 
 export function toggleLanguage() {

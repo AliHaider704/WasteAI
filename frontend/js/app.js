@@ -2,24 +2,42 @@
 import "./errors.js";
 import { guard } from "./errors.js";
 import { getCategories } from "./api.js";
-import "./i18n.js";
+import { getLang, t, whenReady } from "./i18n.js";
 import "./theme.js";
 import "./upload.js";
 import "./results.js";
 import "./audio.js";
-// Hash routing (#/, #/browse, #/result) and the browse view over mock categories.
-// M3 wires scan/upload, M4 fills #result-root, M5 provides window.__i18n and lang/theme, M6 sound.
+// Hash routing (#/, #/browse, #/result) and the Browse view (M11 spec, restored in M18a).
+// Filters live in the hash: #/browse?group=glass&q=bottle (written with history.replaceState).
 
 const ROUTES = ["home", "browse", "result"];
-const state = { categories: [], group: "all", query: "", loaded: false };
+const state = { categories: [], group: "all", query: "", loaded: false, lang: null, token: 0 };
 
 const $ = (sel, root = document) => root.querySelector(sel);
-// Text lookup hook for M5 (i18n.js sets window.__i18n). Falls back to the given default.
-const t = (key, fallback) => (window.__i18n && window.__i18n[key]) || fallback;
+
+function parseHash() {
+  const [path, qs = ""] = location.hash.replace(/^#\/?/, "").split("?");
+  return { name: ROUTES.includes(path) ? path : "home", params: new URLSearchParams(qs) };
+}
 
 function currentRoute() {
-  const name = location.hash.replace(/^#\/?/, "") || "home";
-  return ROUTES.includes(name) ? name : "home";
+  return parseHash().name;
+}
+
+function readFilters() {
+  const { name, params } = parseHash();
+  if (name !== "browse") return;
+  state.group = params.get("group") || "all";
+  state.query = (params.get("q") || "").trim().toLowerCase();
+  $("#browse-search").value = params.get("q") || "";
+}
+
+function writeFilters() {
+  const params = new URLSearchParams();
+  if (state.group !== "all") params.set("group", state.group);
+  if (state.query) params.set("q", state.query);
+  const qs = params.toString();
+  history.replaceState(null, "", `#/browse${qs ? `?${qs}` : ""}`);
 }
 
 let firstRender = true;
@@ -28,7 +46,14 @@ function renderRouteUnsafe() {
   document.querySelectorAll(".view").forEach((view) => {
     view.hidden = view.dataset.view !== name;
   });
-  if (name === "browse" && !state.loaded) loadCategories();
+  if (name === "browse") {
+    readFilters();
+    if (!state.loaded || state.lang !== getLang()) loadCategories();
+    else {
+      renderGroups();
+      renderList();
+    }
+  }
   if (!firstRender) {
     const heading = $(`.view[data-view="${name}"] h1`);
     if (heading) heading.focus();
@@ -42,15 +67,23 @@ function renderRoute() {
 }
 
 async function loadCategories() {
+  const token = ++state.token;
+  const lang = getLang();
   try {
-    const data = await getCategories(document.documentElement.lang || "en"); // retries with backoff
+    await whenReady();
+    const data = await getCategories(lang); // retries with backoff
+    if (token !== state.token) return; // a newer load (language change) wins
     state.categories = Array.isArray(data.categories) ? data.categories : [];
     state.loaded = true;
+    state.lang = lang;
     $("#browse-error").hidden = true;
     renderGroups();
     renderList();
   } catch (err) {
+    if (token !== state.token) return;
+    state.loaded = false;
     $("#browse-error").hidden = false;
+    $("#browse-empty").hidden = true;
   }
 }
 
@@ -66,7 +99,7 @@ function renderGroups() {
     btn.type = "button";
     btn.className = "chip";
     btn.dataset.group = group;
-    btn.textContent = t(`group.${group}`, group);
+    btn.textContent = t(`group.${group}`);
     btn.setAttribute("aria-pressed", String(group === state.group));
     box.append(btn);
   });
@@ -100,13 +133,21 @@ function renderList() {
     meta.className = "card__meta";
     const chip = document.createElement("span");
     chip.className = `bin bin--${cat.bin}`;
-    chip.textContent = t(`bin.${cat.bin}`, cat.bin);
+    chip.textContent = t(`bin.${cat.bin}`);
     meta.append(chip);
     li.append(meta);
     list.append(li);
   });
   $("#browse-empty").hidden = items.length !== 0 || !state.loaded;
-  $("#browse-count").textContent = t("browse.count", "{n}").replace("{n}", String(items.length));
+  $("#browse-count").textContent = state.loaded ? t("browse.count", { n: items.length }) : "";
+}
+
+function applyFilters() {
+  writeFilters();
+  document.querySelectorAll("#browse-groups .chip").forEach((chip) => {
+    chip.setAttribute("aria-pressed", String(chip.dataset.group === state.group));
+  });
+  renderList();
 }
 
 function bindEvents() {
@@ -114,17 +155,40 @@ function bindEvents() {
     const btn = e.target.closest("button[data-group]");
     if (!btn) return;
     state.group = btn.dataset.group;
-    document.querySelectorAll("#browse-groups .chip").forEach((chip) => {
-      chip.setAttribute("aria-pressed", String(chip.dataset.group === state.group));
-    });
-    renderList();
+    applyFilters();
   });
   $("#browse-search").addEventListener("input", (e) => {
     state.query = e.target.value.trim().toLowerCase();
-    renderList();
+    applyFilters();
+  });
+  $("#browse-clear").addEventListener("click", () => {
+    state.group = "all";
+    state.query = "";
+    $("#browse-search").value = "";
+    applyFilters();
+  });
+  $("#browse-retry").addEventListener("click", () => {
+    $("#browse-error").hidden = true;
+    loadCategories();
+  });
+  document.addEventListener("i18n:change", () => {
+    // Server text follows ?lang=, so reload the categories; labels rebuild when the data arrives.
+    if (currentRoute() === "browse" || state.loaded) {
+      if (state.loaded) {
+        renderGroups();
+        renderList();
+      }
+      loadCategories();
+    }
   });
   window.addEventListener("hashchange", renderRoute);
 }
 
+const search = $("#browse-search");
+search.setAttribute("name", "q");
+search.setAttribute("type", "search");
+search.setAttribute("inputmode", "search");
+search.setAttribute("autocomplete", "off");
+
 bindEvents();
-renderRoute();
+whenReady().then(renderRoute, renderRoute);
