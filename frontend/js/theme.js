@@ -27,7 +27,7 @@ function save(theme) {
 export function effectiveTheme() {
   const forced = root.dataset.theme;
   if (forced === "light" || forced === "dark") return forced;
-  return media && media.matches ? "dark" : "light";
+  return "light";
 }
 
 // The button shows the icon of the theme it will switch to.

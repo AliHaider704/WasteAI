@@ -1,7 +1,7 @@
 /* File: frontend/css/tokens.css */
 /*
    Design tokens. D3 kraft and ink (D-020): light = kraft paper, dark = warm graphite, one ink-blue accent. Flat colors, no texture.
-   Theme: data-theme="light|dark" on <html>; default follows prefers-color-scheme.
+   Theme: data-theme="light|dark" on <html>; default is light.
    All colors are 6-digit hex (the preview page reads them to verify AA contrast). */
 
 :root {
@@ -45,7 +45,7 @@
   --shadow-2: 0 4px 12px rgba(37, 34, 29, 0.12);
 }
 
-@media (prefers-color-scheme: dark) {
+@media not all {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
     --color-bg: #1B1916;
@@ -199,7 +199,7 @@ html[lang="ar"] {
   --color-danger-text: #FFC2BC;
   --color-focus: #FFD84D;
 }
-@media (prefers-color-scheme: dark) {
+@media not all {
   :root:not([data-theme="light"])[data-contrast="high"] {
     --color-bg: #000000;
     --color-surface: #0D0D0D;
