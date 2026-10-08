@@ -106,3 +106,26 @@ h1:focus-visible { outline-offset: 4px; }
   .btn, .icon-btn, .chip { transition: background-color 150ms ease-out, border-color 150ms ease-out; }
 }
 .card__icon { inline-size: 2rem; block-size: 2rem; }
+
+/* M24: calm loading bar. Static stripes by default, slow slide only when motion is allowed. */
+.capture__progress {
+  appearance: none;
+  -webkit-appearance: none;
+  display: block;
+  inline-size: 100%;
+  block-size: 0.5rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: repeating-linear-gradient(45deg, var(--color-accent) 0 8px, var(--color-surface-2) 8px 16px);
+  background-size: 22.6px 22.6px;
+  overflow: hidden;
+}
+.capture__progress::-webkit-progress-bar,
+.capture__progress::-webkit-progress-value { background: transparent; }
+.capture__progress::-moz-progress-bar { background: transparent; }
+.capture__progress[hidden] { display: none; }
+@keyframes progress-slide { to { background-position: 22.6px 0; } }
+@media (prefers-reduced-motion: no-preference) {
+  .capture__progress { animation: progress-slide 1.2s linear infinite; }
+}
+:root[data-contrast="high"] .icon-btn[aria-pressed="true"] { outline: 2px solid var(--color-text); }

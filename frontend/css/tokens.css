@@ -149,3 +149,73 @@
   --dur-base: 250ms;
   --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
+
+/* M24: Arabic type scale. Arabic glyphs run large for their size, so 95% of the Latin scale with taller lines (IBM type scale). */
+html[lang="ar"] {
+  --fs-sm: 0.83rem;
+  --fs-base: 0.95rem;
+  --fs-lg: 1.19rem;
+  --fs-xl: 1.66rem;
+  --fs-2xl: 2.375rem;
+  --lh-body-ar: 1.8;
+  --lh-heading-ar: 1.55;
+}
+
+/* M24: high-contrast option. data-contrast="high" is set by js/contrast.js (saved choice, else prefers-contrast: more).
+   Light first; dark blocks come later with higher specificity, so they win in dark. */
+:root[data-contrast="high"] {
+  --color-bg: #FFFFFF;
+  --color-surface: #FFFFFF;
+  --color-surface-2: #EDEDED;
+  --color-text: #000000;
+  --color-text-muted: #262626;
+  --color-border: #000000;
+  --color-border-strong: #000000;
+  --color-accent: #0B2540;
+  --color-accent-hover: #000000;
+  --color-on-accent: #FFFFFF;
+  --color-accent-soft: #E3EAF2;
+  --color-warning-bg: #FFF3DC;
+  --color-warning-text: #4A2800;
+  --color-danger-bg: #FFE9E6;
+  --color-danger-text: #7A0F0A;
+  --color-focus: #0030C0;
+}
+:root[data-theme="dark"][data-contrast="high"] {
+  --color-bg: #000000;
+  --color-surface: #0D0D0D;
+  --color-surface-2: #1F1F1F;
+  --color-text: #FFFFFF;
+  --color-text-muted: #E0E0E0;
+  --color-border: #FFFFFF;
+  --color-border-strong: #FFFFFF;
+  --color-accent: #BFD8F5;
+  --color-accent-hover: #FFFFFF;
+  --color-on-accent: #000000;
+  --color-accent-soft: #1A2A3A;
+  --color-warning-bg: #2A1D08;
+  --color-warning-text: #FFD58A;
+  --color-danger-bg: #2E1210;
+  --color-danger-text: #FFC2BC;
+  --color-focus: #FFD84D;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-contrast="high"] {
+    --color-bg: #000000;
+    --color-surface: #0D0D0D;
+    --color-surface-2: #1F1F1F;
+    --color-text: #FFFFFF;
+    --color-text-muted: #E0E0E0;
+    --color-border: #FFFFFF;
+    --color-border-strong: #FFFFFF;
+    --color-accent: #BFD8F5;
+    --color-accent-hover: #FFFFFF;
+    --color-on-accent: #000000;
+    --color-accent-soft: #1A2A3A;
+    --color-warning-bg: #2A1D08;
+    --color-warning-text: #FFD58A;
+    --color-danger-bg: #2E1210;
+    --color-danger-text: #FFC2BC;
+    --color-focus: #FFD84D;
+  }
+}

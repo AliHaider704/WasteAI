@@ -4,6 +4,7 @@ import { guard } from "./errors.js";
 import { getCategories } from "./api.js";
 import { getLang, setRich, t, whenReady } from "./i18n.js";
 import "./theme.js";
+import "./contrast.js";
 import "./upload.js";
 import "./results.js";
 import "./audio.js";
