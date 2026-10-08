@@ -23,7 +23,7 @@ function el(tag, cls, key) {
 }
 
 function btn(key, cls = "btn") {
-  const b = el("button", cls, key);
+  const b = el("button", cls, key || undefined);
   b.type = "button";
   return b;
 }
@@ -44,7 +44,7 @@ function build() {
   ui.summary.setAttribute("role", "status");
   ui.grid = el("ul", "batch__grid");
   ui.add = btn("batch.add");
-  ui.start = btn("batch.start", "btn btn--primary");
+  ui.start = btn(null, "btn btn--primary"); // text has a variable: set in render(), never by data-i18n
   ui.stop = btn("batch.stop");
   ui.retry = btn("batch.retry");
   ui.close = btn("batch.new");
@@ -238,7 +238,9 @@ function render() {
   ui.summary.textContent = running || c.done
     ? `${t("batch.progress", { done: c.done, total })} · ${t("batch.summary", { ok: c.ok, unsure: c.unsure, fail: c.fail })}` : "";
   ui.start.hidden = running || !pending;
-  ui.start.textContent = t("batch.start", { n: total });
+  const form = new Intl.PluralRules(document.documentElement.lang || "en").select(total);
+  const key = `batch.start.${form}`;
+  ui.start.textContent = t(window.__i18n && window.__i18n[key] ? key : "batch.start.other", { n: total });
   ui.stop.hidden = !running;
   ui.retry.hidden = running || !batch.items.some((i) => i.state === "fail");
   ui.add.hidden = running || total >= MAX_PHOTOS;

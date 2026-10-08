@@ -123,7 +123,6 @@
   "batch.limit": "Only the first {n} photos were kept.",
   "batch.preparing": "Preparing your photos…",
   "batch.add": "Add photos",
-  "batch.start": "Analyze {n} photos",
   "batch.stop": "Stop",
   "batch.retry": "Retry failed",
   "batch.new": "New batch",
@@ -139,5 +138,11 @@
   "batch.slowdown": "Too many requests. Paused to protect the limit. Wait a minute, then start again.",
   "drop.stamp": "Drop to analyze",
   "drop.title": "Release your photos here",
-  "drop.hint": "Up to 10 photos at once. Only image files are accepted."
+  "drop.hint": "Up to 10 photos at once. Only image files are accepted.",
+  "batch.start.one": "Analyze 1 photo",
+  "batch.start.other": "Analyze {n} photos",
+  "batch.start.two": "Analyze 2 photos",
+  "batch.start.few": "Analyze {n} photos",
+  "batch.start.many": "Analyze {n} photos",
+  "batch.start": "Analyze {n} photos"
 }

@@ -48,3 +48,6 @@ html[lang="ar"] .dropzone__stamp { letter-spacing: 0; text-transform: none; }
 }
 @keyframes drop-in { from { opacity: 0; } }
 @keyframes stamp-down { from { transform: rotate(-2deg) scale(1.12); opacity: 0; } }
+
+/* display rules above must not defeat the hidden attribute */
+.batch[hidden], .batch [hidden], .dropzone[hidden] { display: none !important; }
