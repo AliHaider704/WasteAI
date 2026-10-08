@@ -2,7 +2,7 @@
 import "./errors.js";
 import { guard } from "./errors.js";
 import { getCategories } from "./api.js";
-import { getLang, setRich, t, whenReady } from "./i18n.js";
+import { getLang, plain, setRich, t, whenReady } from "./i18n.js";
 import "./theme.js";
 import "./header-scroll.js";
 import "./contrast.js";
@@ -31,8 +31,9 @@ function readFilters() {
   const { name, params } = parseHash();
   if (name !== "browse") return;
   state.group = params.get("group") || "all";
-  state.query = (params.get("q") || "").trim().toLowerCase();
-  $("#browse-search").value = params.get("q") || "";
+  const q = plain(params.get("q") || "").replace(/<[^>]*>/g, "").trim();
+  state.query = q.toLowerCase();
+  $("#browse-search").value = q;
 }
 
 function writeFilters() {
@@ -125,7 +126,7 @@ function renderGroups() {
 function matches(cat) {
   if (state.group !== "all" && cat.group !== state.group) return false;
   if (!state.query) return true;
-  const hay = `${cat.name} ${cat.summary || ""} ${cat.id}`.toLowerCase();
+  const hay = plain(`${cat.name} ${cat.summary || ""} ${cat.id}`).toLowerCase();
   return hay.includes(state.query);
 }
 

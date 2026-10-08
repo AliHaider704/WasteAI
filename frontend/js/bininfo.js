@@ -3,7 +3,7 @@
 // Texts come from i18n/bins.<lang>.json (static, ar + en); category names come from /categories.
 
 import { getCategories } from "./api.js";
-import { getLang, setRich, t, whenReady } from "./i18n.js";
+import { getLang, plain, setRich, t, whenReady } from "./i18n.js";
 import { log } from "./log.js";
 
 const NS = "http://www.w3.org/2000/svg";
@@ -80,7 +80,7 @@ function categoryLinks(cats) {
     const li = el("li");
     const a = document.createElement("a");
     a.className = "bininfo__cat";
-    a.href = `#/browse?q=${encodeURIComponent(cat.name)}`;
+    a.href = `#/browse?q=${encodeURIComponent(plain(cat.name))}`;
     if (cat.icon) {
       const svg = icon(`assets/category-icons.svg#${cat.icon}`, "icon bininfo__cat-icon");
       svg.setAttribute("width", "20");
