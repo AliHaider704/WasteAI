@@ -12,7 +12,7 @@ FILT=/etc/fail2ban/filter.d/wasteai-429.conf
 LOG=/var/log/nginx/access.log
 FAIL=0
 
-say() { printf '%-5s %s\n' "$1" "$2"; [ "$1" = FAIL ] && FAIL=$((FAIL + 1)); }
+say() { printf '%-5s %s\n' "$1" "$2"; if [ "$1" = FAIL ]; then FAIL=$((FAIL + 1)); fi; return 0; }
 avail() { awk '/MemAvailable/ {printf "%d", $2/1024}' /proc/meminfo; }
 [ "$(id -u)" -eq 0 ] || { echo "run with sudo"; exit 2; }
 
@@ -76,7 +76,7 @@ check() {
   if command -v sshd >/dev/null 2>&1; then
     local cfg; cfg=$(sshd -T 2>/dev/null)
     echo "$cfg" | grep -qi '^passwordauthentication no' && say PASS "ssh PasswordAuthentication no" || say WARN "ssh PasswordAuthentication is not 'no'"
-    echo "$cfg" | grep -Eqi '^permitrootlogin (no|prohibit-password)' && say PASS "ssh root login restricted" || say WARN "ssh root login allowed"
+    echo "$cfg" | grep -Eqi '^permitrootlogin (no|prohibit-password|without-password)' && say PASS "ssh root login restricted" || say WARN "ssh root login allowed"
     echo "$cfg" | grep -qi '^pubkeyauthentication yes' && say PASS "ssh pubkey on" || say WARN "ssh pubkey off"
   else say WARN "sshd not found"; fi
 
