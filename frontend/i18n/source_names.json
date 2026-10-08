@@ -1,0 +1,7 @@
+{
+  "_path": "frontend/i18n/source_names.json",
+  "local_onnx": "emilyyy04/trash_classifier",
+  "azure": "Azure AI Vision",
+  "reciclapi": "ReciclAPI",
+  "llm": "Gemini"
+}

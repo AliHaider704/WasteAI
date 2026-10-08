@@ -12,5 +12,10 @@
     "WebP",
     "MB"
   ],
-  "brands": []
+  "brands": [
+    "Azure AI Vision",
+    "emilyyy04/trash_classifier",
+    "ReciclAPI",
+    "Gemini"
+  ]
 }

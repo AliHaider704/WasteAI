@@ -239,6 +239,27 @@ def check_labels():
         err("labels: ar/en keys differ")
 
 
+def check_source_names():
+    data = load_json(ROOT / "frontend" / "i18n" / "source_names.json")
+    if not isinstance(data, dict):
+        err("source_names.json: missing or invalid")
+        return
+    allow = load_json(ROOT / "content" / "tools" / "allowlist.json") or {}
+    brands = set(allow.get("brands", []))
+    names = {k: v for k, v in data.items() if not k.startswith("_")}
+    for key, value in names.items():
+        if not isinstance(value, str) or not value.strip() or ARABIC.search(value):
+            err(f"source_names: '{key}' must be a Latin name")
+        elif value not in brands:
+            err(f"source_names: '{value}' is not in allowlist.json brands")
+        for lang in LANGS:
+            d = load_json(ROOT / "frontend" / "i18n" / f"{lang}.json") or {}
+            if f"source.{key}" not in d:
+                err(f"{lang}.json: missing key source.{key}")
+    for extra in sorted(brands - set(names.values())):
+        err(f"allowlist brand '{extra}' is not used in source_names.json")
+
+
 def check_line_limits():
     paths = [ROOT / "content" / f"guidance.{lang}.json" for lang in LANGS]
     paths += [ROOT / "frontend" / "i18n" / f"{lang}.json" for lang in LANGS] + [Path(__file__)]
@@ -256,6 +277,7 @@ def main():
     check_text_rules()
     check_index_shell()
     check_labels()
+    check_source_names()
     check_line_limits()
     if errors:
         print(f"FAILED: {len(errors)} problem(s)")

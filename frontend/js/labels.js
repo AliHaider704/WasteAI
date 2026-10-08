@@ -22,3 +22,22 @@ export function labelFor(raw, lang = getLang()) {
   const key = String(raw || "").trim().toLowerCase();
   return Object.prototype.hasOwnProperty.call(dict, key) && key[0] !== "_" ? dict[key] : t("why.other_label");
 }
+
+let names = null;
+
+/** Real service and model names (D-030): proper nouns, same in both languages. */
+export async function loadSourceNames() {
+  if (names) return names;
+  try {
+    const res = await fetch("i18n/source_names.json");
+    names = res.ok ? await res.json() : {};
+  } catch {
+    names = {};
+  }
+  return names;
+}
+
+export function sourceName(id) {
+  const v = names && names[id];
+  return typeof v === "string" && id[0] !== "_" ? v : "";
+}

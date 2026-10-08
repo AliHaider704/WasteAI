@@ -4,7 +4,7 @@
 // All text is looked up by key via window.__i18n (M5); the key itself is shown until then.
 
 import { store, getCategories, sendFeedback, ApiError } from "./api.js";
-import { loadLabels, labelFor } from "./labels.js";
+import { loadLabels, labelFor, loadSourceNames, sourceName } from "./labels.js";
 import { plain, setRich, t } from "./i18n.js";
 
 const HIGH = 0.8;   // confidence in words: >= HIGH -> high, >= MEDIUM -> medium, else not sure
@@ -133,8 +133,11 @@ function whyPanel(result) {
   const list = el("ul", "result__list");
   (result.sources || []).forEach((src) => {
     const li = el("li");
-    li.append(el("strong", null, `source.${src.name}`));
-    li.append(document.createTextNode(" "));
+    const real = sourceName(src.name);
+    const head = el("strong", null, real ? "" : `source.${src.name}`);
+    if (real) setRich(head, `<bdi dir="ltr">${real}</bdi>`);
+    li.append(head, " ");
+    if (real) li.append(el("span", "muted", `source.${src.name}`), " ");
     if (src.ok && src.top && src.top.length) {
       li.append(txt("span", "result__labels", src.top.map((l) => `${labelFor(l.label)} ${Math.round(l.score * 100)}%`).join(", ")));
     } else {
@@ -352,7 +355,7 @@ async function show() {
     live.textContent = "";
     return;
   }
-  await Promise.all([loadCatalog(), loadLabels()]);
+  await Promise.all([loadCatalog(), loadLabels(), loadSourceNames()]);
   const prev = root.querySelector(".result__why");
   if (prev) whyOpen = prev.open;
   const layout = el("div", "result result--reveal");
