@@ -64,7 +64,7 @@ async def add_request_id_and_headers(request: Request, call_next):
         response = await call_next(request)
         status = response.status_code
     finally:
-        route = getattr(request.scope.get("route"), "path", "unmatched")
+        route = request.url.path if request.scope.get("route") is not None else "unmatched"
         ACCESS_LOG.log(
             logging.ERROR if status >= 500 else logging.INFO,
             "request",
