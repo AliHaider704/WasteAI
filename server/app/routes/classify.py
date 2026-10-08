@@ -1,4 +1,5 @@
 # File: server/app/routes/classify.py
+import logging
 import time
 import uuid
 
@@ -12,7 +13,8 @@ from app.orchestrator import AllSourcesFailed, get_orchestrator
 from app.ratelimit import ip_limiter
 
 router = APIRouter()
-MAX_BYTES = 2 * 1024 * 1024
+MAX_BYTES = imaging.MAX_BYTES
+LOG = logging.getLogger("wasteai.access")
 
 
 @router.post("/classify")
@@ -33,9 +35,11 @@ async def classify(request: Request, image: UploadFile = File(...), lang: str = 
     try:
         data = imaging.prepare(raw)
     except Exception as exc:
-        return build_error(
-            getattr(exc, "code", "invalid_image"), lang, rid
-        )
+        code = getattr(exc, "code", "invalid_image")
+        # log scrub: stable code and exception class only, never message, bytes or filename
+        LOG.info("upload_rejected", extra={"event": "upload_rejected", "request_id": rid,
+                                           "detail": f"{code}:{type(exc).__name__}"})
+        return build_error(code, lang, rid)
     del raw
     t0 = time.perf_counter()
     orch = get_orchestrator(request.app)
@@ -62,6 +66,8 @@ async def classify(request: Request, image: UploadFile = File(...), lang: str = 
     except Exception as exc:
         if getattr(exc, "code", None) == "overloaded":
             return build_error("overloaded", lang, rid, {"Retry-After": "2"})
+        LOG.error("classify_failed", extra={"event": "classify_failed", "request_id": rid,
+                                            "detail": type(exc).__name__})
         return build_error("internal_error", lang, rid)
     finally:
         data.close()

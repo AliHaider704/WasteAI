@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import io
+import warnings
 from dataclasses import dataclass
 
 from PIL import Image, ImageOps, UnidentifiedImageError
@@ -11,8 +12,12 @@ from PIL import Image, ImageOps, UnidentifiedImageError
 MAX_BYTES = 2 * 1024 * 1024
 MAX_DECODE_SIDE = 1600
 MAX_SIDE = 1024
-MAX_PIXELS = 40_000_000
+MAX_PIXELS = 25_000_000  # pixel cap checked from the header, before any decode
 Image.MAX_IMAGE_PIXELS = MAX_PIXELS
+warnings.simplefilter("error", Image.DecompressionBombWarning)  # warning becomes a 400
+
+
+_FORMATS = {"jpeg": ("JPEG",), "png": ("PNG",), "webp": ("WEBP",)}
 
 
 class ImageError(Exception):
@@ -72,12 +77,17 @@ def prepare(data: bytes | bytearray) -> PreparedImage:
     """Validate and normalize an upload. Raises ImageError (413/415/400)."""
     if len(data) > MAX_BYTES:
         raise ImageError("image_too_large", 413)
-    if detect_type(bytes(data[:12])) is None:
+    kind = detect_type(bytes(data[:12]))
+    if kind is None:
         raise ImageError("unsupported_type", 415)
     src = None
     try:
         src = Image.open(io.BytesIO(bytes(data)))
+        if src.format not in _FORMATS.get(kind, ()):  # content must match its magic bytes
+            raise ImageError("unsupported_type", 415)
         if src.width * src.height > MAX_PIXELS:
+            raise ImageError("invalid_image", 400)
+        if getattr(src, "n_frames", 1) > 1:  # animated WebP/APNG: reject, one frame only
             raise ImageError("invalid_image", 400)
         if src.format == "JPEG":  # cheap downscaled decode for large JPEGs
             src.draft("RGB", (MAX_DECODE_SIDE, MAX_DECODE_SIDE))
@@ -86,7 +96,8 @@ def prepare(data: bytes | bytearray) -> PreparedImage:
         clean = _to_clean_rgb(oriented)
     except ImageError:
         raise
-    except (UnidentifiedImageError, OSError, ValueError, SyntaxError, Image.DecompressionBombError):
+    except (UnidentifiedImageError, OSError, ValueError, SyntaxError, MemoryError,
+            EOFError, Image.DecompressionBombError):
         raise ImageError("invalid_image", 400) from None
     finally:
         if src is not None:

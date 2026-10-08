@@ -44,7 +44,8 @@ def build_error(
     body = {"error": {"code": code if code in _table() else "internal_error",
                       "message": msg["ar"] if lang == "ar" else msg["en"],
                       "request_id": rid or ""}}
-    return JSONResponse(body, status_code=int(entry["http"]), headers=headers)
+    hdrs = {"Cache-Control": "no-store", **(headers or {})}
+    return JSONResponse(body, status_code=int(entry["http"]), headers=hdrs)
 
 
 def error_response(

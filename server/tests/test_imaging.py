@@ -73,3 +73,33 @@ def test_limiter_503_after_wait():
             pass
 
     asyncio.run(run())
+
+
+def test_animated_webp_rejected():
+    buf = io.BytesIO()
+    frames = [Image.new("RGB", (32, 32), c) for c in ((255, 0, 0), (0, 255, 0))]
+    frames[0].save(buf, "WEBP", save_all=True, append_images=frames[1:], duration=50)
+    with pytest.raises(ImageError) as e:
+        prepare(buf.getvalue())
+    assert (e.value.code, e.value.status) == ("invalid_image", 400)
+
+
+def test_pixel_cap_from_header(monkeypatch):
+    monkeypatch.setattr("app.imaging.MAX_PIXELS", 1000)
+    with pytest.raises(ImageError) as e:
+        prepare(_img_bytes("PNG", size=(100, 100)))
+    assert e.value.code == "invalid_image"
+
+
+def test_content_must_match_magic_bytes():
+    png = _img_bytes("PNG")
+    with pytest.raises(ImageError) as e:  # JPEG magic, PNG body
+        prepare(b"\xff\xd8\xff" + png[3:])
+    assert e.value.status in (400, 415)
+
+
+def test_error_body_shape_and_no_store():
+    from app.errors import build_error
+    r = build_error("invalid_image", "en", "rid1")
+    assert r.headers["cache-control"] == "no-store"
+    assert b"rid1" in r.body and b"Traceback" not in r.body

@@ -374,8 +374,8 @@ function bind() {
       handleFile(file, source);
     });
   });
-  ui.panel.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && state.mode !== "loading") closePanel(true);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && state.mode !== "idle" && state.mode !== "loading") closePanel(true);
   });
   window.addEventListener("hashchange", () => {
     if (state.mode !== "idle" && state.mode !== "loading") closePanel(false);

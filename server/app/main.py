@@ -94,11 +94,15 @@ async def _validation(request: Request, exc: RequestValidationError):
 
 @app.exception_handler(StarletteHTTPException)
 async def _http(request: Request, exc: StarletteHTTPException):
+    if exc.status_code == 413:
+        return error_response(request, "image_too_large")
     return error_response(request, "invalid_request" if exc.status_code < 500 else "internal_error")
 
 
 @app.exception_handler(Exception)
 async def _unexpected(request: Request, exc: Exception):
+    ACCESS_LOG.error("unhandled", extra={"event": "unhandled", "detail": type(exc).__name__,
+                                         "request_id": getattr(request.state, "request_id", None)})
     return error_response(request, "internal_error")
 
 
