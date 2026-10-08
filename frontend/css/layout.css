@@ -117,3 +117,11 @@ button.bin:focus-visible { outline: 3px solid var(--color-focus); outline-offset
   h1 { font-size: 2rem; }
   .actions > .btn--primary { min-block-size: 3.25rem; font-size: 1.125rem; }
 }
+
+/* ---- Desktop header: full-width bar, brand at the start edge, tools at the end edge, one line ---- */
+@media (min-width: 1024px) {
+  .app-header__inner { max-inline-size: 72rem; padding-inline: 2rem; padding-block: 0.625rem; }
+  .app-header .brand { white-space: nowrap; font-size: 1.125rem; }
+  .toolbar { gap: 0.5rem; flex-shrink: 0; }
+  .app-header .icon-btn { min-block-size: 2.5rem; min-inline-size: 2.5rem; }
+}
