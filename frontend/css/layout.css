@@ -103,3 +103,23 @@ button.bin:focus-visible { outline: 3px solid var(--color-focus); outline-offset
   button.bin:hover { transform: rotate(-2deg) translateY(-2px); text-decoration: underline; }
 }
 @media (prefers-reduced-motion: reduce) { button.bin { transition: none; } }
+
+/* ---- Desktop (>=768px): "Browse categories" moves below the bins; mobile order is unchanged ---- */
+@media (min-width: 768px) {
+  .view[data-view="home"] { display: flex; flex-direction: column; }
+  .view[data-view="home"] > .actions { display: contents; }
+  .view[data-view="home"] > .actions > .btn--primary { order: 1; margin-block-start: 1rem; }
+  .view[data-view="home"] > .actions > button.btn:not(.btn--primary) { order: 2; margin-block-start: 0.75rem; }
+  .view[data-view="home"] > .stamps__hint { order: 3; }
+  .view[data-view="home"] > .stamps { order: 4; }
+  .view[data-view="home"] > .actions > a.btn { order: 5; align-self: flex-start; margin-block-start: 1.5rem; }
+}
+
+/* ---- Desktop scale: 15px base, ~640px reading column, smaller focal button & h1 (standard desktop UI proportions) ---- */
+@media (min-width: 1024px) {
+  html { font-size: 93.75%; }
+  .app-header__inner, .app-main { max-inline-size: 40rem; }
+  .app-main { padding-block: 2rem 3rem; }
+  h1 { font-size: 2rem; }
+  .actions > .btn--primary { min-block-size: 3.25rem; font-size: 1.125rem; }
+}
