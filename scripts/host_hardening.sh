@@ -31,7 +31,7 @@ install_f2b() {
   command -v fail2ban-client >/dev/null 2>&1 || apt-get install -y fail2ban >/dev/null || { echo "apt failed"; exit 1; }
   cat > "$FILT" <<'EOF'
 [Definition]
-failregex = ^<HOST> - \S+ \[[^]]+\] "[A-Z]+ /api/[^"]*" 429 
+failregex = ^<HOST> -.*"[A-Z]+ /api/[^"]*" 429 
 ignoreregex =
 EOF
   cat > "$JAIL" <<EOF
@@ -43,7 +43,7 @@ port     = http,https
 maxretry = 5
 findtime = 60
 bantime  = 3600
-ignoreip = 127.0.0.1/8 ::1
+ignoreip = 127.0.0.1/8 ::1 $(curl -s --max-time 5 https://checkip.amazonaws.com)
 EOF
   fail2ban-client -t >/dev/null 2>&1 || { echo "fail2ban config test failed, rolling back"; rollback; exit 1; }
   systemctl enable --now fail2ban >/dev/null 2>&1
