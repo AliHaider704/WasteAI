@@ -3,6 +3,7 @@
 from functools import lru_cache
 from pathlib import Path
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -19,6 +20,11 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     llm_tiebreaker_enabled: bool = False
     llm_daily_cap: int = 20
+    # Source weights (D-031). Renormalized over the sources that answer.
+    w_local: float = Field(0.6, gt=0, le=1)
+    w_azure: float = Field(0.4, gt=0, le=1)
+    w_reciclapi: float = Field(0.2, gt=0, le=1)
+    w_llm: float = Field(0.3, gt=0, le=1)
     max_image_bytes: int = 2 * 1024 * 1024
     contract_dir: Path = REPO_ROOT / "contract"
     content_dir: Path = REPO_ROOT / "content"

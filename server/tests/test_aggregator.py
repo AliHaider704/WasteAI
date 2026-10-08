@@ -86,3 +86,45 @@ def test_calibrate_identity_and_monotone():
     assert aggregator.calibrate(s, 1.0) == s
     soft = aggregator.calibrate(s, 2.0)
     assert abs(sum(soft.values()) - 1) < 1e-9 and soft["a"] < 0.7 and soft["a"] > soft["b"]
+
+
+# --- A24: configurable weights (D-031) ---
+def _with_weights(monkeypatch, **env):
+    from app import config
+
+    for k, v in env.items():
+        monkeypatch.setenv(k, str(v))
+    config.get_settings.cache_clear()
+
+
+def test_default_weights_local_heavy(monkeypatch):
+    from app import config
+
+    for k in ("W_LOCAL", "W_AZURE"):
+        monkeypatch.delenv(k, raising=False)
+    config.get_settings.cache_clear()
+    w = aggregator.weights()
+    assert w["local_onnx"] > w["azure"]
+    config.get_settings.cache_clear()
+
+
+def test_cloud_heavy_flips_disagreement(monkeypatch):
+    from app import config
+
+    s = {"local_onnx": {"glass": 0.9, "paper": 0.1},
+         "azure": {"paper": 0.9, "glass": 0.1}}
+    _with_weights(monkeypatch, W_LOCAL=0.6, W_AZURE=0.4)
+    assert aggregator.combine(s)["glass"] > aggregator.combine(s)["paper"]
+    _with_weights(monkeypatch, W_LOCAL=0.4, W_AZURE=0.6)
+    c = aggregator.combine(s)
+    assert c["paper"] > c["glass"]
+    config.get_settings.cache_clear()
+
+
+def test_weights_renormalized_single_source(monkeypatch):
+    from app import config
+
+    _with_weights(monkeypatch, W_LOCAL=0.4, W_AZURE=0.6)
+    c = aggregator.combine({"azure": {"glass": 0.8, "paper": 0.2}})
+    assert abs(sum(c.values()) - 1.0) < 1e-9
+    config.get_settings.cache_clear()

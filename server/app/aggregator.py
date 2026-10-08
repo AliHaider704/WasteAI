@@ -4,6 +4,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+# Baseline weights (D-031). Runtime values come from env W_LOCAL, W_AZURE,
+# W_RECICLAPI, W_LLM via weights(). Defaults stay local-heavy until the A23/A24
+# field report shows a cloud-heavy setting (e.g. W_AZURE=0.6, W_LOCAL=0.4) is not
+# worse. Rollback: unset the env vars (or set 0.4 / 0.6) and restart the service.
 WEIGHTS = {"local_onnx": 0.6, "azure": 0.4, "reciclapi": 0.2, "llm": 0.3}
 # Baseline values (A5/A7a, before A14): TEMPERATURE 1.0, OK_MIN 0.65,
 # SINGLE_OK_MIN 0.80, HAZARD_MIN 0.35. Change only from field data
@@ -59,12 +63,27 @@ def _top_id(scores: dict[str, float]) -> str:
     return max(scores.items(), key=lambda kv: (kv[1], kv[0]))[0]
 
 
+def weights() -> dict[str, float]:
+    """Source weights: config (env) overrides the baseline table."""
+    from .config import get_settings
+
+    st = get_settings()
+    w = {
+        "local_onnx": st.w_local,
+        "azure": st.w_azure,
+        "reciclapi": st.w_reciclapi,
+        "llm": st.w_llm,
+    }
+    return {k: v for k, v in w.items()}
+
+
 def combine(scores: dict[str, dict[str, float]]) -> dict[str, float]:
     """Weighted mean over the sources that answered (weights renormalized)."""
-    total = sum(WEIGHTS.get(name, 0.2) for name in scores)
+    wt = weights()
+    total = sum(wt.get(name, 0.2) for name in scores)
     out: dict[str, float] = {}
     for name, cats in scores.items():
-        w = WEIGHTS.get(name, 0.2) / total
+        w = wt.get(name, 0.2) / total
         for cat, val in cats.items():
             out[cat] = out.get(cat, 0.0) + w * val
     return out
