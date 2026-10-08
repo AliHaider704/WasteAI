@@ -3,12 +3,14 @@
 
 Checks: category ID coverage vs contract/categories.json, ar/en parity, 3-5 steps, hazard warnings,
 frontend/i18n ar/en key parity, i18n keys used in the frontend exist, and the 500-line file limit.
+index.html shell rules (translatable attributes, no hardcoded text),
 UI leak scan (raw keys, {n}, merge markers) lives in check_ui_leaks.py.
 Exit code 1 if any error is found.
 """
 import json
 import re
 import sys
+from html.parser import HTMLParser
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -171,6 +173,52 @@ def rule_labels():
     return found | set(stop.get("stop", []))
 
 
+ATTRS = ("aria-label", "placeholder", "title", "alt")
+SKIP_TEXT = {"script", "style", "noscript", "title"}
+
+
+class ShellScan(HTMLParser):
+    """Collects shell problems: untranslated attributes and text nodes outside data-i18n elements."""
+
+    def __init__(self):
+        super().__init__()
+        self.problems = []
+        self.stack = []  # (tag, translated?)
+
+    def handle_starttag(self, tag, attrs):
+        a = dict(attrs)
+        mapped = {p.split(":")[0].strip() for p in a.get("data-i18n-attr", "").split(";") if ":" in p}
+        for name in ATTRS:
+            if name in a and name not in mapped:
+                self.problems.append(f"index.html line {self.getpos()[0]}: <{tag} {name}> must use data-i18n-attr")
+        if tag in ("meta", "link", "br", "img", "input", "use", "source"):
+            return
+        parent = self.stack[-1][1] if self.stack else False
+        self.stack.append((tag, parent or "data-i18n" in a or tag in SKIP_TEXT))
+
+    def handle_endtag(self, tag):
+        if self.stack and self.stack[-1][0] == tag:
+            self.stack.pop()
+
+    def handle_data(self, data):
+        if data.strip() and not (self.stack and self.stack[-1][1]):
+            self.problems.append(f"index.html line {self.getpos()[0]}: hardcoded text {data.strip()[:40]!r}")
+
+
+def check_index_shell():
+    path = ROOT / "frontend" / "index.html"
+    html = path.read_text(encoding="utf-8")
+    scan = ShellScan()
+    scan.feed(re.sub(r"<!--.*?-->|<!DOCTYPE[^>]*>", "", html, flags=re.S))
+    for message in scan.problems:
+        err(message)
+    root = re.search(r"<html[^>]*>", html)
+    if not root or "data-i18n-pending" not in root.group(0) or "lang=" not in root.group(0) or "dir=" not in root.group(0):
+        err("index.html: <html> needs lang, dir and data-i18n-pending")
+    if not re.search(r"<noscript>[^<]*</noscript>|<noscript>.*?lang=\"ar\".*?lang=\"en\"", html, re.S):
+        err("index.html: <noscript> needs a message in Arabic and in English")
+
+
 def check_labels():
     dicts = {}
     for lang in LANGS:
@@ -206,6 +254,7 @@ def main():
     check_parity(ids, ar, en)
     check_i18n()
     check_text_rules()
+    check_index_shell()
     check_labels()
     check_line_limits()
     if errors:
