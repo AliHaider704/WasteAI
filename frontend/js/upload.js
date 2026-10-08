@@ -6,6 +6,7 @@
 import { classify, ApiError, store } from "./api.js";
 import { log } from "./log.js";
 import { createConsent } from "./consent.js";
+import { openBatch, setPrepare } from "./batch.js";
 import { isCameraSupported, startCamera, stopCamera, grabFrame } from "./camera.js";
 
 const MAX_SIDE = 1024;
@@ -32,6 +33,7 @@ function fileInput(capture) {
   input.accept = "image/*";
   if (capture) input.setAttribute("capture", "environment");
   input.hidden = true;
+  if (!capture) input.multiple = true; // gallery: up to MAX_PHOTOS at once
   return input;
 }
 
@@ -191,6 +193,23 @@ function showPreview(blob, source) {
   say("");
   setMode("preview");
   ui.analyze.focus();
+}
+
+async function toJpeg(file) {
+  const bitmap = await decode(file);
+  const blob = await resizeToJpeg(bitmap, bitmap.width, bitmap.height);
+  if (bitmap.close) bitmap.close();
+  return blob;
+}
+
+function handleFiles(files, source) {
+  const list = Array.from(files || []);
+  if (list.length > 1) {
+    if (state.mode !== "idle") closePanel(false);
+    openBatch(list.slice(0, 40), toJpeg); // batch.js keeps the first MAX_PHOTOS images
+    return;
+  }
+  handleFile(list[0], source);
 }
 
 async function handleFile(file, source) {
@@ -377,12 +396,12 @@ function bindDragAndDrop() {
   home.addEventListener("drop", (e) => {
     e.preventDefault();
     home.classList.remove("is-dragover");
-    const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-    handleFile(file, "drop");
+    handleFiles(e.dataTransfer && e.dataTransfer.files, "drop");
   });
 }
 
 function bind() {
+  setPrepare(toJpeg);
   document.addEventListener("click", (e) => {
     const trigger = e.target.closest("[data-action]");
     if (!trigger) return;
@@ -400,9 +419,10 @@ function bind() {
   ui.cancel.addEventListener("click", () => closePanel(true));
   [[ui.fileCapture, "capture"], [ui.fileGallery, "gallery"]].forEach(([input, source]) => {
     input.addEventListener("change", () => {
-      const file = input.files && input.files[0];
+      const files = input.files;
+      const list = Array.from(files || []);
       input.value = "";
-      handleFile(file, source);
+      handleFiles(list, source);
     });
   });
   document.addEventListener("keydown", (e) => {
