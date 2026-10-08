@@ -7,6 +7,7 @@ import "./theme.js";
 import "./header-scroll.js";
 import "./contrast.js";
 import "./upload.js";
+import "./dropzone.js";
 import "./results.js";
 import "./bininfo.js";
 import "./audio.js";

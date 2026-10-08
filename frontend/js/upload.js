@@ -383,20 +383,15 @@ function onScan() {
 }
 
 function bindDragAndDrop() {
-  const home = ui.home;
-  ["dragenter", "dragover"].forEach((type) =>
-    home.addEventListener(type, (e) => {
-      e.preventDefault();
-      home.classList.add("is-dragover");
-    })
-  );
-  home.addEventListener("dragleave", (e) => {
-    if (!home.contains(e.relatedTarget)) home.classList.remove("is-dragover");
-  });
-  home.addEventListener("drop", (e) => {
+  const hasFiles = (e) => e.dataTransfer && Array.from(e.dataTransfer.types || []).includes("Files");
+  // Document-wide, so a missed drop never makes the browser open the file.
+  document.addEventListener("dragover", (e) => { if (hasFiles(e)) e.preventDefault(); });
+  document.addEventListener("drop", (e) => {
+    if (!hasFiles(e)) return;
     e.preventDefault();
-    home.classList.remove("is-dragover");
-    handleFiles(e.dataTransfer && e.dataTransfer.files, "drop");
+    if (state.mode === "loading") return;
+    if (location.hash && location.hash !== "#/") location.hash = "#/";
+    handleFiles(e.dataTransfer.files, "drop");
   });
 }
 

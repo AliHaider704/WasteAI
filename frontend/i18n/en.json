@@ -136,5 +136,8 @@
   "batch.photo_alt": "Photo {n}",
   "batch.progress": "{done} of {total} done",
   "batch.summary": "{ok} identified, {unsure} unsure, {fail} failed",
-  "batch.slowdown": "Too many requests. Paused to protect the limit. Wait a minute, then start again."
+  "batch.slowdown": "Too many requests. Paused to protect the limit. Wait a minute, then start again.",
+  "drop.stamp": "Drop to analyze",
+  "drop.title": "Release your photos here",
+  "drop.hint": "Up to 10 photos at once. Only image files are accepted."
 }
