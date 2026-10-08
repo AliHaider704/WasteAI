@@ -53,6 +53,7 @@ server {
         location = /api/v1/classify {
             limit_req zone=wasteai burst=3 nodelay;
             limit_req_status 429;
+            error_page 413 = @too_large;
             error_page 429 = @rate_limited;
             proxy_pass http://127.0.0.1:__PORT__;
         }
@@ -60,6 +61,7 @@ server {
         location = /api/v1/feedback {
             limit_req zone=wasteai_fb burst=3 nodelay;
             limit_req_status 429;
+            error_page 413 = @too_large;
             error_page 429 = @rate_limited;
             proxy_pass http://127.0.0.1:__PORT__;
         }
@@ -67,6 +69,7 @@ server {
         location = /api/v1/log {
             limit_req zone=wasteai_log burst=10 nodelay;
             limit_req_status 429;
+            error_page 413 = @too_large;
             error_page 429 = @rate_limited;
             proxy_pass http://127.0.0.1:__PORT__;
         }
