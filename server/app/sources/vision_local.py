@@ -5,9 +5,11 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import time
 from pathlib import Path
 
 import numpy as np
+from PIL import Image
 
 from app.imaging import PreparedImage
 from app.sources.base import Source, SourceResult
@@ -44,6 +46,13 @@ def _softmax(x: np.ndarray) -> np.ndarray:
     return e / e.sum()
 
 
+def _to_probs(scores: np.ndarray) -> np.ndarray:
+    """Softmax only when the model did not already output probabilities."""
+    if scores.min() < 0 or scores.max() > 1 or abs(float(scores.sum()) - 1.0) > 1e-2:
+        return _softmax(scores)
+    return scores
+
+
 class VisionLocal(Source):
     name = "local_onnx"
 
@@ -56,6 +65,8 @@ class VisionLocal(Source):
         self._session = session  # injectable for tests
         self._input_name = ""
         self._nhwc = False
+        self.health = {"status": "down", "reason": "not_loaded", "checked_at": None,
+                       "latency_ms": None}
         if session is not None:
             self._bind()
 
@@ -90,6 +101,39 @@ class VisionLocal(Source):
         self._input_name = inp.name
         shape = list(inp.shape)
         self._nhwc = len(shape) == 4 and shape[-1] == 3
+        self.health = {"status": "up", "reason": "loaded", "checked_at": None, "latency_ms": None}
+
+    def mark_down(self, reason: str) -> None:
+        """Record a load failure as a short reason code (no paths)."""
+        self.health = {"status": "down", "reason": reason, "checked_at": int(time.time()),
+                       "latency_ms": None}
+
+    def selftest(self) -> dict:
+        """One real inference on a generated image; checks size, NaN and probabilities."""
+        t0 = time.perf_counter()
+        reason = "ok"
+        if not self.ready:
+            reason = "model_not_loaded"
+        else:
+            try:
+                img = Image.linear_gradient("L").resize((self.size, self.size)).convert("RGB")
+                x = self._preprocess(PreparedImage(img, "selftest"))
+                raw = np.asarray(self._session.run(None, {self._input_name: x})[0],
+                                 dtype=np.float32).reshape(-1)
+                if raw.size != len(self.labels):
+                    reason = "output_size_mismatch"
+                elif not np.isfinite(raw).all():
+                    reason = "nan_output"
+                elif abs(float(_to_probs(raw).sum()) - 1.0) > 1e-2:
+                    reason = "bad_probabilities"
+            except Exception as exc:
+                reason = f"inference_error:{type(exc).__name__}"
+        self.health = {
+            "status": "up" if reason == "ok" else "down", "reason": reason,
+            "checked_at": int(time.time()),
+            "latency_ms": int((time.perf_counter() - t0) * 1000),
+        }
+        return self.health
 
     def _preprocess(self, prepared: PreparedImage) -> np.ndarray:
         img = prepared.image.resize((self.size, self.size))
@@ -105,8 +149,9 @@ class VisionLocal(Source):
     def _infer(self, prepared: PreparedImage) -> list[dict]:
         out = self._session.run(None, {self._input_name: self._preprocess(prepared)})[0]
         scores = np.asarray(out, dtype=np.float32).reshape(-1)
-        if scores.min() < 0 or scores.max() > 1 or abs(float(scores.sum()) - 1.0) > 1e-2:
-            scores = _softmax(scores)
+        if not np.isfinite(scores).all():
+            raise LocalModelError("nan_output")
+        scores = _to_probs(scores)
         k = min(3, len(self.labels), len(scores))
         idx = np.argsort(scores)[::-1][:k]
         return [{"label": self.labels[i], "score": round(float(scores[i]), 4)} for i in idx]

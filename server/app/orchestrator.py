@@ -1,6 +1,7 @@
 # File: server/app/orchestrator.py
 import asyncio
 import inspect
+import logging
 import time
 
 from app import aggregator, catalog, mapper
@@ -8,6 +9,7 @@ from app.sources.vision_azure import VisionAzure
 from app.sources.vision_llm import VisionLLM
 from app.sources.vision_reciclapi import VisionReciclAPI
 
+LOG = logging.getLogger("wasteai.health")
 TIMEOUT = 6.0
 ALT_SHOWN = 2
 
@@ -59,9 +61,34 @@ class Orchestrator:
         if recicl.enabled:
             self.sources.append(("reciclapi", recicl))
 
+    def local_status(self) -> str:
+        if self.local is None:
+            return "down"
+        return getattr(self.local, "health", {}).get("status", "up")
+
+    async def startup_selftests(self) -> dict:
+        """Run at startup: real local inference + cheap Azure check; logs source_status."""
+        if self.local is not None and hasattr(self.local, "selftest"):
+            await asyncio.to_thread(self.local.selftest)
+        LOG.info("source_status", extra={"event": "source_status", "source_status": self.statuses()})
+        return self.statuses()
+
+    async def deep(self) -> dict:
+        """Admin view: re-run the local self-test, hourly real Azure call, quota use."""
+        local = {"status": "down", "reason": "not_loaded"}
+        if self.local is not None and hasattr(self.local, "selftest"):
+            local = await asyncio.to_thread(self.local.selftest)
+        azure = await self.azure.deep_check()
+        try:
+            from app import quota
+            azure["quota_used"], azure["quota_limit"] = quota.used(), quota.LIMIT
+        except Exception:
+            azure["quota_used"] = None
+        return {"local_onnx": local, "azure": azure}
+
     def statuses(self) -> dict:
         return {
-            "local_onnx": "up" if self.local is not None else "down",
+            "local_onnx": self.local_status(),
             "azure": self.azure.status(),
             "reciclapi": "up" if self.recicl.enabled else "disabled",
             "llm": self.llm.status() if self.llm is not None else "disabled",
@@ -75,6 +102,11 @@ class Orchestrator:
         results = await asyncio.gather(*[_call(n, s, data) for n, s in self.sources])
         if not any(ok for _, ok, _ in results):
             raise AllSourcesFailed
+        answered = [n for n, ok, _ in results if ok]
+        if len(self.sources) > 1 and len(answered) == 1:
+            LOG.warning("degraded", extra={
+                "event": "degraded", "request_id": request_id,
+                "source_status": {n: ok for n, ok, _ in results}})
         cats = catalog.by_id(lang)
         usable = {}
         for name, ok, pairs in results:
@@ -161,7 +193,11 @@ def build_orchestrator() -> Orchestrator:
         from app.sources.vision_local import VisionLocal
 
         local = VisionLocal.from_env()
-        local.load()
+        try:
+            local.load()
+        except Exception as exc:
+            local.mark_down("model_file_missing" if "not found" in str(exc)
+                            else f"load_error:{type(exc).__name__}")
     except Exception:
         local = None
     return Orchestrator(local, VisionAzure.from_env(), VisionReciclAPI.from_env(),

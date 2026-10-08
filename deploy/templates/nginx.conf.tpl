@@ -50,6 +50,12 @@ server {
         proxy_read_timeout 15s;
         proxy_pass http://127.0.0.1:__PORT__;
 
+        location = /api/v1/health/deep {
+            allow 127.0.0.1;
+            deny all;
+            proxy_pass http://127.0.0.1:__PORT__;
+        }
+
         location = /api/v1/classify {
             limit_req zone=wasteai burst=3 nodelay;
             limit_req_status 429;

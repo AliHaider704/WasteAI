@@ -66,6 +66,8 @@ function iconNode(name) {
   const svg = document.createElementNS(SVG_NS, "svg");
   svg.setAttribute("class", "icon result__icon");
   svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("width", "32");
+  svg.setAttribute("height", "32");
   const use = document.createElementNS(SVG_NS, "use");
   use.setAttribute("href", `assets/category-icons.svg#${name}`);
   svg.append(use);

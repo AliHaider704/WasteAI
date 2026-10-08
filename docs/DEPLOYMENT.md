@@ -36,10 +36,14 @@ A second run changes nothing.
 
 Run `bash deploy/install.sh --fix-owner` after any `sudo` file edit in the project.
 
-## Edge hardening (A11)
+## Edge hardening (A11, A17)
 - Every location sends the same headers: `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, and a CSP with `script-src 'self'`, `style-src 'self'`, `base-uri 'none'`, `form-action 'self'`, `frame-ancestors 'none'`.
 - Bodies over 3 MB get the contract JSON `image_too_large` (HTTP 413), in Arabic when `?lang=ar`.
 - `/api/v1/classify`: 10 requests per minute per address, `burst=3 nodelay`; extra requests get HTTP 429, `Retry-After: 6` and the contract JSON `rate_limited`. The app limiter stays as second line.
+- A17 headers (same snippet, every location): `Cross-Origin-Opener-Policy: same-origin`, `Cross-Origin-Resource-Policy: same-origin`, `Strict-Transport-Security: max-age=31536000` (no `preload`; browsers ignore it over plain HTTP, so it only acts on the 443 block).
+- A17 caching: `Cache-Control: no-cache` for `/` (index, `/js/`, `/css/`, `/i18n/`) and for `.svg`; `public, max-age=31536000, immutable` only under `/assets/fonts/`.
+- A17 limits: `server_tokens off`; `client_header_timeout` and `client_body_timeout` 10 s, `send_timeout` 15 s; `limit_conn` 20 per address; `/api/v1/feedback` 6 requests per minute (`burst=3`) and `/api/v1/log` 20 requests per minute (`burst=10`), both with 429, `Retry-After: 6` and the contract JSON `rate_limited`.
+- Every nested `/api/` location that sets its own `error_page` must also repeat `error_page 413 = @too_large;` (nginx does not inherit `error_page` into a location that defines one; otherwise nginx sends its HTML 413 page).
 - Checks: `curl -sI https://<DOMAIN>/assets/icons.svg | grep -i "content-security-policy\|x-content-type"`; `head -c 3500000 /dev/zero > /tmp/big.jpg; curl -s -F image=@/tmp/big.jpg https://<DOMAIN>/api/v1/classify`; 12 quick `curl` calls to `/api/v1/classify` end with 429.
 
 ## State

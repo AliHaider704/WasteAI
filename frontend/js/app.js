@@ -40,6 +40,20 @@ function writeFilters() {
   history.replaceState(null, "", `#/browse${qs ? `?${qs}` : ""}`);
 }
 
+function iconNode(name) {
+  if (!name) return null;
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("class", "icon card__icon");
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("width", "32");
+  svg.setAttribute("height", "32");
+  const use = document.createElementNS(NS, "use");
+  use.setAttribute("href", `assets/category-icons.svg#${name}`);
+  svg.append(use);
+  return svg;
+}
+
 let firstRender = true;
 function renderRouteUnsafe() {
   const name = currentRoute();
@@ -122,6 +136,8 @@ function renderList() {
     const title = document.createElement("h2");
     title.className = "card__title";
     setRich(title, cat.name);
+    const icon = iconNode(cat.icon);
+    if (icon) li.append(icon);
     li.append(title);
     if (cat.summary) {
       const p = document.createElement("p");

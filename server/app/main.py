@@ -1,5 +1,6 @@
 # File: server/app/main.py
 """FastAPI entry point: uvicorn app.main:app --port 8100"""
+import asyncio
 import logging
 import time
 import uuid
@@ -35,7 +36,12 @@ ACCESS_LOG = logging.getLogger("wasteai.access")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup: build the orchestrator (loads the model if active), purge old cache rows."""
-    get_orchestrator(app)
+    orch = get_orchestrator(app)
+    try:  # self-tests must never block startup beyond 10 s
+        await asyncio.wait_for(orch.startup_selftests(), 10)
+    except Exception as exc:
+        ACCESS_LOG.warning("selftest_skipped", extra={"event": "selftest_skipped",
+                                                      "source_status": {"error": type(exc).__name__}})
     await cache.purge_expired()
     yield
 

@@ -105,3 +105,4 @@ h1:focus-visible { outline-offset: 4px; }
 @media (prefers-reduced-motion: no-preference) {
   .btn, .icon-btn, .chip { transition: background-color 150ms ease-out, border-color 150ms ease-out; }
 }
+.card__icon { inline-size: 2rem; block-size: 2rem; }

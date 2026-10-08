@@ -3,6 +3,7 @@
 
 Checks: category ID coverage vs contract/categories.json, ar/en parity, 3-5 steps, hazard warnings,
 frontend/i18n ar/en key parity, i18n keys used in the frontend exist, and the 500-line file limit.
+UI leak scan (raw keys, {n}, merge markers) lives in check_ui_leaks.py.
 Exit code 1 if any error is found.
 """
 import json

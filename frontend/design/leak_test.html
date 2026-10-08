@@ -1,0 +1,36 @@
+<!-- File: frontend/design/leak_test.html -->
+<!doctype html>
+<!-- Dev-only. Serve frontend/ over HTTP and open /design/leak_test.html. Loads the app for ar and en,
+     waits for the dictionary, and fails (red banner) if rendered text looks like a raw key, {n}, merge marker, undefined or [object. -->
+<html lang="en"><head><meta charset="utf-8"><title>UI leak test</title>
+<style>body{font:16px system-ui;margin:1rem}.ok{background:#cfe8cf}.bad{background:#f4b4b4;font-weight:600}
+.row{padding:.5rem;margin:.25rem 0}iframe{inline-size:100%;block-size:16rem;border:1px solid #888}</style></head>
+<body><h1>UI leak test</h1><div id="out"></div>
+<script>
+// Dev tool: strings below are test fixtures, not UI text.
+const BAD = /\b[a-z]+\.[a-z_.]+\b|\{n\}|<<<<|\bundefined\b|\[object/;
+const ROUTES = ["#/", "#/browse"];
+const out = document.getElementById("out");
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+async function run() {
+  for (const lang of ["ar", "en"]) {
+    try { localStorage.setItem("wasteai.lang", lang); } catch (e) {}
+    for (const route of ROUTES) {
+      const frame = document.createElement("iframe");
+      frame.src = "../index.html" + route;
+      document.body.append(frame);
+      await new Promise((r) => frame.addEventListener("load", r, { once: true }));
+      await wait(1800);
+      const doc = frame.contentDocument;
+      const text = doc.body.innerText;
+      const hit = text.match(BAD);
+      const row = document.createElement("div");
+      row.className = "row " + (hit ? "bad" : "ok");
+      row.textContent = `${lang} ${route} lang=${doc.documentElement.lang}: ` + (hit ? `FAIL "${hit[0]}"` : "OK");
+      out.append(row);
+      frame.remove();
+    }
+  }
+}
+run();
+</script></body></html>
