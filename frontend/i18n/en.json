@@ -108,5 +108,14 @@
   "countdown.ready": "You can try again now.",
   "source.llm": "Optional cloud AI model (used with your consent)",
   "consent.label": "Also send this photo to a Google AI model when the result is unclear. This is optional, Google staff may review it, and this app does not store it.",
-  "consent.note": "Applies to this photo only."
+  "consent.note": "Applies to this photo only.",
+  "home.bins_hint": "Tap a bin to see what goes in it and how to prepare it.",
+  "bininfo.close": "Close",
+  "bininfo.accepts": "What goes in",
+  "bininfo.rejects": "What stays out",
+  "bininfo.prepare": "Before you drop it",
+  "bininfo.covers": "Categories in this app",
+  "bininfo.why": "Why it matters",
+  "bininfo.note": "Bin colors here are a guide. Your municipality may use other colors or rules, so follow the signs on your local bins.",
+  "bininfo.error": "Could not load the bin details."
 }

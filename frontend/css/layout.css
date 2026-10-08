@@ -91,3 +91,15 @@ body {
   .app-header .icon-btn .icon { inline-size: 1.25rem; block-size: 1.25rem; }
 }
 @media (prefers-reduced-motion: reduce) { .app-header { transition: none; } }
+
+/* ---- Home: bin chips are buttons that open the bin details ---- */
+.stamps__hint { margin-block: 2rem 0; font-size: var(--fs-sm); }
+.stamps__hint + .stamps { margin-block-start: 0.75rem; }
+button.bin { font: inherit; font-size: var(--fs-sm); font-weight: var(--fw-medium); cursor: pointer; min-block-size: 2.75rem; padding-inline: 0.875rem; }
+button.bin:active { transform: rotate(-2deg) translateY(1px); }
+button.bin:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+@media (hover: hover) {
+  button.bin { transition: transform var(--dur-fast, 150ms) var(--ease-out, ease-out); }
+  button.bin:hover { transform: rotate(-2deg) translateY(-2px); text-decoration: underline; }
+}
+@media (prefers-reduced-motion: reduce) { button.bin { transition: none; } }

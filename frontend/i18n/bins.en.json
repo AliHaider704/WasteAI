@@ -1,0 +1,194 @@
+{
+  "_path": "frontend/i18n/bins.en.json",
+  "bins": {
+    "blue": {
+      "tagline": "Plastic bottles, tubs and containers",
+      "definition": "The blue bin is for plastic packaging: the bottles, jugs, tubs and trays most homes throw away every day. A sorting plant separates plastic by type later, so your part is simple. Keep it empty, rinsed and apart from everything else.",
+      "accepts": [
+        "Water, juice and soft-drink bottles",
+        "Bottles of shampoo, detergent and cleaning liquid",
+        "Yogurt tubs, margarine tubs and food trays",
+        "Plastic jugs and containers marked with a recycling number from 1 to 7",
+        "Clean plastic caps, screwed back onto the bottle"
+      ],
+      "rejects": [
+        "Plastic bags and wrapping film, which need a separate drop-off point",
+        "Containers that held motor oil, paint or pesticides (they belong in the red bin)",
+        "Food-soiled plastic you cannot rinse clean",
+        "Number 3 (PVC) and number 6 (PS, foam) plastics are often refused by local collectors, so check first"
+      ],
+      "prepare": [
+        "Empty it completely",
+        "Rinse with a little water; there is no need to scrub",
+        "Squeeze out the air and put the cap back on, so more fits in the bin",
+        "Leave the label on; the plant removes it"
+      ],
+      "why": "Plastic that is clean and sorted can become new containers, fibers and pipes. A greasy tub can spoil the clean plastic around it, so a quick rinse makes a real difference."
+    },
+    "yellow": {
+      "tagline": "Paper, cardboard and drink cartons",
+      "definition": "The yellow bin takes paper-based packaging and printed paper. Its one rule is to stay dry and clean, because paper fibers are only worth recycling while they are in good condition.",
+      "accepts": [
+        "Newspapers, magazines, office paper and envelopes",
+        "Cardboard boxes, flattened",
+        "Egg cartons and paper bags",
+        "Milk and juice cartons, rinsed and flattened",
+        "Notebooks and paperback books, with plastic covers removed"
+      ],
+      "rejects": [
+        "Greasy or food-stained paper, such as the bottom of a pizza box",
+        "Used tissues, napkins and paper towels",
+        "Wet, moldy or burnt paper",
+        "Paper coated with plastic or foil, such as many snack wrappers"
+      ],
+      "prepare": [
+        "Keep it dry until collection",
+        "Flatten boxes and cartons to save space",
+        "Pull off large pieces of tape and plastic windows",
+        "Rinse cartons and let them drain"
+      ],
+      "why": "Wet or greasy paper is hard to recycle and can spoil the clean paper around it. Keeping paper dry is the single most useful habit for this bin."
+    },
+    "green": {
+      "tagline": "Glass bottles and jars",
+      "definition": "The green bin is for glass packaging only. Bottle and jar glass can be melted and made into new glass again and again without losing quality, as long as it is not mixed with other materials.",
+      "accepts": [
+        "Drink bottles of any color",
+        "Food jars: sauce, jam, pickles and spreads",
+        "Perfume and cosmetic bottles, once empty",
+        "Clean medicine bottles with no liquid left inside"
+      ],
+      "rejects": [
+        "Ceramics, porcelain, cups and plates",
+        "Mirrors and window glass",
+        "Light bulbs and tubes (take them to a special collection point)",
+        "Heat-resistant glass such as oven dishes, which melts at a different temperature"
+      ],
+      "prepare": [
+        "Empty it and give it a quick rinse",
+        "Remove lids; metal lids go in the grey bin",
+        "Labels can stay on",
+        "Wrap broken glass in thick paper and mark the package, so collectors are not hurt"
+      ],
+      "why": "One piece of ceramic or oven glass can cause defects in a whole batch of new glass. Keeping the bin pure is what makes glass recycling work."
+    },
+    "grey": {
+      "tagline": "Cans, tins and scrap metal",
+      "definition": "The grey bin holds metal packaging and small metal items. Metal is valuable: it can be recycled many times, and making it from recycled material takes far less energy than making it from ore.",
+      "accepts": [
+        "Aluminum drink cans",
+        "Steel food tins",
+        "Clean aluminum foil and trays",
+        "Metal jar lids and bottle caps",
+        "Small scrap such as old pots and cutlery"
+      ],
+      "rejects": [
+        "Cans that held paint or chemicals (red bin)",
+        "Aerosol cans that still contain product",
+        "Batteries and electronics (special collection)",
+        "Large scrap such as pipes, appliances and car parts; sell or give these to a scrap collector"
+      ],
+      "prepare": [
+        "Empty and rinse it",
+        "Press sharp lid edges inward",
+        "Scrunch foil into a ball so it does not blow away",
+        "Keep metal away from food waste"
+      ],
+      "why": "Aluminum saves the most energy when recycled, and scrap metal also has market value, so collectors in many areas will take it from you."
+    },
+    "brown": {
+      "tagline": "Food scraps, garden waste and clean wood",
+      "definition": "The brown bin is for material that was once alive and can rot back into soil. Composted properly, it becomes a natural soil improver instead of a pile of smelly waste.",
+      "accepts": [
+        "Fruit and vegetable peels and leftovers",
+        "Coffee grounds, tea bags and eggshells",
+        "Leaves, grass clippings and small branches",
+        "Untreated wood offcuts and sawdust"
+      ],
+      "rejects": [
+        "Plastic and plastic bags, including ones labeled as biodegradable",
+        "Cooking oil and large amounts of grease",
+        "Pet waste and diapers (black bin)",
+        "Painted, varnished or treated wood (special collection)"
+      ],
+      "prepare": [
+        "Drain off liquid before it goes in",
+        "Wrap scraps in paper, never in a plastic bag",
+        "Cut branches into short pieces",
+        "Keep a lid on the kitchen container to limit smells and flies"
+      ],
+      "why": "Food buried in a landfill rots without air and gives off methane, a strong greenhouse gas. Sent to compost, the same scraps feed the soil."
+    },
+    "special": {
+      "tagline": "Electronics, batteries, textiles and building waste",
+      "definition": "This is not a bin you fill at home. It stands for items that need a collection point or a pickup of their own, because they hold valuable parts, or because they do not belong in ordinary waste at all.",
+      "accepts": [
+        "Phones, chargers, cables and other small electronics",
+        "Large appliances such as TVs, fridges and washing machines",
+        "Batteries of every kind",
+        "Clothes, shoes and fabric; give wearable items away first",
+        "Rubble, tiles and plasterboard from building work"
+      ],
+      "rejects": [
+        "Ordinary household waste",
+        "Liquids such as paint and solvents (red bin)",
+        "Anything that is simply broken but still useful: repair or donate it first"
+      ],
+      "prepare": [
+        "Tape the terminals of batteries with insulating tape",
+        "Do not open, crush or burn devices or batteries",
+        "Delete your personal data from phones and computers",
+        "Arrange a pickup for large items instead of leaving them on the street"
+      ],
+      "why": "Electronics and batteries contain metals worth recovering and substances that must not reach soil or water. A damaged battery can also start a fire inside a waste truck."
+    },
+    "red": {
+      "tagline": "Chemicals, medicines and medical waste",
+      "definition": "The red bin is a warning color. It is for items that can poison, burn or injure people, animals or water supplies. They need special handling and a proper collection point. Never pour them down the drain.",
+      "accepts": [
+        "Paint, thinners, solvents and pesticides",
+        "Used motor oil and strong cleaning chemicals",
+        "Expired or unused medicines, returned to a pharmacy",
+        "Needles and blades in a rigid, closed container",
+        "Used masks and gloves, sealed in a bag"
+      ],
+      "rejects": [
+        "Ordinary household waste",
+        "Chemicals mixed together in one container",
+        "Loose needles in a bag",
+        "Anything poured down a sink, toilet or into the soil"
+      ],
+      "prepare": [
+        "Keep chemicals in their original container with the label on",
+        "Never mix different products",
+        "Close caps tightly and store upright, away from heat and children",
+        "Use a thick plastic bottle with a lid as a sharps container, and mark it clearly"
+      ],
+      "why": "A small amount of chemical or medicine can contaminate a lot of water, and loose sharps injure the people who handle waste. When in doubt, check with your local authorities."
+    },
+    "black": {
+      "tagline": "Everything that cannot go anywhere else",
+      "definition": "The black bin is the last option. It takes ordinary waste that cannot be recycled, composted or collected separately, and it ends up in landfill. Before you use it, ask once: can this be reused, recycled or composted?",
+      "accepts": [
+        "Used tissues, napkins and hygiene products",
+        "Diapers and sealed pet waste",
+        "Broken ceramics, cups and plates",
+        "Greasy or soiled paper and food wrappers",
+        "Dust, sweepings and cooled ashes"
+      ],
+      "rejects": [
+        "Anything recyclable: check the other bins first",
+        "Batteries and electronics (special collection)",
+        "Chemicals, medicines and sharps (red bin)",
+        "Hot ashes or embers"
+      ],
+      "prepare": [
+        "Bag it and tie the bag tightly",
+        "Let ashes cool completely",
+        "Do not overfill, so the bag can be carried without tearing",
+        "Sort the rest of your waste first; this bin should be the smallest"
+      ],
+      "why": "Everything in this bin ends in landfill, so each item you send to another bin makes the pile smaller."
+    }
+  }
+}

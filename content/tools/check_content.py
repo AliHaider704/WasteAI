@@ -146,6 +146,7 @@ def check_text_rules():
     allowed = set(allow.get("tokens", [])) | set(allow.get("brands", []))
     files = [f"frontend/i18n/{lang}.json" for lang in LANGS] + [f"content/guidance.{lang}.json" for lang in LANGS]
     files += [f"frontend/i18n/labels.{lang}.json" for lang in LANGS]
+    files += [f"frontend/i18n/bins.{lang}.json" for lang in LANGS]
     for rel in files:
         data = load_json(ROOT / rel)
         lang = "ar" if ".ar." in rel or rel.endswith("/ar.json") else "en"
@@ -260,6 +261,40 @@ def check_source_names():
         err(f"allowlist brand '{extra}' is not used in source_names.json")
 
 
+BIN_LISTS = ("accepts", "rejects", "prepare")
+BIN_TEXTS = ("tagline", "definition", "why")
+
+
+def check_bins():
+    """Bin details (Home dialog): every bin of the contract, same shape in ar and en, Arabic text is Arabic."""
+    cats = load_json(ROOT / "contract" / "categories.json")
+    cats = cats.get("categories", []) if isinstance(cats, dict) else cats
+    want = {c["bin"] for c in cats}
+    data = {}
+    for lang in LANGS:
+        doc = load_json(ROOT / "frontend" / "i18n" / f"bins.{lang}.json")
+        data[lang] = (doc or {}).get("bins")
+        if not isinstance(data[lang], dict):
+            err(f"bins.{lang}.json: missing or invalid")
+            return
+        if set(data[lang]) != want:
+            err(f"bins.{lang}.json: bins {sorted(data[lang])} differ from the contract {sorted(want)}")
+    for bin_id in sorted(want):
+        a, e = data["ar"].get(bin_id, {}), data["en"].get(bin_id, {})
+        for key in BIN_TEXTS:
+            if not a.get(key) or not e.get(key):
+                err(f"bins.{bin_id}.{key}: empty in ar or en")
+            elif not ARABIC.search(a[key]):
+                err(f"bins.ar.{bin_id}.{key}: has no Arabic letters")
+        for key in BIN_LISTS:
+            if not a.get(key) or len(a[key]) != len(e.get(key) or []):
+                err(f"bins.{bin_id}.{key}: ar and en lists differ in length")
+        for key in ("bin." + bin_id,):
+            for lang in LANGS:
+                if key not in (load_json(ROOT / "frontend" / "i18n" / f"{lang}.json") or {}):
+                    err(f"{lang}.json: missing key {key}")
+
+
 def check_line_limits():
     paths = [ROOT / "content" / f"guidance.{lang}.json" for lang in LANGS]
     paths += [ROOT / "frontend" / "i18n" / f"{lang}.json" for lang in LANGS] + [Path(__file__)]
@@ -278,6 +313,7 @@ def main():
     check_index_shell()
     check_labels()
     check_source_names()
+    check_bins()
     check_line_limits()
     if errors:
         print(f"FAILED: {len(errors)} problem(s)")

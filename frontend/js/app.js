@@ -8,6 +8,7 @@ import "./header-scroll.js";
 import "./contrast.js";
 import "./upload.js";
 import "./results.js";
+import "./bininfo.js";
 import "./audio.js";
 // Hash routing (#/, #/browse, #/result) and the Browse view (M11 spec, restored in M18a).
 // Filters live in the hash: #/browse?group=glass&q=bottle (written with history.replaceState).

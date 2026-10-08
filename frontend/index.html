@@ -24,6 +24,7 @@
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/results.css">
   <link rel="stylesheet" href="css/consent.css">
+  <link rel="stylesheet" href="css/bininfo.css">
   <link rel="preload" as="fetch" crossorigin href="i18n/ar.json">
   <noscript><link rel="stylesheet" href="css/noscript.css"></noscript>
   <script type="module" src="js/app.js"></script>
@@ -78,7 +79,8 @@
           <span data-i18n="home.browse">Browse categories</span>
         </a>
       </div>
-      <div class="stamps" aria-hidden="true"><span class="bin bin--blue" data-i18n="bin.blue">blue</span><span class="bin bin--green" data-i18n="bin.green">green</span><span class="bin bin--yellow" data-i18n="bin.yellow">yellow</span><span class="bin bin--red" data-i18n="bin.red">red</span><span class="bin bin--black" data-i18n="bin.black">black</span><span class="bin bin--brown" data-i18n="bin.brown">brown</span><span class="bin bin--grey" data-i18n="bin.grey">grey</span><span class="bin bin--special" data-i18n="bin.special">special</span></div>
+      <p id="stamps-hint" class="stamps__hint muted" data-i18n="home.bins_hint">Tap a bin to see what goes in it and how to prepare it.</p>
+      <div class="stamps" role="group" aria-labelledby="stamps-hint"><button type="button" class="bin bin--blue" data-bin-info="blue" aria-haspopup="dialog" data-i18n="bin.blue">Blue bin</button><button type="button" class="bin bin--green" data-bin-info="green" aria-haspopup="dialog" data-i18n="bin.green">Green bin</button><button type="button" class="bin bin--yellow" data-bin-info="yellow" aria-haspopup="dialog" data-i18n="bin.yellow">Yellow bin</button><button type="button" class="bin bin--red" data-bin-info="red" aria-haspopup="dialog" data-i18n="bin.red">Red bin</button><button type="button" class="bin bin--black" data-bin-info="black" aria-haspopup="dialog" data-i18n="bin.black">Black bin</button><button type="button" class="bin bin--brown" data-bin-info="brown" aria-haspopup="dialog" data-i18n="bin.brown">Brown bin</button><button type="button" class="bin bin--grey" data-bin-info="grey" aria-haspopup="dialog" data-i18n="bin.grey">Grey bin</button><button type="button" class="bin bin--special" data-bin-info="special" aria-haspopup="dialog" data-i18n="bin.special">Special collection</button></div>
     </section>
 
     <section class="view" data-view="result" aria-labelledby="result-title" hidden>
