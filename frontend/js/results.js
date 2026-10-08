@@ -307,6 +307,7 @@ function buildUncertain(result) {
   const tips = el("ul", "result__list");
   TIP_KEYS.forEach((key) => tips.append(el("li", null, key)));
   card.append(tips);
+  card.append(el("p", "muted", "result.second_photo"));
   const again = el("a", "btn btn--primary", "result.try_again");
   again.href = "#/";
   card.append(again, whyPanel(result), feedbackBlock(result, null));

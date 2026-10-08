@@ -62,15 +62,16 @@ function build() {
   ui.status.setAttribute("role", "status");
 
   ui.shutter = el("button", "btn btn--primary", "capture.shutter");
+  ui.go = el("button", "btn btn--primary", "capture.allow");
   ui.pick = el("button", "btn", "capture.choose");
   ui.retake = el("button", "btn", "capture.retake");
   ui.analyze = el("button", "btn btn--primary", "capture.analyze");
   ui.cancel = el("button", "btn", "capture.cancel");
-  [ui.shutter, ui.pick, ui.retake, ui.analyze, ui.cancel].forEach((b) => (b.type = "button"));
+  [ui.shutter, ui.go, ui.pick, ui.retake, ui.analyze, ui.cancel].forEach((b) => (b.type = "button"));
 
   ui.consent = createConsent();
   const buttons = el("div", "actions");
-  buttons.append(ui.shutter, ui.analyze, ui.retake, ui.pick, ui.cancel);
+  buttons.append(ui.go, ui.shutter, ui.analyze, ui.retake, ui.pick, ui.cancel);
 
   ui.fileCapture = fileInput(true);
   ui.fileGallery = fileInput(false);
@@ -86,6 +87,7 @@ function say(key) {
 
 // mode -> visible parts
 const MODES = {
+  explain: { buttons: ["go", "pick", "cancel"] },
   starting: { video: true, buttons: ["cancel"] },
   camera: { video: true, buttons: ["shutter", "pick", "cancel"] },
   fallback: { buttons: ["pick", "cancel"] },
@@ -103,7 +105,7 @@ function setMode(mode) {
   ui.video.hidden = !cfg.video;
   ui.img.hidden = !cfg.img;
   ui.progress.hidden = !cfg.progress;
-  ["shutter", "pick", "retake", "analyze", "cancel"].forEach((name) => {
+  ["go", "shutter", "pick", "retake", "analyze", "cancel"].forEach((name) => {
     ui[name].hidden = !cfg.buttons.includes(name);
   });
   ui.consent.setVisible(mode === "preview");
@@ -217,9 +219,34 @@ async function handleFile(file, source) {
 
 // ---------- camera flow ----------
 
-async function openCamera() {
+const EXPLAINED_KEY = "wasteai.camera_explained";
+
+function wasExplained() {
+  try {
+    return localStorage.getItem(EXPLAINED_KEY) === "1";
+  } catch (e) {
+    return false;
+  }
+}
+
+function markExplained() {
+  try {
+    localStorage.setItem(EXPLAINED_KEY, "1");
+  } catch (e) {
+    /* storage unavailable: explain again next time */
+  }
+}
+
+async function openCamera(skipExplain) {
   const session = ++state.session;
   releasePhoto();
+  if (!skipExplain && !wasExplained()) {
+    // Explain why the camera is needed before the browser shows its prompt.
+    setMode("explain");
+    say("camera.explain");
+    ui.go.focus();
+    return;
+  }
   setMode("starting");
   say("camera.starting");
   try {
@@ -361,6 +388,10 @@ function bind() {
     if (!trigger) return;
     if (trigger.dataset.action === "scan") onScan();
     if (trigger.dataset.action === "upload" && state.mode !== "loading") ui.fileGallery.click();
+  });
+  ui.go.addEventListener("click", () => {
+    markExplained();
+    openCamera(true);
   });
   ui.shutter.addEventListener("click", takePhoto);
   ui.pick.addEventListener("click", () => ui.fileGallery.click());
