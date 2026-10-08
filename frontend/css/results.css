@@ -124,32 +124,44 @@
    (No sticky: it depends on header and window scroll, which is what made the photo drift.) */
 body:has(.view[data-view="result"]:not([hidden])) { block-size: 100vh; block-size: 100dvh; overflow: hidden; }
 .app-main:has(.view[data-view="result"]:not([hidden])) { flex: 1 1 auto; min-block-size: 0; display: flex; flex-direction: column; inline-size: 100%; }
-.view[data-view="result"]:not([hidden]) { flex: 1 1 auto; min-block-size: 0; display: flex; flex-direction: column; gap: 0.75rem; }
-.view[data-view="result"] h1 { flex: none; margin-block: 0; }
-.view[data-view="result"] > .btn { flex: none; align-self: start; }
+/* Back sits on the title row (saves a full row of height; same place on phone and desktop). */
+.view[data-view="result"]:not([hidden]) {
+  flex: 1 1 auto; min-block-size: 0;
+  display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas: "back title" "root root"; align-items: center; gap: 0.5rem 0.75rem;
+}
+.view[data-view="result"] > * { margin: 0; }
+.view[data-view="result"] > .btn { grid-area: back; min-block-size: 2.75rem; }
+.view[data-view="result"] h1 { grid-area: title; }
+.view[data-view="result"] > #result-root { grid-area: root; align-self: stretch; }
+.view[data-view="result"] h1 { flex: none; margin-block: 0; font-size: 1.5rem; line-height: 1.3; }
 #result-root { flex: 1 1 auto; min-block-size: 0; display: flex; flex-direction: column; }
 #result-root > .result { flex: 1 1 auto; min-block-size: 0; display: flex; flex-direction: column; gap: 0.75rem; }
 .result__media { flex: none; position: static; padding: 0; }
-/* Phone: the whole item stays visible (contain, not a cropped slice) on a neutral mat.
+/* Phone: a compact thumbnail band (about 16% of the screen); the whole item stays visible (contain) on a neutral mat.
    Declarations are doubled so browsers without dvh/clamp fall back to a fixed height. */
 .result__photo {
-  block-size: 12rem;
-  block-size: clamp(9rem, 32dvh, 18rem);
+  block-size: 7.5rem;
+  block-size: clamp(6rem, 16dvh, 9rem);
   max-block-size: none;
   aspect-ratio: auto;
   object-fit: contain;
   background: var(--color-surface-2, #8881);
 }
-.result__card, .result > :not(.result__media) { flex: 1 1 auto; min-block-size: 0; overflow-y: auto; overscroll-behavior: contain; padding-inline-end: 0.5rem; }
+.result__card, .result > :not(.result__media) { flex: 1 1 auto; min-block-size: 0; overflow-y: auto; overscroll-behavior: contain; padding-inline-end: 0.5rem; padding-block-end: 1rem; }
 /* Wide screens, and phones held sideways (too short for photo-above-details). */
 @media (min-width: 900px), (orientation: landscape) and (max-height: 32rem) {
-  #result-root > .result { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); grid-template-rows: minmax(0, 1fr); gap: 2rem; align-items: stretch; }
+  #result-root > .result { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); grid-template-rows: minmax(0, 1fr); gap: 2rem; align-items: stretch; }
   .result__media { align-self: start; position: static; }
-  .result__photo { block-size: auto; aspect-ratio: 4 / 3; max-block-size: 60vh; max-block-size: 60dvh; }
+  .result__photo { block-size: auto; aspect-ratio: 4 / 3; max-block-size: 40vh; max-block-size: 40dvh; }
 }
 /* Sideways phone: no room for a visible title; the photo fills the left column instead of overflowing it. */
 @media (orientation: landscape) and (max-height: 32rem) and (max-width: 899px) {
   .view[data-view="result"] h1 { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .result__media { align-self: stretch; min-block-size: 0; }
   .result__photo { block-size: 100%; aspect-ratio: auto; max-block-size: none; }
+}
+/* Soft fade where the details scroll under the edge, so text is not cut mid-line. */
+@media (max-width: 899px) and (orientation: portrait) {
+  .result__card, .result > :not(.result__media) { -webkit-mask-image: linear-gradient(#000 calc(100% - 1.5rem), transparent); mask-image: linear-gradient(#000 calc(100% - 1.5rem), transparent); }
 }
