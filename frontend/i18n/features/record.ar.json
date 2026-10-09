@@ -1,0 +1,11 @@
+{
+  "_path": "frontend/i18n/features/record.ar.json",
+  "f.record.title": "سجل الفرز",
+  "f.record.empty": "لا توجد أختام بعد. افرز عنصرًا لإضافة أول ختم.",
+  "f.record.count": "{n} من {m} فئة مختومة",
+  "f.record.unknown": "فئة غير معروفة",
+  "f.record.reset": "إعادة ضبط السجل",
+  "f.record.confirm": "هل تريد إعادة ضبط سجل الفرز؟ ستُحذف الأختام من هذا الجهاز.",
+  "f.record.yes": "إعادة الضبط",
+  "f.record.no": "الإبقاء على السجل"
+}

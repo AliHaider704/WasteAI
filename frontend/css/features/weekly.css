@@ -1,0 +1,2 @@
+/* File: frontend/css/features/weekly.css */
+.f-weekly progress { display: block; inline-size: 100%; margin-block: 0.5rem; accent-color: var(--color-accent); }

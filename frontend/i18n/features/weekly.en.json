@@ -1,0 +1,14 @@
+{
+  "_path": "frontend/i18n/features/weekly.en.json",
+  "f.weekly.title": "This week's sorting goal",
+  "f.weekly.goal": "Sort {n} items from this group this week:",
+  "f.weekly.progress": "{n} sorted so far",
+  "f.weekly.done": "Goal reached. A new goal starts next week.",
+  "f.weekly.label": "Weekly goal progress",
+  "f.weekly.g.plastics": "Plastics",
+  "f.weekly.g.paper": "Paper",
+  "f.weekly.g.glass": "Glass",
+  "f.weekly.g.metals": "Metals",
+  "f.weekly.g.organic": "Organic waste",
+  "f.weekly.g.other": "Other"
+}

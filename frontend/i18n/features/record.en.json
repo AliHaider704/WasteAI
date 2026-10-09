@@ -1,0 +1,11 @@
+{
+  "_path": "frontend/i18n/features/record.en.json",
+  "f.record.title": "Sorting Record",
+  "f.record.empty": "No stamps yet. Sort an item to add the first one.",
+  "f.record.count": "{n} of {m} categories stamped",
+  "f.record.unknown": "Unknown category",
+  "f.record.reset": "Reset my record",
+  "f.record.confirm": "Reset your Sorting Record? The stamps are removed from this device.",
+  "f.record.yes": "Reset record",
+  "f.record.no": "Keep record"
+}

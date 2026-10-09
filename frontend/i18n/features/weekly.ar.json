@@ -1,0 +1,14 @@
+{
+  "_path": "frontend/i18n/features/weekly.ar.json",
+  "f.weekly.title": "هدف الفرز لهذا الأسبوع",
+  "f.weekly.goal": "افرز {n} عناصر من هذه المجموعة هذا الأسبوع:",
+  "f.weekly.progress": "تم فرز {n} حتى الآن",
+  "f.weekly.done": "تحقق الهدف. يبدأ هدف جديد الأسبوع القادم.",
+  "f.weekly.label": "تقدم هدف الأسبوع",
+  "f.weekly.g.plastics": "البلاستيك",
+  "f.weekly.g.paper": "الورق",
+  "f.weekly.g.glass": "الزجاج",
+  "f.weekly.g.metals": "المعادن",
+  "f.weekly.g.organic": "المواد العضوية",
+  "f.weekly.g.other": "أخرى"
+}
