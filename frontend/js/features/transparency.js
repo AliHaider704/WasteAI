@@ -75,8 +75,8 @@ export default function init(ctx) {
     const { store: api } = await import("../api.js");
     const card = document.querySelector(".result__card");
     await decorate(card, api.result || {});
-    const box = card && card.querySelector(".f-details");
-    if (box) box.scrollIntoView({ behavior: "smooth", block: "center" });
+    const why = card && card.querySelector("details.result__why");
+    if (why && on) why.open = true;
   });
   host.append(b);
   ctx.on("i18n:change", paint);

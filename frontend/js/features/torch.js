@@ -36,7 +36,12 @@ export default function init(ctx) {
     lit = false;
     const tr = track();
     const caps = tr && tr.getCapabilities ? tr.getCapabilities() : {};
-    torch.hidden = !(caps && caps.torch);
+    const rear = (tr && tr.getSettings ? tr.getSettings().facingMode : "") !== "user";
+    torch.hidden = !(rear && caps && caps.torch);
+    // Some phones report torch support only after the stream has warmed up: re-check.
+    if (tr && rear && !(caps && caps.torch) && (refresh.n = (refresh.n || 0) + 1) <= 4) {
+      setTimeout(() => { if (track() === tr) refresh(); }, 700);
+    }
     flip.hidden = true;
     if (tr && navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
       try {

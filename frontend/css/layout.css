@@ -125,3 +125,8 @@ button.bin:focus-visible { outline: 3px solid var(--color-focus); outline-offset
   .toolbar { gap: 0.5rem; flex-shrink: 0; }
   .app-header .icon-btn { min-block-size: 2.5rem; min-inline-size: 2.5rem; }
 }
+
+/* Header tools: never stretch, wrap neatly (fixes tall buttons on phones) */
+.toolbar { flex-wrap: wrap; align-items: center; align-content: center; justify-content: flex-end; }
+#slot-header-tools { display: contents; }
+.app-header__inner { align-items: center; }
