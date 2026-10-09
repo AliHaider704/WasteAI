@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     w_azure: float = Field(0.4, gt=0, le=1)
     w_reciclapi: float = Field(0.2, gt=0, le=1)
     w_llm: float = Field(0.3, gt=0, le=1)
+    # Per-client /classify limit per minute (event mode raises it, A34). Default unchanged.
+    rate_classify_per_min: int = Field(10, ge=1, le=600)
     max_image_bytes: int = 2 * 1024 * 1024
     contract_dir: Path = REPO_ROOT / "contract"
     content_dir: Path = REPO_ROOT / "content"

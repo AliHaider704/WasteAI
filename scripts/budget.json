@@ -1,0 +1,8 @@
+{
+  "_path": "scripts/budget.json",
+  "_note": "Measured with scripts/check_budget.py --measure on 2026-10-09: eager 130449 B raw, 45351 B gzip. Eager limits = measured + 15%. Lazy limit per feature (js, css, data, two i18n files together): 12 KB gzip, 40 KB raw (starting value, revisit after M32 and M33).",
+  "eager_gzip_max": 52150,
+  "eager_raw_max": 150000,
+  "lazy_gzip_max": 12288,
+  "lazy_raw_max": 40960
+}

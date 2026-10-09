@@ -1,0 +1,6 @@
+{
+ "_path": "frontend/i18n/features/facts.en.json",
+ "f.facts.summary": "Good to know",
+ "f.facts.title": "Did you know",
+ "f.facts.accessed": "Accessed {date}"
+}

@@ -341,65 +341,11 @@ components:
           type: array
           items: {type: string}
     SourceLabel:
-      type: object
-      required: [label, score]
-      properties:
-        label:
-          type: string
-          description: Raw English label from the source (UI shows it only in the "Why?" panel).
-        score: {$ref: "#/components/schemas/Confidence"}
+      $ref: "components/sources.yaml#/SourceLabel"
     SourceResult:
-      type: object
-      required: [name, ok, top]
-      properties:
-        name:
-          type: string
-          enum: [local_onnx, azure, reciclapi]
-        ok:
-          type: boolean
-          description: false when the source failed, timed out, hit quota or was skipped (then `top` is empty).
-        top:
-          type: array
-          maxItems: 3
-          items: {$ref: "#/components/schemas/SourceLabel"}
+      $ref: "components/sources.yaml#/SourceResult"
     ClassifyResponse:
-      type: object
-      required: [request_id, status, category, alternatives, agreement, hazard, guidance, sources, elapsed_ms]
-      properties:
-        request_id:
-          type: string
-          description: Opaque ID (UUID). Used by /feedback.
-        status:
-          type: string
-          enum: [ok, uncertain]
-        category:
-          description: Null when status is `uncertain`.
-          oneOf:
-            - {$ref: "#/components/schemas/ResultCategory"}
-            - {type: "null"}
-        alternatives:
-          type: array
-          maxItems: 2
-          items: {$ref: "#/components/schemas/Alternative"}
-        agreement: {$ref: "#/components/schemas/Agreement"}
-        hazard:
-          type: boolean
-          description: |
-            True when a hazard category (battery, hazardous_chemical, medical, ewaste_*) scores >= 0.35.
-            The UI always shows warnings then, even when status is `uncertain`.
-        guidance:
-          description: |
-            Null when status is `uncertain` and hazard is false. When hazard is true, guidance is present
-            (for the hazard category) and its `warnings` are non-empty.
-          oneOf:
-            - {$ref: "#/components/schemas/Guidance"}
-            - {type: "null"}
-        sources:
-          type: array
-          items: {$ref: "#/components/schemas/SourceResult"}
-        elapsed_ms:
-          type: integer
-          minimum: 0
+      $ref: "components/classify.yaml#/ClassifyResponse"
     FeedbackRequest:
       type: object
       required: [request_id, correct_category_id]

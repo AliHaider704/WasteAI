@@ -1,0 +1,23 @@
+/* File: frontend/css/features/delete-data.css */
+.f-textbtn {
+  min-block-size: 3rem;
+  padding-inline: var(--space-1);
+  border: 0;
+  background: none;
+  color: var(--color-text-muted);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+@media (hover: hover) {
+  .f-textbtn:hover { color: var(--color-text); }
+}
+.f-textbtn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.f-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  justify-content: flex-end;
+  margin-block-start: var(--space-2);
+}
+#slot-footer { padding-block: var(--space-2); text-align: center; }

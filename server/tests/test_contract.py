@@ -96,6 +96,6 @@ def test_openapi_file_valid_if_present():
     if not spec.exists():
         pytest.skip("contract/openapi.yaml not present yet")
     import yaml
-    from openapi_spec_validator import validate_spec
+    from openapi_spec_validator import validate
 
-    validate_spec(yaml.safe_load(spec.read_text(encoding="utf-8")))
+    validate(yaml.safe_load(spec.read_text(encoding="utf-8")), base_uri=spec.resolve().as_uri())

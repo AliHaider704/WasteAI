@@ -186,7 +186,11 @@ async function start() {
     }
     render();
   }
-  if (token === batch.run) { batch.phase = "done"; render(); }
+  if (token === batch.run) {
+    batch.phase = "done";
+    render();
+    document.dispatchEvent(new CustomEvent("wasteai:batch", { detail: { items: batch.items.length, done: true } }));
+  }
 }
 
 function statusLabel(item) {

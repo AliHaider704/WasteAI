@@ -49,6 +49,8 @@ async def classify(request: Request, image: UploadFile = File(...), lang: str = 
     if hit is not None:
         data.close()
         hit["request_id"] = rid
+        for src in hit.get("sources", []):
+            src["elapsed_ms"] = None  # no source ran on a cache hit
         hit["elapsed_ms"] = int((time.perf_counter() - t0) * 1000)
         await cache.record_issued(rid)
         note_result(request, hit)

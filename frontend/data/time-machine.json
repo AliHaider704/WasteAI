@@ -1,0 +1,96 @@
+{
+ "_path": "frontend/data/time-machine.json",
+ "entries": [
+  {
+   "id": "paper",
+   "years_min": 0.08,
+   "years_max": 0.08,
+   "en": "Paper",
+   "ar": "الورق",
+   "source": {
+    "kind": "external",
+    "title": "Milton Keynes Council, Litter breakdown wall display",
+    "url": "https://www.milton-keynes.gov.uk/sites/default/files/2022-02/Litter%20wall%20display.pdf",
+    "accessed": "2026-10-09"
+   }
+  },
+  {
+   "id": "metal_steel",
+   "years_min": 80,
+   "years_max": 100,
+   "en": "Steel can",
+   "ar": "علبة الصلب",
+   "source": {
+    "kind": "external",
+    "title": "Milton Keynes Council, Litter breakdown wall display",
+    "url": "https://www.milton-keynes.gov.uk/sites/default/files/2022-02/Litter%20wall%20display.pdf",
+    "accessed": "2026-10-09"
+   }
+  },
+  {
+   "id": "metal_aluminum",
+   "years_min": 200,
+   "years_max": 500,
+   "en": "Aluminium can",
+   "ar": "علبة الألمنيوم",
+   "source": {
+    "kind": "external",
+    "title": "Milton Keynes Council, Litter breakdown wall display",
+    "url": "https://www.milton-keynes.gov.uk/sites/default/files/2022-02/Litter%20wall%20display.pdf",
+    "accessed": "2026-10-09"
+   }
+  },
+  {
+   "id": "plastic_pet",
+   "years_min": 450,
+   "years_max": 450,
+   "en": "Plastic bottle",
+   "ar": "زجاجة بلاستيكية",
+   "source": {
+    "kind": "external",
+    "title": "Milton Keynes Council, Litter breakdown wall display",
+    "url": "https://www.milton-keynes.gov.uk/sites/default/files/2022-02/Litter%20wall%20display.pdf",
+    "accessed": "2026-10-09"
+   }
+  },
+  {
+   "id": "glass",
+   "years_min": 1000000,
+   "years_max": 1000000,
+   "en": "Glass bottle",
+   "ar": "زجاجة زجاجية",
+   "source": {
+    "kind": "external",
+    "title": "US Forest Service, Trash Timeline",
+    "url": "https://www.fs.usda.gov/media/255248",
+    "accessed": "2026-10-09"
+   }
+  },
+  {
+   "id": "organic_food",
+   "years_min": 0.17,
+   "years_max": 2,
+   "en": "Apple to banana peel",
+   "ar": "من التفاحة إلى قشرة الموز",
+   "source": {
+    "kind": "external",
+    "title": "Milton Keynes Council, Litter breakdown wall display",
+    "url": "https://www.milton-keynes.gov.uk/sites/default/files/2022-02/Litter%20wall%20display.pdf",
+    "accessed": "2026-10-09"
+   }
+  },
+  {
+   "id": "textile",
+   "years_min": 0.42,
+   "years_max": 0.42,
+   "en": "Cotton clothes",
+   "ar": "الملابس القطنية",
+   "source": {
+    "kind": "external",
+    "title": "Milton Keynes Council, Litter breakdown wall display",
+    "url": "https://www.milton-keynes.gov.uk/sites/default/files/2022-02/Litter%20wall%20display.pdf",
+    "accessed": "2026-10-09"
+   }
+  }
+ ]
+}

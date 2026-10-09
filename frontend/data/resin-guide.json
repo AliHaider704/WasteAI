@@ -1,0 +1,89 @@
+{
+ "_path": "frontend/data/resin-guide.json",
+ "entries": [
+  {
+   "id": "resin1",
+   "ids": [
+    "plastic_pet"
+   ],
+   "en": "PET (1)",
+   "ar": "<bdi dir=\"ltr\">PET</bdi> (1)",
+   "source": {
+    "kind": "internal",
+    "ref": "PRODUCT-SPECIFICATION.md section 4, Plastics row"
+   }
+  },
+  {
+   "id": "resin2",
+   "ids": [
+    "plastic_hdpe"
+   ],
+   "en": "HDPE (2)",
+   "ar": "<bdi dir=\"ltr\">HDPE</bdi> (2)",
+   "source": {
+    "kind": "internal",
+    "ref": "PRODUCT-SPECIFICATION.md section 4, Plastics row"
+   }
+  },
+  {
+   "id": "resin3",
+   "ids": [
+    "plastic_pvc"
+   ],
+   "en": "PVC (3): may not be accepted",
+   "ar": "<bdi dir=\"ltr\">PVC</bdi> (3): قد لا يُقبل",
+   "source": {
+    "kind": "internal",
+    "ref": "PRODUCT-SPECIFICATION.md section 4, Plastics row"
+   }
+  },
+  {
+   "id": "resin4",
+   "ids": [
+    "plastic_ldpe"
+   ],
+   "en": "LDPE (4)",
+   "ar": "<bdi dir=\"ltr\">LDPE</bdi> (4)",
+   "source": {
+    "kind": "internal",
+    "ref": "PRODUCT-SPECIFICATION.md section 4, Plastics row"
+   }
+  },
+  {
+   "id": "resin5",
+   "ids": [
+    "plastic_pp"
+   ],
+   "en": "PP (5)",
+   "ar": "<bdi dir=\"ltr\">PP</bdi> (5)",
+   "source": {
+    "kind": "internal",
+    "ref": "PRODUCT-SPECIFICATION.md section 4, Plastics row"
+   }
+  },
+  {
+   "id": "resin6",
+   "ids": [
+    "plastic_ps"
+   ],
+   "en": "PS (6): may not be accepted",
+   "ar": "<bdi dir=\"ltr\">PS</bdi> (6): قد لا يُقبل",
+   "source": {
+    "kind": "internal",
+    "ref": "PRODUCT-SPECIFICATION.md section 4, Plastics row"
+   }
+  },
+  {
+   "id": "resin7",
+   "ids": [
+    "plastic_other"
+   ],
+   "en": "Other (7)",
+   "ar": "أخرى (7)",
+   "source": {
+    "kind": "internal",
+    "ref": "PRODUCT-SPECIFICATION.md section 4, Plastics row"
+   }
+  }
+ ]
+}

@@ -1,0 +1,268 @@
+{
+  "_path": "frontend/data/features.json",
+  "features": {
+    "facts": {
+      "enabled": false,
+      "module": "facts",
+      "trigger": "result",
+      "needs": [],
+      "playful": false
+    },
+    "journey": {
+      "enabled": false,
+      "module": "journey",
+      "trigger": "result",
+      "needs": [],
+      "playful": true
+    },
+    "quiz": {
+      "enabled": false,
+      "module": "quiz",
+      "trigger": "home",
+      "needs": [],
+      "playful": true
+    },
+    "resin-guide": {
+      "enabled": false,
+      "module": "resin-guide",
+      "trigger": "result",
+      "needs": [],
+      "playful": false
+    },
+    "checklist": {
+      "enabled": false,
+      "module": "checklist",
+      "trigger": "result",
+      "needs": [],
+      "playful": false
+    },
+    "mistakes": {
+      "enabled": false,
+      "module": "mistakes",
+      "trigger": "result",
+      "needs": [],
+      "playful": false
+    },
+    "framing": {
+      "enabled": false,
+      "module": "framing",
+      "trigger": "capture",
+      "needs": [],
+      "playful": false
+    },
+    "photo-check": {
+      "enabled": false,
+      "module": "photo-check",
+      "trigger": "capture",
+      "needs": [],
+      "playful": false
+    },
+    "timer": {
+      "enabled": false,
+      "module": "timer",
+      "trigger": "capture",
+      "needs": [],
+      "playful": false
+    },
+    "torch": {
+      "enabled": false,
+      "module": "torch",
+      "trigger": "capture",
+      "needs": [],
+      "playful": false
+    },
+    "crop": {
+      "enabled": false,
+      "module": "crop",
+      "trigger": "capture",
+      "needs": [],
+      "playful": false
+    },
+    "confidence-bar": {
+      "enabled": false,
+      "module": "confidence-bar",
+      "trigger": "result",
+      "needs": [],
+      "playful": false
+    },
+    "my-bins": {
+      "enabled": false,
+      "module": "my-bins",
+      "trigger": "result",
+      "needs": [],
+      "playful": false
+    },
+    "share": {
+      "enabled": false,
+      "module": "share",
+      "trigger": "result",
+      "needs": [],
+      "playful": false
+    },
+    "read-aloud": {
+      "enabled": false,
+      "module": "read-aloud",
+      "trigger": "result",
+      "needs": [],
+      "playful": false
+    },
+    "two-sources": {
+      "enabled": false,
+      "module": "two-sources",
+      "trigger": "result",
+      "needs": [],
+      "playful": false
+    },
+    "history": {
+      "enabled": false,
+      "module": "history",
+      "trigger": "home",
+      "needs": [],
+      "playful": false
+    },
+    "stats": {
+      "enabled": false,
+      "module": "stats",
+      "trigger": "home",
+      "needs": [],
+      "playful": false
+    },
+    "favorites": {
+      "enabled": false,
+      "module": "favorites",
+      "trigger": "browse",
+      "needs": [],
+      "playful": false
+    },
+    "delete-data": {
+      "enabled": false,
+      "module": "delete-data",
+      "trigger": "footer",
+      "needs": [],
+      "playful": false
+    },
+    "badges": {
+      "enabled": false,
+      "module": "badges",
+      "trigger": "home",
+      "needs": [],
+      "playful": true
+    },
+    "weekly": {
+      "enabled": false,
+      "module": "weekly",
+      "trigger": "home",
+      "needs": [],
+      "playful": true
+    },
+    "exhibition": {
+      "enabled": false,
+      "module": "exhibition",
+      "trigger": "idle",
+      "needs": [],
+      "playful": false
+    },
+    "palette": {
+      "enabled": false,
+      "module": "palette",
+      "trigger": "command",
+      "needs": [],
+      "playful": false
+    },
+    "transparency": {
+      "enabled": false,
+      "module": "transparency",
+      "trigger": "header",
+      "needs": [],
+      "playful": false
+    },
+    "status": {
+      "enabled": false,
+      "module": "status",
+      "trigger": "footer",
+      "needs": [],
+      "playful": false
+    },
+    "easy-read": {
+      "enabled": false,
+      "module": "easy-read",
+      "trigger": "header",
+      "needs": [],
+      "playful": false
+    },
+    "kids": {
+      "enabled": false,
+      "module": "kids",
+      "trigger": "header",
+      "needs": [],
+      "playful": false
+    },
+    "ink": {
+      "enabled": false,
+      "module": "ink",
+      "trigger": "result",
+      "needs": [],
+      "playful": true
+    },
+    "record": {
+      "enabled": false,
+      "module": "record",
+      "trigger": "home",
+      "needs": [],
+      "playful": true
+    },
+    "time-machine": {
+      "enabled": false,
+      "module": "time-machine",
+      "trigger": "result",
+      "needs": [],
+      "playful": true
+    },
+    "evidence": {
+      "enabled": false,
+      "module": "evidence",
+      "trigger": "result",
+      "needs": [],
+      "playful": false
+    },
+    "guess": {
+      "enabled": false,
+      "module": "guess",
+      "trigger": "capture",
+      "needs": [],
+      "playful": true
+    },
+    "evaporate": {
+      "enabled": false,
+      "module": "evaporate",
+      "trigger": "result",
+      "needs": [],
+      "playful": true
+    },
+    "conveyor": {
+      "enabled": false,
+      "module": "conveyor",
+      "trigger": "home",
+      "needs": [],
+      "playful": true
+    },
+    "daily": {
+      "enabled": false,
+      "module": "daily",
+      "trigger": "home",
+      "needs": [],
+      "playful": true
+    },
+    "_probe": {
+      "enabled": false,
+      "module": "_probe",
+      "trigger": "home",
+      "needs": [],
+      "playful": false
+    }
+  },
+  "profiles": {
+    "public": [],
+    "exhibition": []
+  }
+}

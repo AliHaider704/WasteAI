@@ -1,0 +1,105 @@
+{
+ "_path": "frontend/data/mistakes.json",
+ "entries": [
+  {
+   "id": "pl1",
+   "group": "plastics",
+   "en": "Putting PVC or PS in the bin without checking local rules",
+   "ar": "وضع <bdi dir=\"ltr\">PVC</bdi> أو <bdi dir=\"ltr\">PS</bdi> في الحاوية دون معرفة القواعد المحلية",
+   "source": {
+    "kind": "internal",
+    "ref": "PRODUCT-SPECIFICATION.md section 4, Plastics row"
+   }
+  },
+  {
+   "id": "pl2",
+   "group": "plastics",
+   "en": "Mixing film plastic with bottles",
+   "ar": "خلط الأكياس البلاستيكية الرقيقة مع الزجاجات",
+   "source": {
+    "kind": "internal",
+    "ref": "PRODUCT-SPECIFICATION.md section 4, Plastics row"
+   }
+  },
+  {
+   "id": "pa1",
+   "group": "paper",
+   "en": "Adding greasy paper",
+   "ar": "إضافة ورق دهني",
+   "source": {
+    "kind": "internal",
+    "ref": "PRODUCT-SPECIFICATION.md section 4, Paper row"
+   }
+  },
+  {
+   "id": "pa2",
+   "group": "paper",
+   "en": "Leaving boxes unflattened",
+   "ar": "ترك الصناديق دون تسطيح",
+   "source": {
+    "kind": "internal",
+    "ref": "PRODUCT-SPECIFICATION.md section 4, Paper row"
+   }
+  },
+  {
+   "id": "gl1",
+   "group": "glass",
+   "en": "Adding ceramics, mirrors or bulbs",
+   "ar": "إضافة الخزف أو المرايا أو المصابيح",
+   "source": {
+    "kind": "internal",
+    "ref": "PRODUCT-SPECIFICATION.md section 4, Glass row"
+   }
+  },
+  {
+   "id": "me1",
+   "group": "metals",
+   "en": "Leaving food in cans",
+   "ar": "ترك بقايا الطعام في العلب",
+   "source": {
+    "kind": "internal",
+    "ref": "PRODUCT-SPECIFICATION.md section 4, Metals row"
+   }
+  },
+  {
+   "id": "or1",
+   "group": "organic",
+   "en": "Adding plastic with food scraps",
+   "ar": "إضافة البلاستيك مع بقايا الطعام",
+   "source": {
+    "kind": "internal",
+    "ref": "PRODUCT-SPECIFICATION.md section 4, Organic row"
+   }
+  },
+  {
+   "id": "or2",
+   "group": "organic",
+   "en": "Pouring cooked oil into the organic bin",
+   "ar": "سكب الزيت المطبوخ في حاوية العضويات",
+   "source": {
+    "kind": "internal",
+    "ref": "PRODUCT-SPECIFICATION.md section 4, Organic row"
+   }
+  },
+  {
+   "id": "ew1",
+   "group": "e-waste",
+   "en": "Throwing batteries in general trash",
+   "ar": "رمي البطاريات في النفايات العامة",
+   "source": {
+    "kind": "internal",
+    "ref": "PRODUCT-SPECIFICATION.md section 4, E-waste row"
+   }
+  },
+  {
+   "id": "ew2",
+   "group": "e-waste",
+   "en": "Leaving battery terminals uncovered",
+   "ar": "ترك أطراف البطارية مكشوفة",
+   "source": {
+    "kind": "internal",
+    "ref": "PRODUCT-SPECIFICATION.md section 4, E-waste row"
+   }
+  }
+ ]
+}

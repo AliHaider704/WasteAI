@@ -1,0 +1,27 @@
+# File: contract/components/sources.yaml
+SourceLabel:
+  type: object
+  required: [label, score]
+  properties:
+    label:
+      type: string
+      description: Raw English label from the source (UI shows it only in the "Why?" panel).
+    score: {$ref: "../openapi.yaml#/components/schemas/Confidence"}
+SourceResult:
+  type: object
+  required: [name, ok, top]
+  properties:
+    name:
+      type: string
+      enum: [local_onnx, azure, reciclapi, llm]
+    ok:
+      type: boolean
+      description: false when the source failed, timed out, hit quota or was skipped (then `top` is empty).
+    top:
+      type: array
+      maxItems: 3
+      items: {$ref: "#/SourceLabel"}
+    elapsed_ms:
+      type: [integer, "null"]
+      minimum: 0
+      description: Milliseconds this source call took (monotonic clock). Null on a cache hit, because no source ran.

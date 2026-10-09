@@ -2,10 +2,11 @@
 # wasteai-managed server block. install.sh fills the listen and redirect placeholders (port 80, or 443 + Certbot cert files when the
 # certificate exists, plus a port 80 -> https redirect). Never edit by hand on the host: edit this file, re-run install.sh.
 
-# Edge rate limit: 10 requests per minute per client address (the app limiter stays as second line).
-limit_req_zone $binary_remote_addr zone=wasteai:5m rate=10r/m;
+# Edge rate limit: __RATE__ requests per minute per client address (RATE_CLASSIFY_PER_MIN, default 10) (the app limiter stays as second line).
+limit_req_zone $binary_remote_addr zone=wasteai:5m rate=__RATE__r/m;
 limit_req_zone $binary_remote_addr zone=wasteai_fb:2m rate=6r/m;
 limit_req_zone $binary_remote_addr zone=wasteai_log:2m rate=20r/m;
+limit_req_zone $binary_remote_addr zone=wasteai_health:2m rate=30r/m;
 limit_conn_zone $binary_remote_addr zone=wasteai_conn:5m;
 
 # Localized messages, same wording as contract/errors.json (language from ?lang=ar|en, default en).
@@ -33,6 +34,13 @@ server {
 
     error_page 413 = @too_large;
 
+    # Compression for text assets (html is always compressed by default). Applies to static files and API JSON.
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 256;
+    gzip_comp_level 5;
+    gzip_types application/json application/manifest+json application/javascript text/javascript text/css image/svg+xml;
+
     location /api/ {
         include /etc/nginx/snippets/wasteai-headers.conf;
         # The app sets the same headers for non-Nginx use; hide them so each is sent once.
@@ -53,6 +61,14 @@ server {
         location = /api/v1/health/deep {
             allow 127.0.0.1;
             deny all;
+            proxy_pass http://127.0.0.1:__PORT__;
+        }
+
+        # Public status polling: 30 per minute per address (the status dialog polls at most every 30 s).
+        location = /api/v1/health {
+            limit_req zone=wasteai_health burst=5 nodelay;
+            limit_req_status 429;
+            error_page 429 = @rate_limited;
             proxy_pass http://127.0.0.1:__PORT__;
         }
 
@@ -101,6 +117,23 @@ server {
         include /etc/nginx/snippets/wasteai-headers.conf;
         add_header Cache-Control "public, max-age=31536000, immutable" always;
         access_log off;
+    }
+
+    # Delight-track static assets: always revalidate (same rule as html, js, css). Each location repeats the
+    # header include because add_header in a location replaces the inherited ones.
+    location ^~ /data/ {
+        include /etc/nginx/snippets/wasteai-headers.conf;
+        add_header Cache-Control "no-cache" always;
+    }
+
+    location ^~ /i18n/ {
+        include /etc/nginx/snippets/wasteai-headers.conf;
+        add_header Cache-Control "no-cache" always;
+    }
+
+    location ^~ /css/features/ {
+        include /etc/nginx/snippets/wasteai-headers.conf;
+        add_header Cache-Control "no-cache" always;
     }
 
     location ~* \.svg$ {

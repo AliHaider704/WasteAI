@@ -34,3 +34,12 @@ jobs:
       - name: tokens
         if: always()
         run: python3 content/tools/check_tokens.py
+      - name: ui leaks
+        if: always()
+        run: python3 content/tools/check_ui_leaks.py
+      - name: size budget
+        if: always()
+        run: python3 scripts/check_budget.py
+      - name: feature guards
+        if: always()
+        run: bash scripts/check_features.sh

@@ -1,0 +1,17 @@
+{
+ "_path": "frontend/i18n/features/time-machine.ar.json",
+ "f.time-machine.summary": "معلومات مفيدة",
+ "f.time-machine.source": "المصدر:",
+ "f.time-machine.accessed": "تاريخ الاطلاع: {date}",
+ "f.time-machine.title": "كم يدوم",
+ "f.time-machine.label": "الزمن المنقضي",
+ "f.time-machine.today": "اليوم",
+ "f.time-machine.vary": "تختلف التقديرات باختلاف الظروف.",
+ "f.time-machine.one": "التقدير: {a} {unit}",
+ "f.time-machine.range": "التقدير: من {a} إلى {b} {unit}",
+ "f.time-machine.unit_month": "شهر",
+ "f.time-machine.unit_months": "شهر",
+ "f.time-machine.unit_year": "سنة",
+ "f.time-machine.unit_years": "سنة",
+ "f.time-machine.item": "المقاس على:"
+}

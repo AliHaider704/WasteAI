@@ -98,7 +98,12 @@ const MODES = {
   loading: { img: true, progress: true, buttons: [] },
 };
 
+function stage(name, extra) {
+  document.dispatchEvent(new CustomEvent("wasteai:capture", { detail: { stage: name, ...extra } }));
+}
+
 function setMode(mode) {
+  if (state.mode === "idle" && mode !== "idle") stage("open");
   state.mode = mode;
   const cfg = MODES[mode];
   ui.panel.hidden = mode === "idle";
@@ -133,6 +138,7 @@ function closePanel(restoreFocus) {
   releaseCamera();
   releasePhoto();
   say("");
+  if (restoreFocus && state.mode !== "idle") stage("cancel");
   setMode("idle");
   if (restoreFocus) {
     const scan = ui.home.querySelector('[data-action="scan"]');
@@ -184,7 +190,7 @@ function resizeToJpeg(source, width, height) {
   });
 }
 
-function showPreview(blob, source) {
+function showPreview(blob, source, silent) {
   releasePhoto();
   state.blob = blob;
   state.source = source;
@@ -192,6 +198,7 @@ function showPreview(blob, source) {
   ui.img.src = state.url;
   say("");
   setMode("preview");
+  if (!silent) stage("ready", { blob, replace: (b) => showPreview(b, source, true) });
   ui.analyze.focus();
 }
 
@@ -332,6 +339,7 @@ function startCountdown(seconds) {
 
 async function analyze() {
   if (!state.blob || state.mode !== "preview" || state.pending || state.cooldown) return; // F-19
+  stage("before-send", { blob: state.blob });
   state.pending = true;
   setMode("loading");
   say("loading.analyzing");
@@ -359,6 +367,7 @@ function finish(result) {
   state.url = null;
   store.result = result;
   closePanel(false);
+  stage("sent");
   document.dispatchEvent(new CustomEvent("wasteai:result", { detail: { result, photoUrl: store.photoUrl } }));
   location.hash = "#/result";
 }

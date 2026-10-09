@@ -60,6 +60,9 @@ def check_key(key, where, dicts):
 
 def main():
     dicts = {lang: load_dict(lang) for lang in ("ar", "en")}
+    for lang in dicts:
+        for ns in sorted((FE / "i18n" / "features").glob(f"*.{lang}.json")):
+            dicts[lang] |= {k for k in json.loads(ns.read_text(encoding="utf-8")) if not k.startswith("_")}
     namespaces = {k.split(".")[0] for k in dicts["en"] if "." in k}
     for path in sorted(list(FE.rglob("*")) + list((ROOT / "content").rglob("*"))):
         if not path.is_file() or path.suffix not in TEXT_EXT or "fonts" in path.parts:

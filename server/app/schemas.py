@@ -30,6 +30,10 @@ class SourceResult(BaseModel):
     name: str
     ok: bool
     top: list[SourceLabel] = Field(default_factory=list, max_length=3)
+    elapsed_ms: int | None = Field(default=None, ge=0)
+
+
+SourceInfo = SourceResult
 
 
 class ClassifyResponse(BaseModel):

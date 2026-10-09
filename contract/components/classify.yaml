@@ -1,0 +1,39 @@
+# File: contract/components/classify.yaml
+ClassifyResponse:
+  type: object
+  required: [request_id, status, category, alternatives, agreement, hazard, guidance, sources, elapsed_ms]
+  properties:
+    request_id:
+      type: string
+      description: Opaque ID (UUID). Used by /feedback.
+    status:
+      type: string
+      enum: [ok, uncertain]
+    category:
+      description: Null when status is `uncertain`.
+      oneOf:
+        - {$ref: "../openapi.yaml#/components/schemas/ResultCategory"}
+        - {type: "null"}
+    alternatives:
+      type: array
+      maxItems: 2
+      items: {$ref: "../openapi.yaml#/components/schemas/Alternative"}
+    agreement: {$ref: "../openapi.yaml#/components/schemas/Agreement"}
+    hazard:
+      type: boolean
+      description: |
+        True when a hazard category (battery, hazardous_chemical, medical, ewaste_*) scores >= 0.35.
+        The UI always shows warnings then, even when status is `uncertain`.
+    guidance:
+      description: |
+        Null when status is `uncertain` and hazard is false. When hazard is true, guidance is present
+        (for the hazard category) and its `warnings` are non-empty.
+      oneOf:
+        - {$ref: "../openapi.yaml#/components/schemas/Guidance"}
+        - {type: "null"}
+    sources:
+      type: array
+      items: {$ref: "sources.yaml#/SourceResult"}
+    elapsed_ms:
+      type: integer
+      minimum: 0

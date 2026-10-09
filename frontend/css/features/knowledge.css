@@ -1,0 +1,15 @@
+/* File: frontend/css/features/knowledge.css */
+.f-know { margin-block-start: var(--space-2); }
+.f-know > summary { cursor: pointer; font-weight: 600; min-block-size: 3rem; display: flex; align-items: center; }
+.f-know[open] { display: flex; flex-direction: column; gap: var(--space-2); }
+.f-know__s[data-slug="resin-guide"] { order: 1; }
+.f-know__s[data-slug="checklist"] { order: 2; }
+.f-know__s[data-slug="mistakes"] { order: 3; }
+.f-know__s[data-slug="facts"] { order: 4; }
+.f-know h3 { margin-block: 0 var(--space-1); font-size: var(--fs-lg); }
+.f-list { margin: 0; padding-inline-start: var(--space-2); }
+.f-list--plain li + li { margin-block-start: var(--space-0); }
+.f-list:not(.f-list--plain) { list-style: none; padding-inline-start: 0; }
+.f-list:not(.f-list--plain) li { display: flex; align-items: center; gap: var(--space-1); min-block-size: 2.75rem; }
+.f-list input[type="checkbox"] { inline-size: 1.25rem; block-size: 1.25rem; accent-color: var(--color-accent); flex-shrink: 0; }
+.f-list [aria-current="true"] { font-weight: 600; text-decoration: underline; text-underline-offset: 0.25em; }

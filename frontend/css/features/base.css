@@ -1,0 +1,30 @@
+/* File: frontend/css/features/base.css */
+/* Shared feature primitives (M30). Tokens only; logical properties only. */
+.f-card {
+  padding: var(--space-2, 1rem);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md, 8px);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+.f-dialog {
+  max-inline-size: min(32rem, calc(100% - 2rem));
+  padding: var(--space-2, 1rem);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md, 8px);
+  background: var(--color-surface);
+  color: var(--color-text);
+  overscroll-behavior: contain;
+  padding-block-end: calc(var(--space-2, 1rem) + env(safe-area-inset-bottom, 0px));
+  padding-inline: max(var(--space-2, 1rem), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+}
+.f-dialog::backdrop { background: rgb(0 0 0 / 0.45); }
+.f-dialog button { touch-action: manipulation; }
+.f-card :focus-visible,
+.f-dialog :focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .f-card, .f-dialog { transition: none; animation: none; }
+}

@@ -44,6 +44,21 @@ async def _call(name: str, src, data: bytes):
         return name, False, []
 
 
+async def _timed(name: str, src, data: bytes, timings: dict):
+    """Run one source call and record its duration (monotonic clock, ms)."""
+    t = time.perf_counter()
+    res = await _call(name, src, data)
+    timings[name] = max(0, int((time.perf_counter() - t) * 1000))
+    return res
+
+
+def _source_items(results, timings: dict) -> list[dict]:
+    return [{"name": n, "ok": ok,
+             "top": [{"label": lb, "score": round(sc, 4)} for lb, sc in p[:3]],
+             "elapsed_ms": timings.get(n)}
+            for n, ok, p in results]
+
+
 def _hazard_warning(cats: dict) -> list[str]:
     """Generic hazard note, taken from the content files (never hard-coded here)."""
     ref = cats.get("hazardous_chemical", {}).get("warnings", [])
@@ -99,7 +114,8 @@ class Orchestrator:
 
     async def run(self, data, lang: str, request_id: str, allow_cloud_llm: bool = False) -> dict:
         t0 = time.perf_counter()
-        results = await asyncio.gather(*[_call(n, s, data) for n, s in self.sources])
+        timings: dict[str, int] = {}
+        results = await asyncio.gather(*[_timed(n, s, data, timings) for n, s in self.sources])
         if not any(ok for _, ok, _ in results):
             raise AllSourcesFailed
         answered = [n for n, ok, _ in results if ok]
@@ -117,7 +133,7 @@ class Orchestrator:
         # Tiebreaker: flag on + per-photo consent + unclear first pass; never after a hazard.
         if (allow_cloud_llm and self.llm_active() and not (first and first.hazard)
                 and (first is None or first.status != "ok" or first.agreement == "none")):
-            name, ok, pairs = await _call("llm", self.llm, data)
+            name, ok, pairs = await _timed("llm", self.llm, data, timings)
             results.append((name, ok, pairs))
             scores = mapper.map_labels(pairs) if ok else {}
             if scores:
@@ -131,11 +147,7 @@ class Orchestrator:
                 "agreement": "none",
                 "hazard": False,
                 "guidance": None,
-                "sources": [
-                    {"name": n, "ok": ok,
-                     "top": [{"label": lb, "score": round(sc, 4)} for lb, sc in pairs[:3]]}
-                    for n, ok, pairs in results
-                ],
+                "sources": _source_items(results, timings),
                 "elapsed_ms": int((time.perf_counter() - t0) * 1000),
             }
         d = aggregator.decide(usable)
@@ -179,10 +191,7 @@ class Orchestrator:
             "hazard": d.hazard,
             "guidance": guidance,
             "reason": reason,
-            "sources": [
-                {"name": n, "ok": ok, "top": [{"label": lb, "score": round(s, 4)} for lb, s in p[:3]]}
-                for n, ok, p in results
-            ],
+            "sources": _source_items(results, timings),
             "elapsed_ms": int((time.perf_counter() - t0) * 1000),
         }
 

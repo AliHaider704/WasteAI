@@ -4,6 +4,8 @@ import threading
 import time
 from collections import deque
 
+from app.config import get_settings
+
 
 class TokenBucket:
     """Capacity = per_minute tokens, refilled continuously."""
@@ -50,7 +52,7 @@ class IPLimiter:
             return 0
 
 
-ip_limiter = IPLimiter(10, 60.0)
+ip_limiter = IPLimiter(get_settings().rate_classify_per_min, 60.0)
 
 # Separate bucket for /feedback: 10 per minute per IP.
 feedback_limiter = IPLimiter(10, 60.0)

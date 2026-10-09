@@ -1,0 +1,7 @@
+{
+ "_path": "frontend/i18n/features/journey.en.json",
+ "f.journey.summary": "Good to know",
+ "f.journey.source": "Source:",
+ "f.journey.accessed": "Accessed {date}",
+ "f.journey.title": "What happens next"
+}

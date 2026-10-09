@@ -147,21 +147,36 @@ def check_text_rules():
     files = [f"frontend/i18n/{lang}.json" for lang in LANGS] + [f"content/guidance.{lang}.json" for lang in LANGS]
     files += [f"frontend/i18n/labels.{lang}.json" for lang in LANGS]
     files += [f"frontend/i18n/bins.{lang}.json" for lang in LANGS]
+    files += [f"frontend/i18n/features/{p.name}" for p in sorted((ROOT / "frontend" / "i18n" / "features").glob("*.json"))]
+    pairs = []
     for rel in files:
         data = load_json(ROOT / rel)
         lang = "ar" if ".ar." in rel or rel.endswith("/ar.json") else "en"
-        for text in strings(data):
-            if "..." in text or "\u2014" in text or EMOJI.search(text):
-                err(f"{rel}: no '...', em dash or emoji allowed: {text[:50]!r}")
-            if lang == "en" and ARABIC.search(text):
-                err(f"{rel}: Arabic letters in an English file: {text[:50]!r}")
-            if lang == "ar":
-                for token in BDI.findall(text):
-                    if token not in allowed:
-                        err(f"{rel}: '{token}' is not in content/tools/allowlist.json")
-                rest = re.sub(r"\{\w+\}", "", BDI.sub("", text))
-                if re.search(r"[A-Za-z]", rest):
-                    err(f"{rel}: Latin letters outside <bdi> allow-list: {text[:50]!r}")
+        pairs += [(rel, lang, x) for x in strings(data)]
+    for path in sorted((ROOT / "frontend" / "data").glob("*.json")):
+        if path.name == "features.json":
+            continue
+        rel = path.relative_to(ROOT).as_posix()
+        for e in (load_json(path) or {}).get("entries", []):
+            pairs += [(rel, lg, x) for lg in LANGS for x in strings(e.get(lg))]
+    for rel, lang, text in pairs:
+        if "frontend/data/" in rel or "i18n/features/" in rel:
+            bare = re.sub(r"\b(" + "|".join(map(re.escape, allowed or ["-"])) + r")\b", "", text)
+            if re.search(r"[A-Za-z]{3,}", bare) and bare == bare.upper() and lang == "en":
+                err(f"{rel}: all-caps text: {text[:50]!r}")
+            if text.rstrip().endswith(("\u2192", "\u2190", "\u2197", "\u279c", "->", ">>", "\u00bb")):
+                err(f"{rel}: text ends with an arrow: {text[:50]!r}")
+        if "..." in text or "\u2014" in text or EMOJI.search(text):
+            err(f"{rel}: no '...', em dash or emoji allowed: {text[:50]!r}")
+        if lang == "en" and ARABIC.search(text):
+            err(f"{rel}: Arabic letters in an English file: {text[:50]!r}")
+        if lang == "ar":
+            for token in BDI.findall(text):
+                if token not in allowed:
+                    err(f"{rel}: '{token}' is not in content/tools/allowlist.json")
+            rest = re.sub(r"\{\w+\}", "", BDI.sub("", text))
+            if re.search(r"[A-Za-z]", rest):
+                err(f"{rel}: Latin letters outside <bdi> allow-list: {text[:50]!r}")
 
 
 def rule_labels():

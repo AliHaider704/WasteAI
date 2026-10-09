@@ -178,7 +178,7 @@ restore_conf() {
 
 # Render the server block: TLS listen + redirect when the certificate and Certbot support files exist.
 render_nginx() {
-  local tpl listen redirect le=/etc/letsencrypt
+  local tpl listen redirect rate le=/etc/letsencrypt
   tpl="$(<"$REPO/deploy/templates/nginx.conf.tpl")"
   if sudo test -f "$le/live/$DOMAIN/fullchain.pem" && sudo test -f "$le/options-ssl-nginx.conf" \
      && sudo test -f "$le/ssl-dhparams.pem"; then
@@ -204,6 +204,8 @@ render_nginx() {
   tpl="${tpl//__DOMAIN__/$DOMAIN}"
   tpl="${tpl//__APP__/$APP}"
   tpl="${tpl//__PORT__/$PORT}"
+  rate="$(env_get RATE_CLASSIFY_PER_MIN)"; case "$rate" in ''|*[!0-9]*) rate=10 ;; esac
+  tpl="${tpl//__RATE__/$rate}"
   printf '%s\n' "$tpl"
 }
 

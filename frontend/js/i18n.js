@@ -125,6 +125,33 @@ export function plain(text) {
   return String(text ?? "").replace(BDI, "$1");
 }
 
+const namespaces = new Set();
+
+async function mergeNamespace(slug, lang) {
+  try {
+    const res = await fetch(`i18n/features/${slug}.${lang}.json`);
+    if (!res.ok) throw new Error(String(res.status));
+    const data = await res.json();
+    Object.keys(data).filter((k) => k.startsWith("f.")).forEach((k) => (window.__i18n[k] = data[k]));
+  } catch (err) {
+    log("i18n_missing_key", { level: "warning", detail: `namespace ${slug} ${lang}` });
+  }
+}
+
+/** Loads i18n/features/<slug>.<lang>.json into the dictionary; reloads it on language change. */
+export async function loadNamespace(slug) {
+  await ready;
+  window.__i18n = window.__i18n || {};
+  namespaces.add(slug);
+  await mergeNamespace(slug, getLang());
+  translateDocument();
+}
+
+document.addEventListener("i18n:change", async (event) => {
+  await Promise.all([...namespaces].map((slug) => mergeNamespace(slug, event.detail.lang)));
+  if (namespaces.size) translateDocument();
+});
+
 /** Promise that resolves after the first dictionary is applied. */
 export function whenReady() {
   return ready;

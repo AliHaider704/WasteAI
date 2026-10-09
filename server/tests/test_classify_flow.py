@@ -68,6 +68,8 @@ def test_miss_then_hit(env):
     assert a["request_id"] != b["request_id"]
     assert a["category"] == b["category"]
     assert isinstance(b["elapsed_ms"], int)
+    assert all(isinstance(x["elapsed_ms"], int) and x["elapsed_ms"] >= 0 for x in a["sources"])
+    assert all(x["elapsed_ms"] is None for x in b["sources"])
 
 
 def test_uncertain(env):

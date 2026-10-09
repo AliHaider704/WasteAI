@@ -1,0 +1,56 @@
+{
+ "_path": "frontend/data/journey.json",
+ "entries": [
+  {
+   "id": "collected",
+   "groups": [
+    "plastics",
+    "paper",
+    "glass",
+    "metals"
+   ],
+   "en": "A hauler or local authority collects it",
+   "ar": "تجمعه جهة جمع خاصة أو حكومية",
+   "source": {
+    "kind": "external",
+    "title": "US EPA, The U.S. Recycling System",
+    "url": "https://epa.gov/americarecycles/us-recycling-system",
+    "accessed": "2026-10-09"
+   }
+  },
+  {
+   "id": "sorted",
+   "groups": [
+    "plastics",
+    "paper",
+    "glass",
+    "metals"
+   ],
+   "en": "It is sorted and cleaned of contaminants",
+   "ar": "يُفرز وتُزال منه الشوائب",
+   "source": {
+    "kind": "external",
+    "title": "US EPA, The U.S. Recycling System",
+    "url": "https://epa.gov/americarecycles/us-recycling-system",
+    "accessed": "2026-10-09"
+   }
+  },
+  {
+   "id": "remade",
+   "groups": [
+    "plastics",
+    "paper",
+    "glass",
+    "metals"
+   ],
+   "en": "It is made into new products",
+   "ar": "يُصنَّع منه منتج جديد",
+   "source": {
+    "kind": "external",
+    "title": "US EPA, The U.S. Recycling System",
+    "url": "https://epa.gov/americarecycles/us-recycling-system",
+    "accessed": "2026-10-09"
+   }
+  }
+ ]
+}

@@ -11,6 +11,7 @@ import "./dropzone.js";
 import "./results.js";
 import "./bininfo.js";
 import "./audio.js";
+import "./features/registry.js";
 // Hash routing (#/, #/browse, #/result) and the Browse view (M11 spec, restored in M18a).
 // Filters live in the hash: #/browse?group=glass&q=bottle (written with history.replaceState).
 
@@ -82,6 +83,7 @@ function renderRouteUnsafe() {
 }
 
 function renderRoute() {
+  document.dispatchEvent(new CustomEvent("wasteai:route", { detail: { view: currentRoute() } }));
   guard(currentRoute(), renderRouteUnsafe);
 }
 

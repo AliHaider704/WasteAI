@@ -1,0 +1,6 @@
+{
+ "_path": "frontend/i18n/features/facts.ar.json",
+ "f.facts.summary": "معلومات مفيدة",
+ "f.facts.title": "هل تعلم",
+ "f.facts.accessed": "تاريخ الاطلاع: {date}"
+}
