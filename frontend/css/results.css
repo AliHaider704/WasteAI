@@ -165,3 +165,11 @@ body:has(.view[data-view="result"]:not([hidden])) { block-size: 100vh; block-siz
 @media (max-width: 899px) and (orientation: portrait) {
   .result__card, .result > :not(.result__media) { -webkit-mask-image: linear-gradient(#000 calc(100% - 1.5rem), transparent); mask-image: linear-gradient(#000 calc(100% - 1.5rem), transparent); }
 }
+
+/* Desktop: let the page scroll normally instead of locking the result into the window height. */
+@media (min-width: 900px) and (min-height: 33rem) {
+  body:has(.view[data-view="result"]:not([hidden])) { block-size: auto; overflow: visible; }
+  #result-root > .result { grid-template-rows: auto; align-items: start; }
+  .result__card, .result > :not(.result__media) { overflow: visible; padding-block-end: 0; -webkit-mask-image: none; mask-image: none; }
+  .result__media { position: sticky; inset-block-start: 5rem; }
+}

@@ -36,12 +36,9 @@ export default function init(ctx) {
     lit = false;
     const tr = track();
     const caps = tr && tr.getCapabilities ? tr.getCapabilities() : {};
-    const rear = (tr && tr.getSettings ? tr.getSettings().facingMode : "") !== "user";
-    torch.hidden = !(rear && caps && caps.torch);
-    // Some phones report torch support only after the stream has warmed up: re-check.
-    if (tr && rear && !(caps && caps.torch) && (refresh.n = (refresh.n || 0) + 1) <= 4) {
-      setTimeout(() => { if (track() === tr) refresh(); }, 700);
-    }
+    const st = tr && tr.getSettings ? tr.getSettings() : {};
+    const front = st.facingMode ? st.facingMode === "user" : /front|user|selfie|أمام/i.test((tr && tr.label) || "");
+    torch.hidden = !tr || front; // always offered on the rear camera
     flip.hidden = true;
     if (tr && navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
       try {
@@ -62,8 +59,7 @@ export default function init(ctx) {
       labels();
       say(ctx.t(lit ? "f.torch.on" : "f.torch.off"));
     } catch (e) {
-      torch.hidden = true; // the browser refused: stop offering it
-      syncBar();
+      say(ctx.t("f.torch.off")); // this camera has no torch: button stays, nothing lights
     }
   });
 

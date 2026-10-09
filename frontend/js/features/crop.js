@@ -54,6 +54,18 @@ export default function init(ctx) {
   tools.append(toggle, apply, reset);
   host.insertBefore(tools, host.querySelector(".actions") || null);
 
+  // Header check mark: confirms the crop (visible only while the crop frame is open).
+  const hostTools = ctx.slot && ctx.slot("header-tools");
+  const okBtn = document.createElement("button");
+  okBtn.type = "button";
+  okBtn.className = "icon-btn";
+  okBtn.hidden = true;
+  okBtn.setAttribute("aria-label", ctx.t("f.crop.apply"));
+  okBtn.title = ctx.t("f.crop.apply");
+  okBtn.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#check"></use></svg>';
+  okBtn.addEventListener("click", () => { if (!box.hidden) doApply(); });
+  if (hostTools) hostTools.prepend(okBtn);
+
   function say(msg) {
     const live = host.querySelector(".capture__status");
     if (live) live.textContent = msg;
@@ -82,11 +94,13 @@ export default function init(ctx) {
     draw();
     toggle.textContent = ctx.t("f.crop.cancel");
     apply.hidden = false;
+    okBtn.hidden = false;
     box.focus();
   }
   function close() {
     box.hidden = true;
     apply.hidden = true;
+    okBtn.hidden = true;
     toggle.textContent = ctx.t("f.crop.start");
   }
   function setRect(n) {
