@@ -1,0 +1,29 @@
+/* File: frontend/css/features/crop.css. touch-action: none only on the crop box and its handles. */
+.cr-wrap { position: relative; }
+.cr-box {
+  position: absolute;
+  box-sizing: border-box;
+  border: 2px solid var(--color-accent);
+  outline: 1px solid var(--color-surface);
+  box-shadow: 0 0 0 100vmax rgb(0 0 0 / 0.45);
+  clip-path: inset(-100vmax);
+  cursor: move;
+  touch-action: none;
+}
+.cr-box[hidden], .cr-tools [hidden] { display: none; }
+.cr-box:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+.cr-handle {
+  position: absolute;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  background: var(--color-accent);
+  border: 2px solid var(--color-surface);
+  border-radius: 50%;
+  touch-action: none;
+}
+.cr-nw { inset-block-start: -0.875rem; left: -0.875rem; cursor: nwse-resize; }
+.cr-ne { inset-block-start: -0.875rem; right: -0.875rem; cursor: nesw-resize; }
+.cr-sw { bottom: -0.875rem; left: -0.875rem; cursor: nesw-resize; }
+.cr-se { bottom: -0.875rem; right: -0.875rem; cursor: nwse-resize; }
+.cr-tools { display: flex; flex-wrap: wrap; gap: var(--space-1); justify-content: center; margin-block: var(--space-1); }
+.cr-tools .btn { touch-action: manipulation; }

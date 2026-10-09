@@ -1,0 +1,25 @@
+<!doctype html>
+<!-- File: frontend/design/photo_check_lab.html (dev only). Drop photos; read brightness and sharpness. -->
+<meta charset="utf-8"><title>Photo check lab</title>
+<style>body{font:16px system-ui;margin:1rem}table{border-collapse:collapse}td,th{border:1px solid #888;padding:.3rem .6rem;text-align:end;font-variant-numeric:tabular-nums}#drop{border:2px dashed #888;padding:2rem;margin-block:1rem}</style>
+<h1>Photo check lab</h1>
+<p>Label each photo good or poor in its file name, drop 20 files, then pick thresholds that flag the poor ones and at most 1 of 10 good ones.</p>
+<div id="drop" tabindex="0">Drop photos here or <input type="file" accept="image/*" multiple></div>
+<table><thead><tr><th>File</th><th>Brightness</th><th>Sharpness</th><th>Flag</th></tr></thead><tbody id="rows"></tbody></table>
+<script type="module">
+import { scorePhoto } from "../js/features/photo-check.js";
+const cfg = await fetch("../data/photo-check.json").then((r) => r.json());
+const rows = document.getElementById("rows");
+async function add(files) {
+  for (const f of files) {
+    const s = await scorePhoto(f, cfg.side);
+    const flag = s.brightness < cfg.dark_below ? "dark" : s.brightness > cfg.bright_above ? "bright" : s.sharpness < cfg.blurry_below ? "blurry" : "";
+    const tr = rows.insertRow();
+    [f.name, s.brightness.toFixed(1), s.sharpness.toFixed(1), flag].forEach((v) => (tr.insertCell().textContent = v));
+  }
+}
+const drop = document.getElementById("drop");
+drop.addEventListener("dragover", (e) => e.preventDefault());
+drop.addEventListener("drop", (e) => { e.preventDefault(); add(e.dataTransfer.files); });
+drop.querySelector("input").addEventListener("change", (e) => add(e.target.files));
+</script>

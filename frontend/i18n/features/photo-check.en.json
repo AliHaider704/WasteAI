@@ -1,0 +1,6 @@
+{
+ "_path": "frontend/i18n/features/photo-check.en.json",
+ "f.photo-check.dark": "The photo looks dark. Move to a brighter spot.",
+ "f.photo-check.bright": "The photo looks too bright. Move out of direct light.",
+ "f.photo-check.blurry": "The photo looks blurry. Hold steady and retake it."
+}

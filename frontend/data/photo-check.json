@@ -1,0 +1,8 @@
+{
+ "_path": "frontend/data/photo-check.json",
+ "side": 128,
+ "dark_below": 55,
+ "bright_above": 215,
+ "blurry_below": 60,
+ "measured": "PROVISIONAL, not measured on the owner's 20 photos yet. Scores: mean gray 0-255; sharpness = variance of a 3x3 Laplacian on a 128 px gray copy. Run design/photo_check_lab.html on 10 good and 10 poor photos, then replace these values and write reports/photo_check.md."
+}

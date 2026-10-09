@@ -1,0 +1,6 @@
+{
+ "_path": "frontend/i18n/features/photo-check.ar.json",
+ "f.photo-check.dark": "الصورة تبدو داكنة. انتقل إلى مكان أكثر إضاءة.",
+ "f.photo-check.bright": "الصورة تبدو شديدة الإضاءة. ابتعد عن الضوء المباشر.",
+ "f.photo-check.blurry": "الصورة تبدو غير واضحة. ثبّت يدك والتقطها من جديد."
+}

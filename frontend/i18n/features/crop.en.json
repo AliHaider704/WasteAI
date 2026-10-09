@@ -1,0 +1,11 @@
+{
+ "_path": "frontend/i18n/features/crop.en.json",
+ "f.crop.start": "Crop photo",
+ "f.crop.cancel": "Cancel crop",
+ "f.crop.apply": "Apply crop",
+ "f.crop.reset": "Reset crop",
+ "f.crop.area": "Crop area. Arrow keys move it, Shift plus arrow keys resize it",
+ "f.crop.done": "Photo cropped",
+ "f.crop.restored": "Whole photo restored",
+ "f.crop.failed": "The photo could not be cropped. Try again"
+}
