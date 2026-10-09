@@ -67,10 +67,26 @@ export default function init(ctx) {
     if (!tr) return;
     flip.disabled = true;
     try {
-      const cams = (await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === "videoinput");
-      const now = tr.getSettings().deviceId;
+      const md = navigator.mediaDevices;
+      const cams = (await md.enumerateDevices()).filter((d) => d.kind === "videoinput");
+      const st = tr.getSettings();
+      const now = st.deviceId;
       const next = cams[(cams.findIndex((d) => d.deviceId === now) + 1) % cams.length];
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: next.deviceId } }, audio: false });
+      const wantFacing = st.facingMode === "user" ? "environment" : "user";
+      // Phones cannot open two cameras at once: release the current one first.
+      tr.stop();
+      let stream;
+      try {
+        stream = await md.getUserMedia({ video: { deviceId: { exact: next.deviceId } }, audio: false });
+      } catch (e1) {
+        try {
+          stream = await md.getUserMedia({ video: { facingMode: { ideal: wantFacing } }, audio: false });
+        } catch (e2) {
+          stream = await md.getUserMedia({ video: { facingMode: { ideal: st.facingMode || "environment" } }, audio: false }); // restore
+          await adoptStream(stream);
+          throw e2;
+        }
+      }
       await adoptStream(stream); // fires stage "camera", which runs refresh()
       say(ctx.t("f.torch.switched"));
     } catch (e) {
