@@ -167,7 +167,7 @@ body:has(.view[data-view="result"]:not([hidden])) { block-size: 100vh; block-siz
 }
 
 /* Desktop: let the page scroll normally instead of locking the result into the window height. */
-@media (min-width: 900px) and (min-height: 33rem) {
+@media (min-width: 900px) {
   body:has(.view[data-view="result"]:not([hidden])) { block-size: auto; overflow: visible; }
   #result-root > .result { grid-template-rows: auto; align-items: start; }
   .result__card, .result > :not(.result__media) { overflow: visible; padding-block-end: 0; -webkit-mask-image: none; mask-image: none; }
