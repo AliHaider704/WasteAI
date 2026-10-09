@@ -1,0 +1,12 @@
+{
+ "_path": "frontend/i18n/features/evidence.en.json",
+ "f.evidence.title": "How the label became the category",
+ "f.evidence.col_seen": "What the source saw",
+ "f.evidence.col_rule": "Rule",
+ "f.evidence.col_cat": "Category",
+ "f.evidence.rule": "Label rule",
+ "f.evidence.rule_group": "Group rule",
+ "f.evidence.tag_group": "group answer",
+ "f.evidence.list_item": "saw “{label}”, and the rule maps it to {cat}.",
+ "f.evidence.list_group": "No single label decided this. The group answer was {cat}."
+}

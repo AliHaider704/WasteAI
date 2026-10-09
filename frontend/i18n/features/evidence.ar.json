@@ -1,0 +1,12 @@
+{
+ "_path": "frontend/i18n/features/evidence.ar.json",
+ "f.evidence.title": "كيف أصبحت التسمية فئة",
+ "f.evidence.col_seen": "ما رآه المصدر",
+ "f.evidence.col_rule": "القاعدة",
+ "f.evidence.col_cat": "الفئة",
+ "f.evidence.rule": "قاعدة التسمية",
+ "f.evidence.rule_group": "قاعدة المجموعة",
+ "f.evidence.tag_group": "إجابة المجموعة",
+ "f.evidence.list_item": "رأى «{label}»، والقاعدة تربطها بالفئة {cat}.",
+ "f.evidence.list_group": "لم تحسم تسمية واحدة النتيجة. كانت إجابة المجموعة: {cat}."
+}

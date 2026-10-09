@@ -1,0 +1,40 @@
+/* File: frontend/css/features/evidence.css */
+.f-evidence { margin-block-start: var(--space-2); }
+.f-evidence__title { margin-block: 0 var(--space-1); font-size: var(--fs-md, 1rem); }
+.f-evidence__board {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2, 1rem);
+  align-items: start;
+}
+.f-evidence__col { display: flex; flex-direction: column; gap: var(--space-1, 0.5rem); position: relative; z-index: 1; }
+.f-evidence__col:last-child { justify-content: center; align-self: stretch; }
+.f-evidence__head { margin: 0; font-weight: 600; font-size: var(--fs-sm, 0.875rem); }
+.f-evidence__box {
+  padding: var(--space-1, 0.5rem);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md, 8px);
+  background: var(--color-surface);
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+.f-evidence__box--cat { border-color: var(--color-border-strong); font-weight: 600; }
+.f-evidence__tag {
+  display: inline-block;
+  padding-inline: var(--space-1, 0.5rem);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 4px;
+  font-size: var(--fs-sm, 0.875rem);
+}
+.f-evidence__lines { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.f-evidence__lines path { stroke: var(--color-border-strong); stroke-width: 1.5; }
+.f-evidence:not(.is-static) .f-evidence__lines path { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.f-evidence.is-drawn .f-evidence__lines path { stroke-dashoffset: 0; transition: stroke-dashoffset 600ms ease-out; }
+.f-evidence__text { margin-block-start: var(--space-2, 1rem); }
+@media (max-width: 36rem) {
+  .f-evidence__board { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .f-evidence.is-drawn .f-evidence__lines path { transition: none; }
+}

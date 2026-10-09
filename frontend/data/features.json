@@ -219,7 +219,7 @@
       "playful": true
     },
     "evidence": {
-      "enabled": false,
+      "enabled": true,
       "module": "evidence",
       "trigger": "result",
       "needs": [],
