@@ -15,12 +15,16 @@ export default function init(ctx) {
   b.className = "icon-btn";
   b.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#check"></use></svg><span class="visually-hidden"></span>';
   const label = b.querySelector("span");
+  b.hidden = true; // shown only once a photo has been analysed
+  document.addEventListener("wasteai:result", () => { b.hidden = false; });
+  document.addEventListener("wasteai:route", (e) => { if (e.detail && e.detail.view === "browse") b.hidden = true; });
+  document.addEventListener("wasteai:capture", (e) => { if (e.detail && e.detail.stage === "camera") b.hidden = true; });
 
   async function decorate(card, result) {
     if (!card) return;
     card.querySelectorAll(".f-details").forEach((n) => n.remove());
-    const why = card.querySelector(".result__why");
-    if (!on || !why) return;
+    const why = card.querySelector(".result__why") || card;
+    if (!on) return;
     await loadSourceNames();
     if (!card.isConnected) return;
     const box = document.createElement("div");
@@ -59,6 +63,8 @@ export default function init(ctx) {
 
   function paint() {
     b.setAttribute("aria-pressed", String(on));
+    b.style.background = on ? "var(--color-accent, #1f3d5c)" : "";
+    b.style.color = on ? "#fff" : "";
     label.textContent = t("f.transparency.toggle");
   }
   b.addEventListener("click", async () => {
@@ -67,7 +73,10 @@ export default function init(ctx) {
     else store.remove("details-mode");
     paint();
     const { store: api } = await import("../api.js");
-    decorate(document.querySelector(".result__card"), api.result || {});
+    const card = document.querySelector(".result__card");
+    await decorate(card, api.result || {});
+    const box = card && card.querySelector(".f-details");
+    if (box) box.scrollIntoView({ behavior: "smooth", block: "center" });
   });
   host.append(b);
   ctx.on("i18n:change", paint);
