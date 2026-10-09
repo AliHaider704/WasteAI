@@ -166,10 +166,18 @@ body:has(.view[data-view="result"]:not([hidden])) { block-size: 100vh; block-siz
   .result__card, .result > :not(.result__media) { -webkit-mask-image: linear-gradient(#000 calc(100% - 1.5rem), transparent); mask-image: linear-gradient(#000 calc(100% - 1.5rem), transparent); }
 }
 
-/* Desktop: let the page scroll normally instead of locking the result into the window height. */
-@media (min-width: 900px) {
-  body:has(.view[data-view="result"]:not([hidden])) { block-size: auto; overflow: visible; }
-  #result-root > .result { grid-template-rows: auto; align-items: start; }
-  .result__card, .result > :not(.result__media) { overflow: visible; padding-block-end: 0; -webkit-mask-image: none; mask-image: none; }
-  .result__media { position: sticky; inset-block-start: 5rem; }
+/* Every screen: normal page scroll (no locked frame, no inner scroll box). Phones stack photo above details. */
+body:has(.view[data-view="result"]:not([hidden])) { block-size: auto; overflow: visible; }
+.app-main:has(.view[data-view="result"]:not([hidden])) { display: block; }
+.view[data-view="result"]:not([hidden]) { display: grid; grid-template-rows: auto auto; align-items: center; }
+.view[data-view="result"] > #result-root { align-self: start; }
+#result-root, #result-root > .result { min-block-size: auto; }
+#result-root > .result { display: flex; flex-direction: column; align-items: stretch; }
+.result__card, .result > :not(.result__media) { flex: none; overflow: visible; padding-block-end: 1rem; -webkit-mask-image: none; mask-image: none; }
+.result__photo { block-size: clamp(8rem, 28dvh, 14rem); }
+/* Wide screens and sideways phones: photo beside details, pinned while the page scrolls. */
+@media (min-width: 900px), (orientation: landscape) and (max-height: 32rem) {
+  #result-root > .result { display: grid; grid-template-rows: auto; align-items: start; }
+  .result__media { position: sticky; inset-block-start: 1rem; align-self: start; }
+  .result__photo { block-size: auto; aspect-ratio: 4 / 3; max-block-size: 70vh; max-block-size: 70dvh; }
 }
