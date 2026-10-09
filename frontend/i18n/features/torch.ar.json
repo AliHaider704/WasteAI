@@ -1,0 +1,9 @@
+{
+ "_path": "frontend/i18n/features/torch.ar.json",
+ "f.torch.label": "المصباح",
+ "f.torch.switch": "تبديل الكاميرا",
+ "f.torch.on": "تم تشغيل المصباح",
+ "f.torch.off": "تم إطفاء المصباح",
+ "f.torch.switched": "تم تبديل الكاميرا",
+ "f.torch.switch_failed": "تعذّر تبديل الكاميرا"
+}

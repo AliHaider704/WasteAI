@@ -1,0 +1,9 @@
+{
+ "_path": "frontend/i18n/features/torch.en.json",
+ "f.torch.label": "Torch",
+ "f.torch.switch": "Switch camera",
+ "f.torch.on": "Torch on",
+ "f.torch.off": "Torch off",
+ "f.torch.switched": "Camera switched",
+ "f.torch.switch_failed": "Could not switch the camera"
+}

@@ -1,0 +1,74 @@
+/* File: frontend/css/features/capture-tools.css */
+/* M34 capture assistants. Tokens only; logical properties only. */
+.ct-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  justify-content: center;
+}
+.ct-bar[hidden], .ct-btn[hidden], .ct-frame[hidden], .ct-count[hidden] { display: none; }
+.ct-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  min-block-size: 3rem;
+  min-inline-size: 3rem;
+  padding-inline: var(--space-1);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md, 8px);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.ct-btn[aria-pressed="true"] { border-color: var(--color-accent); background: var(--color-accent-soft); }
+:root[data-contrast="high"] .ct-btn[aria-pressed="true"] { outline: 2px solid var(--color-text); }
+.ct-btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.ct-btn:disabled { opacity: 0.6; cursor: default; }
+.ct-icon { inline-size: 1.5rem; block-size: 1.5rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ct-num { min-inline-size: 1ch; font-variant-numeric: tabular-nums; }
+
+/* Panel becomes the positioning parent for the overlays that sit on the video. */
+.capture { position: relative; }
+.ct-frame {
+  position: absolute;
+  inset-inline: 12%;
+  inset-block-start: calc(var(--ct-top, 0px) + var(--ct-height, 0px) * 0.1);
+  block-size: calc(var(--ct-height, 0px) * 0.8);
+  inline-size: 76%;
+  pointer-events: none;
+  fill: none;
+  stroke: #fff; /* sits on live video, not on a page surface: white with a dark halo */
+  stroke-width: 3;
+  stroke-linecap: square;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 1px #000);
+}
+.ct-frame path { vector-effect: non-scaling-stroke; }
+.ct-count {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: var(--ct-top, 0);
+  margin: 0;
+  padding-block: 0.5rem;
+  text-align: center;
+  font-size: 4rem;
+  font-weight: 600;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 0 0 3px #000, 0 0 3px #000;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+.ct-live {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@media (prefers-reduced-motion: reduce) { .ct-btn { transition: none; } }

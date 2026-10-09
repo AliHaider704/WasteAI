@@ -11,6 +11,21 @@ export class CameraError extends Error {
   }
 }
 
+// M34: the live stream is shared with feature modules through `wasteai:capture` stage "camera".
+let active = null;
+const announce = (detail) => document.dispatchEvent(new CustomEvent("wasteai:capture", { detail }));
+export const activeCamera = () => active;
+
+/** Camera switch: replaces the running stream; stopCamera still releases it. */
+export async function adoptStream(next) {
+  if (!active) return next.getTracks().forEach((track) => track.stop());
+  active.stream.getTracks().forEach((track) => track.stop());
+  active.stream = next;
+  active.video.srcObject = next;
+  await active.video.play();
+  announce({ stage: "camera", stream: next, track: next.getVideoTracks()[0] });
+}
+
 /** getUserMedia needs a secure context (HTTPS or localhost). */
 export function isCameraSupported() {
   return Boolean(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) && window.isSecureContext;
@@ -64,12 +79,19 @@ export async function startCamera(video) {
     stopCamera(stream, video);
     throw new CameraError("camera.error", err);
   }
+  active = { stream, origin: stream, video };
+  announce({ stage: "camera", stream, track: stream.getVideoTracks()[0] });
   return stream;
 }
 
 /** Releases the camera so the browser's recording indicator turns off. */
 export function stopCamera(stream, video) {
   if (stream) stream.getTracks().forEach((track) => track.stop());
+  if (active && (stream === active.origin || stream === active.stream)) {
+    active.stream.getTracks().forEach((track) => track.stop());
+    active = null;
+    announce({ stage: "camera-off" });
+  }
   if (video) video.srcObject = null;
 }
 

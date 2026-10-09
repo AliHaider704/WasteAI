@@ -1,0 +1,7 @@
+{
+ "_path": "frontend/i18n/features/timer.en.json",
+ "f.timer.label_off": "Timer: off. Press to change",
+ "f.timer.label_on": "Timer: {n} seconds. Press to change",
+ "f.timer.start": "Photo in {n} seconds",
+ "f.timer.cancelled": "Timer cancelled"
+}

@@ -1,0 +1,7 @@
+{
+ "_path": "frontend/i18n/features/timer.ar.json",
+ "f.timer.label_off": "المؤقت: متوقف. اضغط للتغيير",
+ "f.timer.label_on": "المؤقت: {n} ثوانٍ. اضغط للتغيير",
+ "f.timer.start": "سيتم التقاط الصورة بعد {n} ثوانٍ",
+ "f.timer.cancelled": "تم إلغاء المؤقت"
+}

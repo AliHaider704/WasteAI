@@ -18,7 +18,7 @@ Triggers: `home`, `capture`, `result`, `browse` (on `wasteai:route` / `capture` 
 
 ## Events (real payloads)
 - `wasteai:route` `{ view }` (from `app.js renderRoute`, every route render).
-- `wasteai:capture` `{ stage, ... }`: `open` (panel leaves idle), `ready` `{ blob, replace(blob) }` (preview shown; `replace` swaps the file without re-firing `ready`), `before-send` `{ blob }`, `sent`, `cancel`.
+- `wasteai:capture` `{ stage, ... }`: `open` (panel leaves idle), `ready` `{ blob, replace(blob) }` (preview shown; `replace` swaps the file without re-firing `ready`), `before-send` `{ blob }`, `sent`, `cancel`; M34 adds `camera` `{ stream, track }` (live stream started or swapped by `camera.js`) and `camera-off` (stream released). `camera.js` also exports `activeCamera()` and `adoptStream(stream)` for modules that load after the camera started or that switch lenses.
 - `wasteai:result` `{ result, photoUrl }` (exists; from `upload.js` and `batch.js`).
 - `wasteai:batch` `{ items, done: true }` (when a batch run finishes).
 - `i18n:change` `{ lang, dir }`, `theme:change` `{ theme }`, `sound:change` `{ muted }`.
