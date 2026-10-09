@@ -216,5 +216,15 @@ search.setAttribute("type", "search");
 search.setAttribute("inputmode", "search");
 search.setAttribute("autocomplete", "off");
 
+document.addEventListener("click", (e) => {
+  if (!e.target.closest('[data-action="search"]')) return;
+  const focus = () => { const i = $("#browse-search"); i.focus(); i.select(); };
+  if (currentRoute() === "browse") focus();
+  else {
+    location.hash = "#/browse";
+    setTimeout(focus, 150);
+  }
+});
+
 bindEvents();
 whenReady().then(renderRoute, renderRoute);

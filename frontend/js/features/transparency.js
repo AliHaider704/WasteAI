@@ -13,7 +13,7 @@ export default function init(ctx) {
   const b = document.createElement("button");
   b.type = "button";
   b.className = "icon-btn";
-  b.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#search"></use></svg><span class="visually-hidden"></span>';
+  b.innerHTML = '<svg class="icon" aria-hidden="true"><use href="assets/icons.svg#check"></use></svg><span class="visually-hidden"></span>';
   const label = b.querySelector("span");
 
   async function decorate(card, result) {
