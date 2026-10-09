@@ -165,7 +165,7 @@
     "palette": {
       "enabled": false,
       "module": "palette",
-      "trigger": "command",
+      "trigger": "idle",
       "needs": [],
       "playful": false
     },
