@@ -1,6 +1,7 @@
 // File: frontend/js/features/record.js
 import { catalog, plain, lang, slotEl, resultOf, card, confirmDialog } from "./personal-data.js";
 import { HAZARD, noteResult } from "./play-data.js";
+export const styles = "record";
 
 export default function init(ctx) {
   const host = slotEl(ctx, "home");

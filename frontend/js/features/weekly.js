@@ -2,6 +2,7 @@
 // One goal per week, set by the calendar week (no randomness). No streak, no penalty, no ranking (D-044).
 import { catalog, lang, slotEl, resultOf, card } from "./personal-data.js";
 import { HAZARD, weekInfo } from "./play-data.js";
+export const styles = "weekly";
 
 const GOAL = 3;
 const GROUP_KEY = {

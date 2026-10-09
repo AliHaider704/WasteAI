@@ -2,6 +2,7 @@
 // Sorting stamps: a bin-style rectangle for a category sorted for the first time. No hazard stamps, no rewards.
 import { catalog, plain, lang, slotEl, resultOf } from "./personal-data.js";
 import { noteResult } from "./play-data.js";
+export const styles = "badges";
 
 export default function init(ctx) {
   const host = slotEl(ctx, "result");
