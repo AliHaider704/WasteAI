@@ -1,0 +1,7 @@
+/* File: frontend/css/features/kids.css */
+/* Kids mode keeps the result simple: no technical details, no data tools. Warnings are never hidden. */
+html[data-kids="on"] #result-root details,
+html[data-kids="on"] #slot-footer,
+html[data-kids="on"] #slot-browse .f-card {
+  display: none;
+}

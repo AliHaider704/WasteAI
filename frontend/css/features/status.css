@@ -1,0 +1,19 @@
+/* File: frontend/css/features/status.css */
+.f-status-btn {
+  min-block-size: 3rem;
+  padding-inline: var(--space-1);
+  border: 0;
+  background: none;
+  color: var(--color-text-muted);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+@media (hover: hover) {
+  .f-status-btn:hover { color: var(--color-text); }
+}
+.f-status-btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.f-status-list {
+  margin-block: var(--space-2);
+  padding-inline-start: var(--space-3);
+}

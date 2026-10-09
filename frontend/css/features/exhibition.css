@@ -1,0 +1,7 @@
+/* File: frontend/css/features/exhibition.css */
+.f-ex-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-block-start: var(--space-2);
+}
+html[data-exhibition="on"] .f-dialog p { font-variant-numeric: tabular-nums; }
