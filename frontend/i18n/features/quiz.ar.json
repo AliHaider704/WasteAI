@@ -1,0 +1,14 @@
+{
+  "_path": "frontend/i18n/features/quiz.ar.json",
+  "f.quiz.title": "اختبار سريع",
+  "f.quiz.ask": "إلى أي مجموعة ينتمي: {name}؟",
+  "f.quiz.right": "إجابة صحيحة.",
+  "f.quiz.wrong": "ليست دقيقة. ينتمي إلى مجموعة {group}.",
+  "f.quiz.next": "السؤال التالي",
+  "f.quiz.g.plastics": "البلاستيك",
+  "f.quiz.g.paper": "الورق",
+  "f.quiz.g.glass": "الزجاج",
+  "f.quiz.g.metals": "المعادن",
+  "f.quiz.g.organic": "المواد العضوية",
+  "f.quiz.g.other": "أخرى"
+}

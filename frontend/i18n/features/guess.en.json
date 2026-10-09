@@ -1,0 +1,6 @@
+{
+  "_path": "frontend/i18n/features/guess.en.json",
+  "f.guess.ask": "Make a guess first (optional): which group is it?",
+  "f.guess.same": "You guessed {guess}. The result is in the same group.",
+  "f.guess.diff": "You guessed {guess}. The result is in {group}."
+}

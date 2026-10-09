@@ -1,0 +1,6 @@
+{
+  "_path": "frontend/i18n/features/evaporate.en.json",
+  "f.evaporate.note": "WasteAI does not keep your photo on the server. You can also remove it from this screen.",
+  "f.evaporate.button": "Remove photo from this screen",
+  "f.evaporate.done": "The photo is removed from this screen."
+}

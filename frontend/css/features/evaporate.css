@@ -1,0 +1,7 @@
+/* File: frontend/css/features/evaporate.css */
+.f-evap { margin-block: var(--space-4, 1rem); }
+.f-evap .btn { min-block-size: 3rem; }
+@media (prefers-reduced-motion: no-preference) {
+  .result__photo { transition: opacity 0.4s ease-out; }
+  .result__photo.f-evap__fade { opacity: 0; }
+}

@@ -1,0 +1,14 @@
+{
+  "_path": "frontend/i18n/features/quiz.en.json",
+  "f.quiz.title": "Quick quiz",
+  "f.quiz.ask": "Which group does {name} belong to?",
+  "f.quiz.right": "Correct.",
+  "f.quiz.wrong": "Not quite. It belongs to {group}.",
+  "f.quiz.next": "Next question",
+  "f.quiz.g.plastics": "Plastics",
+  "f.quiz.g.paper": "Paper",
+  "f.quiz.g.glass": "Glass",
+  "f.quiz.g.metals": "Metals",
+  "f.quiz.g.organic": "Organic waste",
+  "f.quiz.g.other": "Other"
+}

@@ -1,0 +1,5 @@
+{
+  "_path": "frontend/i18n/features/daily.en.json",
+  "f.daily.title": "Daily question",
+  "f.daily.done": "Done for today. A new question comes tomorrow."
+}

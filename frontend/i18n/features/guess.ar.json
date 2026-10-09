@@ -1,0 +1,6 @@
+{
+  "_path": "frontend/i18n/features/guess.ar.json",
+  "f.guess.ask": "خمّن أولًا (اختياري): إلى أي مجموعة ينتمي؟",
+  "f.guess.same": "خمّنت: {guess}. النتيجة في المجموعة نفسها.",
+  "f.guess.diff": "خمّنت: {guess}. النتيجة في مجموعة {group}."
+}

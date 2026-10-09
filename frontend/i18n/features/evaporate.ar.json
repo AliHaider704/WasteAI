@@ -1,0 +1,6 @@
+{
+  "_path": "frontend/i18n/features/evaporate.ar.json",
+  "f.evaporate.note": "لا يحتفظ التطبيق بصورتك على الخادم. يمكنك أيضًا إزالتها من هذه الشاشة.",
+  "f.evaporate.button": "إزالة الصورة من هذه الشاشة",
+  "f.evaporate.done": "أُزيلت الصورة من هذه الشاشة."
+}
