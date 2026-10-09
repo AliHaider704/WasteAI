@@ -1,0 +1,8 @@
+{
+  "_path": "frontend/i18n/features/favorites.en.json",
+  "f.favorites.title": "Favorite categories",
+  "f.favorites.empty": "No favorites yet. Save a category from a result.",
+  "f.favorites.unknown": "Unknown category",
+  "f.favorites.add": "Save category to favorites",
+  "f.favorites.remove": "Remove from favorites"
+}

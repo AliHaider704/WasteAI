@@ -1,0 +1,11 @@
+{
+  "_path": "frontend/i18n/features/stats.ar.json",
+  "f.stats.title": "إحصاءاتي",
+  "f.stats.empty": "لم تُحتسب أي نتيجة بعد.",
+  "f.stats.total": "عدد العناصر المفروزة على هذا الجهاز: {n}",
+  "f.stats.unknown": "فئة غير معروفة",
+  "f.stats.reset": "إعادة ضبط الإحصاءات",
+  "f.stats.confirm": "هل تريد إعادة ضبط الأعداد على هذا الجهاز؟",
+  "f.stats.reset_yes": "إعادة الضبط",
+  "f.stats.cancel": "الإبقاء على الإحصاءات"
+}

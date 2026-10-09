@@ -1,0 +1,10 @@
+{
+  "_path": "frontend/i18n/features/history.en.json",
+  "f.history.title": "Recent results",
+  "f.history.empty": "Nothing here yet. Results from this device appear after your first scan.",
+  "f.history.unknown": "Unknown category",
+  "f.history.clear": "Clear history",
+  "f.history.confirm": "Remove all recent results from this device?",
+  "f.history.clear_yes": "Clear history",
+  "f.history.cancel": "Keep history"
+}

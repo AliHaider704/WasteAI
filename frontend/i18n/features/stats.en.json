@@ -1,0 +1,11 @@
+{
+  "_path": "frontend/i18n/features/stats.en.json",
+  "f.stats.title": "My statistics",
+  "f.stats.empty": "No results counted yet.",
+  "f.stats.total": "Items sorted on this device: {n}",
+  "f.stats.unknown": "Unknown category",
+  "f.stats.reset": "Reset statistics",
+  "f.stats.confirm": "Reset the counts on this device?",
+  "f.stats.reset_yes": "Reset statistics",
+  "f.stats.cancel": "Keep statistics"
+}

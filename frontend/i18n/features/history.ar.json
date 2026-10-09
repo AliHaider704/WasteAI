@@ -1,0 +1,10 @@
+{
+  "_path": "frontend/i18n/features/history.ar.json",
+  "f.history.title": "النتائج الأخيرة",
+  "f.history.empty": "لا توجد نتائج بعد. تظهر هنا نتائج هذا الجهاز بعد أول فحص.",
+  "f.history.unknown": "فئة غير معروفة",
+  "f.history.clear": "مسح السجل",
+  "f.history.confirm": "هل تريد حذف كل النتائج الأخيرة من هذا الجهاز؟",
+  "f.history.clear_yes": "مسح السجل",
+  "f.history.cancel": "الإبقاء على السجل"
+}

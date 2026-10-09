@@ -1,0 +1,8 @@
+{
+  "_path": "frontend/i18n/features/favorites.ar.json",
+  "f.favorites.title": "الفئات المفضلة",
+  "f.favorites.empty": "لا توجد فئات مفضلة بعد. احفظ فئة من إحدى النتائج.",
+  "f.favorites.unknown": "فئة غير معروفة",
+  "f.favorites.add": "حفظ الفئة في المفضلة",
+  "f.favorites.remove": "إزالة من المفضلة"
+}
