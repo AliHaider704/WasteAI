@@ -1,0 +1,11 @@
+{
+ "_path": "frontend/i18n/features/transparency.ar.json",
+ "f.transparency.toggle": "وضع التفاصيل",
+ "f.transparency.title": "التفاصيل",
+ "f.transparency.ok": "أجاب",
+ "f.transparency.failed": "لم يجب",
+ "f.transparency.score": "أعلى نتيجة {n}%",
+ "f.transparency.ms": "{n} مللي ثانية",
+ "f.transparency.cache": "أُجيب من نتيجة محفوظة، لذلك لم يعمل أي مصدر.",
+ "f.transparency.total": "الزمن الكلي: {n} مللي ثانية"
+}

@@ -33,20 +33,44 @@
       "name": "local_onnx",
       "ok": true,
       "top": [
-        { "label": "plastic", "score": 0.91 },
-        { "label": "bottle", "score": 0.05 },
-        { "label": "glass", "score": 0.02 }
-      ]
+        {
+          "label": "plastic",
+          "score": 0.91
+        },
+        {
+          "label": "bottle",
+          "score": 0.05
+        },
+        {
+          "label": "glass",
+          "score": 0.02
+        }
+      ],
+      "elapsed_ms": 380
     },
     {
       "name": "azure",
       "ok": true,
       "top": [
-        { "label": "bottle", "score": 0.88 },
-        { "label": "plastic", "score": 0.74 },
-        { "label": "drink", "score": 0.52 }
-      ]
+        {
+          "label": "bottle",
+          "score": 0.88
+        },
+        {
+          "label": "plastic",
+          "score": 0.74
+        },
+        {
+          "label": "drink",
+          "score": 0.52
+        }
+      ],
+      "elapsed_ms": 920
     }
   ],
-  "elapsed_ms": 1420
+  "elapsed_ms": 1420,
+  "reason": [
+    "local_onnx:plastic>plastic_pet",
+    "azure:bottle>plastic_pet"
+  ]
 }

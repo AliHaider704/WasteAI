@@ -1,0 +1,9 @@
+{
+ "_path": "frontend/i18n/features/share.ar.json",
+ "f.share.button": "مشاركة النتيجة",
+ "f.share.copied": "تم النسخ إلى الحافظة",
+ "f.share.manual": "المشاركة غير متاحة هنا. انسخ هذا النص بنفسك.",
+ "f.share.text": "{name}. الحاوية: {bin}. الخطوة الأولى: {step}. {url}",
+ "f.share.text_short": "{name}. الحاوية: {bin}. {url}",
+ "f.share.area": "النص المراد نسخه"
+}

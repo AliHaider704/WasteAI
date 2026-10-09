@@ -1,0 +1,8 @@
+{
+ "_path": "frontend/i18n/features/two-sources.ar.json",
+ "f.two-sources.summary": "كيف قارنّا بين المصدرين",
+ "f.two-sources.saw": "رأى: {list}",
+ "f.two-sources.mapped": "صُنّف على أنه: {list}",
+ "f.two-sources.closing_unsure": "لم يتفق المصدران، لذلك عُرضت النتيجة على أنها غير مؤكدة.",
+ "f.two-sources.closing_used": "اعتُمدت القراءة الأكثر ثقة."
+}

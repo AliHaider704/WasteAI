@@ -1,0 +1,9 @@
+/* File: frontend/css/features/comfort.css */
+.f-field { display: flex; flex-direction: column; gap: var(--space-0); margin-block-end: var(--space-1); }
+.f-actions { display: flex; flex-wrap: wrap; gap: var(--space-1); margin-block-start: var(--space-2); }
+.f-mybin { font-weight: 600; }
+html[data-readable="on"] { font-size: 112.5%; }
+html[data-readable="on"] body { line-height: 1.9; }
+html[data-readable="on"] .result__card, html[data-readable="on"] .result__summary { max-inline-size: 60ch; }
+html[data-readable="on"] .result__steps { list-style-position: inside; padding-inline: 0; }
+html[data-readable="on"] .result__steps li { margin-block: var(--space-2); padding: var(--space-2); border: 1px solid var(--color-border); border-radius: var(--radius-md); }

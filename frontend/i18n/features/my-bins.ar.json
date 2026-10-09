@@ -1,0 +1,14 @@
+{
+ "_path": "frontend/i18n/features/my-bins.ar.json",
+ "f.my-bins.open": "أسماء حاوياتي",
+ "f.my-bins.title": "أسماء حاوياتي",
+ "f.my-bins.note": "تختلف ألوان الحاويات بين المدن. اكتب اسم كل حاوية أو ما تجمعه في منطقتك.",
+ "f.my-bins.placeholder": "مثال: حاوية الورق في شارعنا…",
+ "f.my-bins.save": "حفظ أسماء الحاويات",
+ "f.my-bins.clear": "مسح أسماء الحاويات",
+ "f.my-bins.clear_q": "هل تريد حذف كل أسماء الحاويات من هذا الجهاز؟",
+ "f.my-bins.clear_yes": "مسح الأسماء",
+ "f.my-bins.cancel": "إلغاء",
+ "f.my-bins.close": "إغلاق",
+ "f.my-bins.yours": "حاويتك: {name}"
+}

@@ -1,0 +1,5 @@
+{
+ "_path": "frontend/i18n/features/read-aloud.en.json",
+ "f.read-aloud.start": "Read steps aloud",
+ "f.read-aloud.stop": "Stop reading"
+}

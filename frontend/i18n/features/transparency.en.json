@@ -1,0 +1,11 @@
+{
+ "_path": "frontend/i18n/features/transparency.en.json",
+ "f.transparency.toggle": "Details mode",
+ "f.transparency.title": "Details",
+ "f.transparency.ok": "answered",
+ "f.transparency.failed": "did not answer",
+ "f.transparency.score": "top score {n}%",
+ "f.transparency.ms": "{n} ms",
+ "f.transparency.cache": "Answered from a saved result, so no source ran.",
+ "f.transparency.total": "Total time: {n} ms"
+}

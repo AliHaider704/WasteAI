@@ -1,0 +1,8 @@
+{
+ "_path": "frontend/i18n/features/two-sources.en.json",
+ "f.two-sources.summary": "How the two sources compared",
+ "f.two-sources.saw": "Saw: {list}",
+ "f.two-sources.mapped": "Mapped to: {list}",
+ "f.two-sources.closing_unsure": "The sources did not agree, so the result is shown as not sure.",
+ "f.two-sources.closing_used": "The more confident reading was used."
+}

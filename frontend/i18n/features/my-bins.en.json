@@ -1,0 +1,14 @@
+{
+ "_path": "frontend/i18n/features/my-bins.en.json",
+ "f.my-bins.open": "My bin names",
+ "f.my-bins.title": "My bin names",
+ "f.my-bins.note": "Bin colors differ between cities. Write what each bin is called or collects where you live.",
+ "f.my-bins.placeholder": "For example, the paper bin on our street…",
+ "f.my-bins.save": "Save my bin names",
+ "f.my-bins.clear": "Clear my bin names",
+ "f.my-bins.clear_q": "Remove all your bin names from this device?",
+ "f.my-bins.clear_yes": "Clear names",
+ "f.my-bins.cancel": "Cancel",
+ "f.my-bins.close": "Close",
+ "f.my-bins.yours": "Your bin: {name}"
+}
