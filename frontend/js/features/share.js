@@ -192,7 +192,6 @@ export default function init(ctx) {
     });
     const vars = { name: nameEl.textContent, bin: chip ? chip.textContent : "", step: stepEls[0] ? stepEls[0].textContent : "", url };
     const text = t(stepEls[0] ? "f.share.text" : "f.share.text_short", vars);
-    const alt = t("f.share.preview_alt", vars);
 
     const box = document.createElement("div");
     box.className = "f-share";
@@ -203,88 +202,28 @@ export default function init(ctx) {
     const status = document.createElement("p");
     status.className = "muted";
     status.setAttribute("role", "status");
-    const preview = document.createElement("figure");
-    preview.className = "f-share__preview";
-    preview.hidden = true;
-    const img = document.createElement("img");
-    img.alt = alt;
-    img.width = W;
-    img.height = H;
-    const actions = document.createElement("div");
-    actions.className = "f-share__actions";
-    const save = document.createElement("a");
-    save.className = "btn";
-    save.textContent = t("f.share.download");
-    const copy = document.createElement("button");
-    copy.type = "button";
-    copy.className = "btn";
-    copy.textContent = t("f.share.copy_image");
-    copy.hidden = !(navigator.clipboard && window.ClipboardItem);
-    actions.append(save, copy);
-    preview.append(img, actions);
-    const area = document.createElement("textarea");
-    area.readOnly = true;
-    area.hidden = true;
-    area.setAttribute("aria-label", t("f.share.area"));
-    box.append(btn, status, preview, area);
+    box.append(btn, status);
 
-    let objectUrl = null;
-    let blob = null;
-
-    async function shareText() {
-      if (navigator.share) {
-        try {
-          await navigator.share({ text });
-          return;
-        } catch (err) {
-          if (err && err.name === "AbortError") return;
-        }
-      }
-      try {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          await navigator.clipboard.writeText(text);
-          status.textContent = t("f.share.copied");
-          return;
-        }
-      } catch (err) {
-        // fall through to the manual text area
-      }
-      area.value = text;
-      area.hidden = false;
-      area.focus();
-      area.select();
-      status.textContent = t("f.share.manual");
+    /** No file sharing on this device: the card is saved as a PNG so it can still be sent. */
+    function download(file) {
+      const href = URL.createObjectURL(file);
+      const a = document.createElement("a");
+      a.href = href;
+      a.download = file.name;
+      document.body.append(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(href), 10000);
     }
-
-    function showPreview(file) {
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
-      objectUrl = URL.createObjectURL(file);
-      img.src = objectUrl;
-      save.href = objectUrl;
-      save.download = file.name;
-      preview.hidden = false;
-    }
-
-    copy.addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-        status.textContent = t("f.share.copied_image");
-      } catch (err) {
-        status.textContent = t("f.share.failed");
-      }
-    });
-    save.addEventListener("click", () => {
-      status.textContent = t("f.share.saved");
-    });
 
     btn.addEventListener("click", async () => {
       status.textContent = t("f.share.preparing");
       btn.disabled = true;
       btn.setAttribute("aria-busy", "true");
       try {
-        blob = await drawCard(data());
+        const blob = await drawCard(data());
         const file = new File([blob], `wasteai-${result.category.id}.png`, { type: "image/png" });
-        const payload = { files: [file], title: nameEl.textContent.trim(), text: url };
+        const payload = { files: [file], title: nameEl.textContent.trim(), text: url, url };
         if (navigator.canShare && navigator.canShare(payload)) {
           try {
             await navigator.share(payload);
@@ -297,11 +236,19 @@ export default function init(ctx) {
             }
           }
         }
-        showPreview(file);
-        status.textContent = t("f.share.ready");
+        download(file);
+        status.textContent = t("f.share.saved");
       } catch (err) {
-        status.textContent = t("f.share.failed");
-        await shareText();
+        status.textContent = "";
+        try {
+          if (navigator.share) await navigator.share({ text, url });
+          else if (navigator.clipboard) {
+            await navigator.clipboard.writeText(text);
+            status.textContent = t("f.share.copied");
+          }
+        } catch (e) {
+          status.textContent = t("f.share.failed");
+        }
       } finally {
         btn.disabled = false;
         btn.removeAttribute("aria-busy");

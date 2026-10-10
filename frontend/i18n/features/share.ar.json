@@ -2,19 +2,12 @@
  "_path": "frontend/i18n/features/share.ar.json",
  "f.share.button": "مشاركة النتيجة",
  "f.share.copied": "تم النسخ إلى الحافظة",
- "f.share.manual": "المشاركة غير متاحة هنا. انسخ هذا النص بنفسك.",
  "f.share.text": "{name}. الحاوية: {bin}. الخطوة الأولى: {step}. {url}",
  "f.share.text_short": "{name}. الحاوية: {bin}. {url}",
- "f.share.area": "النص المراد نسخه",
  "f.share.preparing": "جارٍ تجهيز الصورة…",
- "f.share.ready": "الصورة جاهزة. احفظها أو انسخها.",
- "f.share.saved": "تم حفظ الصورة.",
- "f.share.download": "حفظ الصورة",
- "f.share.copy_image": "نسخ الصورة",
- "f.share.copied_image": "تم نسخ الصورة.",
- "f.share.failed": "تعذّر إنشاء الصورة. سنشارك النتيجة كنص.",
+ "f.share.saved": "تم حفظ البطاقة كصورة. أرسلها من معرض الصور.",
+ "f.share.failed": "تعذّرت المشاركة. حاول مرة أخرى.",
  "f.share.bin_label": "الحاوية المناسبة",
  "f.share.steps": "أول الخطوات",
- "f.share.note": "التصنيف تقديري. تحقق من قواعد الفرز في منطقتك.",
- "f.share.preview_alt": "بطاقة النتيجة: {name}، {bin}"
+ "f.share.note": "التصنيف تقديري. تحقق من قواعد الفرز في منطقتك."
 }
