@@ -11,7 +11,7 @@ const STORAGE_KEY = "wasteai.sound";
 const VOICE_KEY = "wasteai.voice";
 const MAX_GAIN = 0.15; // hard ceiling for every cue
 const ERROR_KEYS = new Set([
-  "camera.denied", "camera.not_found", "camera.busy", "camera.error", "upload.invalid", "upload.decode_failed",
+  "camera.denied", "camera.blocked", "camera.dismissed", "camera.not_found", "camera.busy", "camera.error", "upload.invalid", "upload.decode_failed",
 ]);
 
 let ctx = null;

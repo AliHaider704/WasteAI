@@ -31,6 +31,22 @@ export function isCameraSupported() {
   return Boolean(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) && window.isSecureContext;
 }
 
+/** NotAllowedError has several causes. Ask the Permissions API which one, so the message can say what to do. */
+async function deniedKey() {
+  try {
+    const status = await navigator.permissions.query({ name: "camera" });
+    if (status.state === "denied") return "camera.blocked"; // saved "Block" for this site (browser or OS level)
+    return "camera.dismissed"; // prompt closed or suppressed (Brave Shields, no user gesture): trying again can work
+  } catch (e) {
+    return "camera.denied"; // Permissions API cannot query "camera" here
+  }
+}
+
+async function failure(err) {
+  const key = keyFor(err);
+  return new CameraError(key === "camera.denied" ? await deniedKey() : key, err);
+}
+
 function keyFor(err) {
   switch (err && err.name) {
     case "NotAllowedError":
@@ -64,10 +80,10 @@ export async function startCamera(video) {
       try {
         stream = await md.getUserMedia({ video: true, audio: false });
       } catch (err2) {
-        throw new CameraError(keyFor(err2), err2);
+        throw await failure(err2);
       }
     } else {
-      throw new CameraError(keyFor(err), err);
+      throw await failure(err);
     }
   }
   video.muted = true;

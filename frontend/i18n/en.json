@@ -47,6 +47,8 @@
   "camera.not_found": "No camera was found. You can choose a photo instead.",
   "camera.busy": "The camera is in use by another app. Close it or choose a photo.",
   "camera.unsupported": "The camera is not available here. You can choose a photo instead.",
+  "camera.blocked": "The camera is blocked for this site. Click the lock/settings icon next to the address bar, set Camera to Allow, then reload. In Brave also check brave://settings/content/camera. Or choose a photo.",
+  "camera.dismissed": "The camera permission prompt was closed or blocked. Tap the camera button to try again, and choose Allow. If it keeps failing, turn Brave Shields off for this site. Or choose a photo.",
   "camera.error": "Could not use the camera. You can choose a photo instead.",
   "upload.processing": "Preparing your photo…",
   "upload.invalid": "Please choose an image file.",
