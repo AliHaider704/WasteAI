@@ -22,7 +22,15 @@
 .result { display: grid; gap: 1rem; grid-template-columns: minmax(0, 1fr); }
 .result__media { min-inline-size: 0; }
 .result__media:empty { display: none; }
-.result__card { display: grid; gap: 1rem; align-content: start; min-inline-size: 0; padding-block-end: 1rem; }
+/* The slip: one bordered surface holding the whole answer. Flex-wrap lets injected tools sit in a single row (see Tools). */
+.result__card {
+  display: flex; flex-wrap: wrap; align-content: start; gap: 1rem;
+  min-inline-size: 0; padding: 1.25rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+.result__card > * { flex: 1 1 100%; min-inline-size: 0; margin: 0; }
 
 /* The whole item stays visible (contain) on a neutral mat; never cropped. */
 .result__photo {
@@ -46,11 +54,12 @@
 .result__stamp { margin-block-end: -0.25rem; }
 .result__stamp .bin { font-size: 1rem; padding-inline: 1rem; min-block-size: 2.5rem; }
 .result__head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+.result__head .f-meter { order: 3; flex: 1 1 100%; inline-size: auto; block-size: 0.375rem; }
 .result__icon { inline-size: 2rem; block-size: 2rem; }
 .result__name { margin: 0; font-family: var(--font-serif); font-weight: 600; font-size: 2.25rem; line-height: 1.2; overflow-wrap: anywhere; }
 .result__meta { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.result__sub { margin: 0; font-size: 1.25rem; }
-.result__summary { margin: 0; }
+.result__sub { margin: 0; font-size: 1rem; font-weight: 600; letter-spacing: 0; color: var(--color-text-muted); }
+.result__summary { margin: 0; font-size: 1.0625rem; color: var(--color-text-muted); }
 .card { border-radius: var(--radius-md); }
 .card__title { font-family: var(--font-serif); font-weight: 600; }
 
@@ -68,8 +77,14 @@
 .result__confidence[data-level="high"] { border-color: var(--color-accent, #1f5d3a); }
 .result__confidence[data-level="low"] { border-style: dashed; }
 
-.result__steps, .result__list { margin: 0; padding-inline-start: 1.5rem; display: grid; gap: 0.5rem; }
-.result__list { list-style: disc; }
+.result__list { margin: 0; padding-inline-start: 1.5rem; display: grid; gap: 0.5rem; list-style: disc; }
+.result__steps { margin: 0; padding: 0; list-style: none; counter-reset: step; }
+.result__steps li {
+  counter-increment: step; display: grid; grid-template-columns: 2rem minmax(0, 1fr); gap: 0.75rem;
+  padding-block: 0.75rem; border-block-end: 1px solid var(--color-border); font-size: 1.0625rem;
+}
+.result__steps li:last-child { border-block-end: 0; }
+.result__steps li::before { content: counter(step); font-family: var(--font-serif); font-weight: 600; font-size: 1.5rem; line-height: 1.1; color: var(--color-accent); }
 
 .result__warnings {
   padding: 1rem;
@@ -104,6 +119,22 @@
 .result__feedback, .result__form { display: grid; gap: 0.75rem; }
 .result__form[hidden] { display: none; }
 .result__label { font-weight: 600; }
+
+/* Tools: read aloud, share, my bins, feedback opener share one look and one row, after the steps and warnings. */
+.result__card > .btn:not(.btn--primary), .result__card > .f-share, #slot-result > .btn {
+  order: 5; flex: 0 0 auto; inline-size: auto; min-block-size: 2.75rem; background: transparent; border-color: var(--color-border-strong);
+}
+.result__card > .btn:not(.btn--primary), .f-share .btn, #slot-result > .btn { block-size: 2.75rem; padding-block: 0; white-space: nowrap; }
+#slot-result { display: flex; flex-direction: column; align-items: flex-start; gap: 1rem; margin-block-start: 1rem; }
+#slot-result > .f-know, #slot-result > .f-card { align-self: stretch; }
+.result__card > .f-share { display: contents; margin: 0; }
+.f-share .btn { order: 5; flex: 0 0 auto; min-block-size: 2.75rem; background: transparent; border-color: var(--color-border-strong); }
+.f-share textarea, .f-share .muted { flex: 1 1 100%; order: 5; }
+.result__why, .result__card > .f-know { order: 6; border-radius: var(--radius-md); }
+.result__feedback { order: 7; }
+.result__feedback > .btn { inline-size: auto; background: transparent; border-color: transparent; text-decoration: underline; text-underline-offset: 0.25em; }
+.f-know > summary { padding-inline: 0; }
+.f-know:not([open]):not(:has(.f-know__s)) { display: none; } /* never an empty box */
 
 /* Motion: opacity/transform only, interruptible, skipped under reduced motion. */
 @keyframes result-reveal { from { opacity: 0; transform: translateY(0.5rem); } to { opacity: 1; transform: none; } }
