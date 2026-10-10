@@ -149,7 +149,7 @@
       "playful": true
     },
     "weekly": {
-      "enabled": false,
+      "enabled": true,
       "module": "weekly",
       "trigger": "home",
       "needs": [],
@@ -262,7 +262,7 @@
     }
   },
   "profiles": {
-    "public": ["read-aloud"],
+    "public": ["read-aloud", "weekly"],
     "exhibition": []
   }
 }

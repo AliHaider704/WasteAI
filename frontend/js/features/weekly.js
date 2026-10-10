@@ -2,6 +2,7 @@
 // One goal per week, set by the calendar week (no randomness). No streak, no penalty, no ranking (D-044).
 import { catalog, lang, slotEl, resultOf, card } from "./personal-data.js";
 import { HAZARD, weekInfo } from "./play-data.js";
+import { loadNamespace } from "../i18n.js";
 export const styles = "weekly";
 
 const GOAL = 3;
@@ -63,6 +64,13 @@ export default function init(ctx) {
     }
     render();
   });
-  document.addEventListener("i18n:change", render);
+  // The language switch replaces the whole dictionary, then reloads the f.* keys asynchronously.
+  // Render only after this feature's keys are back, otherwise ctx.t() returns "" and the card stays blank.
+  document.addEventListener("i18n:change", async () => {
+    await loadNamespace("weekly");
+    render();
+  });
+  // A page left open over Monday must roll over to the new week's goal.
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) render(); });
   render();
 }
