@@ -97,8 +97,11 @@ export async function startRegistry() {
     const trigger = viewTrigger(e.detail && e.detail.view);
     if (trigger) fire(trigger);
   });
+  // Home cards live in #slot-home, which always exists in the page: load them at startup,
+  // whatever the first route is, so they never depend on a later navigation.
+  fire("home");
   const first = viewTrigger(lastView);
-  if (first) fire(first);
+  if (first && first !== "home") fire(first);
   on("wasteai:capture", () => fire("capture"));
   on("wasteai:result", () => fire("result"));
   fire("header");
