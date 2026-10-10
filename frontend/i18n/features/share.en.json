@@ -5,5 +5,16 @@
  "f.share.manual": "Sharing is not available here. Copy this text yourself.",
  "f.share.text": "{name}. Bin: {bin}. First step: {step}. {url}",
  "f.share.text_short": "{name}. Bin: {bin}. {url}",
- "f.share.area": "Text to copy"
+ "f.share.area": "Text to copy",
+ "f.share.preparing": "Preparing the image…",
+ "f.share.ready": "Image ready. Save it or copy it.",
+ "f.share.saved": "Image saved.",
+ "f.share.download": "Save image",
+ "f.share.copy_image": "Copy image",
+ "f.share.copied_image": "Image copied.",
+ "f.share.failed": "Could not create the image. Sharing the result as text instead.",
+ "f.share.bin_label": "Where it goes",
+ "f.share.steps": "First steps",
+ "f.share.note": "This is an estimate. Check your local sorting rules.",
+ "f.share.preview_alt": "Result card: {name}, {bin}"
 }
