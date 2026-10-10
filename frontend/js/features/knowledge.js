@@ -34,14 +34,16 @@ export function mount(ctx, slug, build) {
     box.className = "f-card f-know";
     box.hidden = true;
     box.dataset.key = `f.${slug}.summary`;
-    box.append(document.createElement("summary"));
+    const body = document.createElement("div");
+    body.className = "f-know__body";
+    box.append(document.createElement("summary"), body);
     host.append(box);
   }
   const sec = document.createElement("div");
   sec.className = "f-know__s";
   sec.dataset.slug = slug;
   sec.hidden = true;
-  box.append(sec);
+  box.querySelector(".f-know__body").append(sec);
   let current = store.result;
 
   async function render() {
@@ -82,6 +84,11 @@ export function sourceLine(ctx, slug, source) {
   b.textContent = source.title || new URL(source.url).hostname;
   a.append(b);
   note.append(a);
-  if (source.accessed) note.append(` ${ctx.t(`f.${slug}.accessed`, { date: source.accessed })}`);
+  if (source.accessed) {
+    const date = document.createElement("span");
+    date.className = "f-source__date";
+    date.textContent = ctx.t(`f.${slug}.accessed`, { date: source.accessed });
+    note.append(date);
+  }
   return note;
 }
