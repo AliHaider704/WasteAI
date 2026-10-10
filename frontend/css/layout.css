@@ -57,9 +57,6 @@ body {
 @media (min-width: 768px) {
   .app-main { padding-block: 2rem 4rem; padding-inline: 1.5rem; }
   .app-header__inner { padding-inline: 1.5rem; }
-  .cards { grid-template-columns: repeat(2, 1fr); }
-  .actions { grid-template-columns: repeat(2, 1fr); }
-  .actions .btn--primary { grid-column: 1 / -1; }
 }
 @media (min-width: 1024px) {
   .app-main { padding-block-start: 3rem; }
@@ -70,12 +67,12 @@ body {
 
 /* ---- M15 (D3 kraft and ink) ---- */
 /* Home: Scan is the one focal action; Upload is secondary; Browse is a quiet link. */
-.actions > .btn--primary { min-block-size: 4rem; font-size: 1.25rem; }
-.actions > a.btn { background: transparent; border-color: transparent; text-decoration: underline; justify-content: center; }
-/* The only home decoration: one row of stamped bin chips. */
-.stamps { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-block-start: 2rem; }
+.actions { grid-template-columns: 1fr 1fr; }
+.actions > .btn--primary { grid-column: 1 / -1; min-block-size: 4.5rem; font-size: 1.25rem; }
+.actions > .btn { padding-inline: 0.75rem; text-align: center; }
 
-/* Motif: the stamped bin label, about -2deg, same angle in LTR and RTL. */
+/* Motif: the stamped bin label, about -2deg, same angle in LTR and RTL.
+   Used where a bin labels a thing (result, Browse rows, dialog); the Home legend below stays flat. */
 .bin { transform: rotate(-2deg); border-radius: var(--radius-sm); }
 .bin { padding-block: 0.125rem; }
 
@@ -86,28 +83,34 @@ body {
 @media (max-width: 767px) {
   .app-header__inner { padding-block: 0.25rem; padding-inline: 0.75rem; gap: 0.5rem; }
   .app-header .brand { min-block-size: 2.5rem; font-size: 0.875rem; line-height: 1.25; min-inline-size: 0; }
-  .toolbar { gap: 0.25rem; }
-  .app-header .icon-btn { min-block-size: 2.5rem; min-inline-size: 2.5rem; border-radius: 0.625rem; }
+  .toolbar { gap: 0; }
+  .app-header .icon-btn { min-block-size: 2.5rem; min-inline-size: 2.5rem; }
   .app-header .icon-btn .icon { inline-size: 1.25rem; block-size: 1.25rem; }
 }
 @media (prefers-reduced-motion: reduce) { .app-header { transition: none; } }
 
 /* ---- Home: bin chips are buttons that open the bin details ---- */
-.stamps__hint { margin-block: 2rem 0; font-size: var(--fs-sm); }
+.stamps__hint { margin-block: 2.5rem 0; font-size: var(--fs-sm); }
 .stamps__hint + .stamps { margin-block-start: 0.75rem; }
 button.bin { font: inherit; font-size: var(--fs-sm); font-weight: var(--fw-medium); cursor: pointer; min-block-size: 2.75rem; padding-inline: 0.875rem; }
-button.bin:active { transform: rotate(-2deg) translateY(1px); }
 button.bin:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
-@media (hover: hover) {
-  button.bin { transition: transform var(--dur-fast, 150ms) var(--ease-out, ease-out); }
-  button.bin:hover { transform: rotate(-2deg) translateY(-2px); text-decoration: underline; }
+.stamps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; margin-block-start: 0.75rem; border-block-start: 1px solid var(--color-border); }
+.stamps > .bin {
+  transform: none; justify-content: flex-start; gap: 0.625rem; text-align: start;
+  min-block-size: 3rem; padding-inline: 0.25rem; border: 0; border-radius: 0;
+  border-block-end: 1px solid var(--color-border);
+  background: transparent; color: var(--color-text);
 }
-@media (prefers-reduced-motion: reduce) { button.bin { transition: none; } }
-
-/* ---- Desktop: same order as mobile (Scan, Upload, Browse, then bins), single column ---- */
-@media (min-width: 768px) {
-  .view[data-view="home"] .actions { grid-template-columns: 1fr; }
+.stamps > .bin::before {
+  content: ""; flex: none; inline-size: 1rem; block-size: 1rem; border-radius: var(--radius-sm);
+  background: var(--sw); border: 1px solid var(--color-border-strong);
 }
+.stamps > .bin--blue { --sw: var(--bin-blue-bg); }       .stamps > .bin--green { --sw: var(--bin-green-bg); }
+.stamps > .bin--yellow { --sw: var(--bin-yellow-bg); }   .stamps > .bin--red { --sw: var(--bin-red-bg); }
+.stamps > .bin--black { --sw: var(--bin-black-bg); }     .stamps > .bin--brown { --sw: var(--bin-brown-bg); }
+.stamps > .bin--grey { --sw: var(--bin-grey-bg); }       .stamps > .bin--special { --sw: var(--bin-special-bg); }
+@media (min-width: 560px) { .stamps { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (hover: hover) { .stamps > .bin:hover { background: var(--color-surface-2); } }
 
 /* ---- Desktop scale: 15px base, ~640px reading column, smaller focal button & h1 (standard desktop UI proportions) ---- */
 @media (min-width: 1024px) {
@@ -120,13 +123,16 @@ button.bin:focus-visible { outline: 3px solid var(--color-focus); outline-offset
 
 /* ---- Desktop header: full-width bar, brand at the start edge, tools at the end edge, one line ---- */
 @media (min-width: 1024px) {
-  .app-header__inner { max-inline-size: 72rem; padding-inline: 2rem; padding-block: 0.625rem; }
-  .app-header .brand { white-space: nowrap; font-size: 1.125rem; }
-  .toolbar { gap: 0.5rem; flex-shrink: 0; }
+  .app-header__inner { padding-block: 0.625rem; }
+  .app-header .brand { font-size: 1.0625rem; }
+  .toolbar { gap: 0.25rem; flex-shrink: 0; }
   .app-header .icon-btn { min-block-size: 2.5rem; min-inline-size: 2.5rem; }
 }
 
 /* Header tools: never stretch, wrap neatly (fixes tall buttons on phones) */
-.toolbar { flex-wrap: wrap; align-items: center; align-content: center; justify-content: flex-end; }
+.toolbar { flex-wrap: nowrap; flex-shrink: 0; align-items: center; justify-content: flex-end; }
+.app-header .brand { flex: 1 1 auto; min-inline-size: 0; line-height: 1.25; }
+/* The result view widens the page; the header follows so the brand stays on the content edge. */
+body:has(.view[data-view="result"]:not([hidden])) .app-header__inner { max-inline-size: 60rem; }
 #slot-header-tools { display: contents; }
 .app-header__inner { align-items: center; }

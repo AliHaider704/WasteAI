@@ -99,6 +99,7 @@ export async function setLanguage(lang, { persist = true } = {}) {
   current = target;
   if (persist) save(target);
   translateDocument();
+  document.documentElement.removeAttribute("data-i18n-pending"); // reveal the shell: no blank wait for the CSS failsafe
   document.dispatchEvent(new CustomEvent("i18n:change", { detail: { lang: target, dir: document.documentElement.dir } }));
 }
 

@@ -9,7 +9,7 @@
   font: inherit;
   color: inherit;
   border: 1px solid var(--color-border, #8886);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
   background: var(--color-surface, transparent);
 }
 .btn, .chip {
@@ -28,6 +28,9 @@
   padding: 0;
   cursor: pointer;
 }
+/* Header tools are plain tools, not a grid of buttons: no fill, no frame until hovered or pressed. */
+.toolbar .icon-btn { background: transparent; border-color: transparent; border-radius: var(--radius-sm); }
+.toolbar .icon-btn[aria-pressed="true"] { background: var(--color-accent-soft); border-color: var(--color-border-strong); }
 .btn--primary {
   background: var(--color-accent, #1f5d3a);
   border-color: var(--color-accent, #1f5d3a);
@@ -74,17 +77,34 @@ h1:focus { outline: none; }
 h1:focus-visible { outline-offset: 4px; }
 
 .lead { font-size: 1.25rem; }
-.muted { color: var(--color-text-muted, inherit); opacity: 0.85; }
+.muted { color: var(--color-text-muted, inherit); }
 
 .card {
   padding: 1rem;
   border: 1px solid var(--color-border, #8886);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
   background: var(--color-surface, transparent);
   display: grid;
   gap: 0.5rem;
   min-block-size: 3rem;
 }
+/* Browse list: ruled rows (icon | name, summary, bin) instead of a grid of identical boxes. */
+.cards > .card {
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  grid-template-areas: "icon title" "icon summary" "icon meta";
+  column-gap: 0.75rem;
+  row-gap: 0.25rem;
+  padding: 1rem 0;
+  border: 0;
+  border-block-end: 1px solid var(--color-border);
+  border-radius: 0;
+  background: transparent;
+}
+.cards > .card:first-child { border-block-start: 1px solid var(--color-border); }
+.cards > .card > .card__icon { grid-area: icon; margin-block-start: 0.25rem; color: var(--color-accent); }
+.cards > .card > .card__title { grid-area: title; }
+.cards > .card > .card__summary { grid-area: summary; color: var(--color-text-muted); }
+.cards > .card > .card__meta { grid-area: meta; margin-block-start: 0.375rem; }
 .card__title { margin: 0; font-size: 1.25rem; font-weight: 600; }
 .card__summary { margin: 0; }
 .card__meta { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
@@ -97,7 +117,7 @@ h1:focus-visible { outline-offset: 4px; }
   aspect-ratio: 4 / 3;
   max-block-size: 70vh;
   object-fit: contain; /* show the whole photo exactly as it will be sent, no cropping */
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
   background: var(--color-surface-2, #8882);
 }
 .capture__media[hidden] { display: none; }
@@ -106,6 +126,7 @@ h1:focus-visible { outline-offset: 4px; }
   .btn, .icon-btn, .chip { transition: background-color 150ms ease-out, border-color 150ms ease-out; }
 }
 .card__icon { inline-size: 2rem; block-size: 2rem; }
+.chips .chip { min-block-size: 2.75rem; padding-inline: 0.875rem; }
 
 /* M24: calm loading bar. Static stripes by default, slow slide only when motion is allowed. */
 .capture__progress {
