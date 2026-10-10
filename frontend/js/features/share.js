@@ -2,12 +2,12 @@
 // F14: share the result as an image card (PNG drawn on a canvas: name, bin, first steps, link). Never the user's photo.
 // Order of attempts: native share sheet with the file, then preview + save/copy, then plain text.
 import { onCard } from "./card-hook.js";
-import { getLang } from "../i18n.js";
+import { store } from "../api.js";
 export const styles = "result-visuals";
 
 const SITE_URL = "https://wasteai.duckdns.org/";
 const W = 1080;
-const H = 1350;
+const H = 1620;
 const PAD = 84;
 // The image is always drawn on the light palette so a shared card looks the same for everyone.
 const C = { kraft: "#E9E1D3", paper: "#F6F1E6", ink: "#25221D", muted: "#5A5348", border: "#C9BFAB", accent: "#23405E", dangerBg: "#FBE0DC", dangerText: "#9A1B14" };
@@ -43,8 +43,19 @@ async function loadFonts(strings) {
   );
 }
 
+function loadImage(url) {
+  return new Promise((resolve) => {
+    if (!url) return resolve(null);
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = url;
+  });
+}
+
 /** Draws the card and resolves to a PNG blob. */
 async function drawCard(d) {
+  const photo = await loadImage(d.photoUrl);
   await loadFonts([d.name, d.bin, d.app, d.stepsTitle, d.note, ...d.steps, d.warning]);
   const canvas = document.createElement("canvas");
   canvas.width = W;
@@ -81,17 +92,37 @@ async function drawCard(d) {
   ctx.fillStyle = C.border;
   ctx.fillRect(PAD, 164, inner, 2);
 
-  // Category name: the one large thing on the card.
+  // The user's own photo, cropped to fill a fixed frame so the layout never shifts.
   let y = 200;
+  if (photo) {
+    const ph = 440;
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(PAD, y, inner, ph, 14);
+    ctx.clip();
+    const k = Math.max(inner / photo.naturalWidth, ph / photo.naturalHeight);
+    const dw = photo.naturalWidth * k;
+    const dh = photo.naturalHeight * k;
+    ctx.drawImage(photo, PAD + (inner - dw) / 2, y + (ph - dh) / 2, dw, dh);
+    ctx.restore();
+    ctx.strokeStyle = C.border;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(PAD, y, inner, ph, 14);
+    ctx.stroke();
+    y += ph + 40;
+  }
+
+  // Category name: the largest type on the card.
   ctx.fillStyle = C.ink;
-  ctx.font = `600 104px ${SERIF}`;
-  const nameLines = wrap(ctx, d.name, inner, 3);
-  y += 92;
+  ctx.font = `600 92px ${SERIF}`;
+  const nameLines = wrap(ctx, d.name, inner, 2);
+  y += photo ? 76 : 92;
   nameLines.forEach((l) => {
     put(l, left, y);
-    y += 124;
+    y += 108;
   });
-  y -= 124 - 40;
+  y -= 108 - 40;
 
   // Bin block uses the bin's own colors, read from the result chip on screen.
   if (d.bin) {
@@ -137,12 +168,12 @@ async function drawCard(d) {
       const cx = left + dirX * 28;
       ctx.fillStyle = C.accent;
       ctx.beginPath();
-      ctx.arc(cx, y + 14, 28, 0, Math.PI * 2);
+      ctx.arc(cx, y - 2, 28, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = "#FFFFFF";
       ctx.textAlign = "center";
       ctx.font = `600 30px ${SANS}`;
-      ctx.fillText(String(i + 1), cx, y + 25); // numeral: centered, no direction
+      ctx.fillText(String(i + 1), cx, y + 9); // numeral: centered, no direction
       ctx.textAlign = "start";
       ctx.fillStyle = C.ink;
       ctx.font = `400 38px ${SANS}`;
@@ -189,6 +220,7 @@ export default function init(ctx) {
       steps: stepEls.slice(0, 3).map((li) => li.textContent.trim()),
       note: t("f.share.note"),
       url,
+      photoUrl: store.photoUrl,
     });
     const vars = { name: nameEl.textContent, bin: chip ? chip.textContent : "", step: stepEls[0] ? stepEls[0].textContent : "", url };
     const text = t(stepEls[0] ? "f.share.text" : "f.share.text_short", vars);
