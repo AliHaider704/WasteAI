@@ -10,5 +10,8 @@
   "f.weekly.g.glass": "الزجاج",
   "f.weekly.g.metals": "المعادن",
   "f.weekly.g.organic": "المواد العضوية",
-  "f.weekly.g.other": "أخرى"
+  "f.weekly.g.other": "أخرى",
+  "f.weekly.examples": "أمثلة: {list}",
+  "f.weekly.sep": "، ",
+  "f.weekly.miss": "آخر عنصر فرزته ليس من هذه المجموعة، لذلك لم يُحتسب."
 }

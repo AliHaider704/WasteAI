@@ -1,6 +1,6 @@
 // File: frontend/js/features/weekly.js
 // One goal per week, set by the calendar week (no randomness). No streak, no penalty, no ranking (D-044).
-import { catalog, lang, slotEl, resultOf, card } from "./personal-data.js";
+import { catalog, plain, lang, slotEl, resultOf, card } from "./personal-data.js";
 import { HAZARD, weekInfo } from "./play-data.js";
 import { loadNamespace } from "../i18n.js";
 export const styles = "weekly";
@@ -32,8 +32,10 @@ export default function init(ctx) {
     return s && s.week === w ? s : { week: w, n: 0, rids: [] };
   }
 
+  let miss = false; // last result was a normal item outside this week's group (shown once, never stored)
+
   async function render() {
-    const { group } = await targetGroup();
+    const { cat, group } = await targetGroup();
     c.box.hidden = !group;
     if (!group) return;
     const s = state();
@@ -49,7 +51,19 @@ export default function init(ctx) {
     bar.setAttribute("aria-label", ctx.t("f.weekly.label"));
     const note = document.createElement("p");
     note.textContent = s.n >= GOAL ? ctx.t("f.weekly.done") : ctx.t("f.weekly.progress").replace("{n}", String(s.n));
-    c.body.append(goal, name, bar, note);
+    c.body.append(goal, name);
+    const names = [...cat.values()].filter((x) => x.group === group && !HAZARD.has(x.id)).map((x) => plain(x.name)).filter(Boolean);
+    if (names.length) {
+      const eg = document.createElement("p");
+      eg.textContent = ctx.t("f.weekly.examples").replace("{list}", names.join(ctx.t("f.weekly.sep")));
+      c.body.append(eg);
+    }
+    c.body.append(bar, note);
+    if (miss && s.n < GOAL) {
+      const m = document.createElement("p");
+      m.textContent = ctx.t("f.weekly.miss");
+      c.body.append(m);
+    }
   }
 
   document.addEventListener("wasteai:result", async (ev) => {
@@ -57,10 +71,15 @@ export default function init(ctx) {
     if (!r || !r.rid || HAZARD.has(r.id)) return;
     const { cat, group } = await targetGroup();
     const s = state();
-    if (group && cat.get(r.id)?.group === group && !s.rids.includes(r.rid)) {
-      s.rids = [r.rid, ...s.rids].slice(0, 10);
-      s.n += 1;
-      ctx.store.set("weekly", s);
+    miss = false;
+    if (group && cat.get(r.id)?.group === group) {
+      if (!s.rids.includes(r.rid)) {
+        s.rids = [r.rid, ...s.rids].slice(0, 10);
+        s.n += 1;
+        ctx.store.set("weekly", s);
+      }
+    } else if (group) {
+      miss = true;
     }
     render();
   });

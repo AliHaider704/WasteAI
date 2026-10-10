@@ -10,5 +10,8 @@
   "f.weekly.g.glass": "Glass",
   "f.weekly.g.metals": "Metals",
   "f.weekly.g.organic": "Organic waste",
-  "f.weekly.g.other": "Other"
+  "f.weekly.g.other": "Other",
+  "f.weekly.examples": "Examples: {list}",
+  "f.weekly.sep": ", ",
+  "f.weekly.miss": "Your last item was not from this group, so it was not counted."
 }
