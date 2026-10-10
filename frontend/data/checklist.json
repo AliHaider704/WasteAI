@@ -4,151 +4,211 @@
   {
    "id": "pl1",
    "group": "plastics",
-   "en": "Empty it and rinse it",
-   "ar": "أفرغه واشطفه",
+   "en": "I emptied and rinsed it",
+   "ar": "تأكدت أنه فارغ وشطفته",
    "source": {
     "kind": "internal",
     "ref": "PRODUCT-SPECIFICATION.md section 4, Plastics row"
+   },
+   "why": {
+    "ar": "الباقي من السوائل والطعام يلوّث الدفعة كلها وقد تُرفض",
+    "en": "Leftover liquid and food contaminate the whole batch and can get it rejected"
    }
   },
   {
    "id": "pl2",
    "group": "plastics",
-   "en": "Put the cap back on",
-   "ar": "أعد وضع الغطاء",
+   "en": "I put the cap back if my collector asks for it",
+   "ar": "أعدت الغطاء إلى مكانه إن طلبت جهة الجمع ذلك",
    "source": {
     "kind": "internal",
     "ref": "PRODUCT-SPECIFICATION.md section 4, Plastics row"
+   },
+   "why": {
+    "ar": "الأغطية الصغيرة المنفصلة تسقط من آلات الفرز ولا تُعاد تدويرها",
+    "en": "Loose small caps fall through sorting machines and are not recycled"
    }
   },
   {
    "id": "pl3",
    "group": "plastics",
-   "en": "Keep film plastic separate",
-   "ar": "افصل الأكياس البلاستيكية الرقيقة",
+   "en": "I separated thin plastic bags from the bottles",
+   "ar": "فصلت الأكياس البلاستيكية الرقيقة عن العبوات",
    "source": {
     "kind": "internal",
     "ref": "PRODUCT-SPECIFICATION.md section 4, Plastics row"
+   },
+   "why": {
+    "ar": "تلتف الأكياس حول آلات الفرز وتعطّلها",
+    "en": "Thin bags wrap around sorting machines and jam them"
    }
   },
   {
    "id": "pa1",
    "group": "paper",
-   "en": "Keep it dry and clean",
-   "ar": "أبقِه جافًا ونظيفًا",
+   "en": "The paper is dry and clean",
+   "ar": "الورق جاف ونظيف",
    "source": {
     "kind": "internal",
     "ref": "PRODUCT-SPECIFICATION.md section 4, Paper row"
+   },
+   "why": {
+    "ar": "الورق المبلل أو الملوّث بالطعام لا يُعاد تصنيعه",
+    "en": "Wet or food-stained paper cannot be recycled"
    }
   },
   {
    "id": "pa2",
    "group": "paper",
-   "en": "Flatten boxes",
-   "ar": "سطّح الصناديق",
+   "en": "I flattened the cardboard boxes",
+   "ar": "سطّحت الصناديق الكرتونية",
    "source": {
     "kind": "internal",
     "ref": "PRODUCT-SPECIFICATION.md section 4, Paper row"
+   },
+   "why": {
+    "ar": "تأخذ مساحة أقل في الحاوية وتُنقل بكفاءة أكبر",
+    "en": "Flat boxes take less room in the bin and are easier to transport"
    }
   },
   {
    "id": "gl1",
    "group": "glass",
-   "en": "Rinse it",
-   "ar": "اشطفه",
+   "en": "I rinsed the glass container",
+   "ar": "شطفت العبوة الزجاجية",
    "source": {
     "kind": "internal",
     "ref": "PRODUCT-SPECIFICATION.md section 4, Glass row"
+   },
+   "why": {
+    "ar": "بقايا المحتوى تسبب روائح وتلوّث الدفعة",
+    "en": "Leftover contents cause smells and contaminate the batch"
    }
   },
   {
    "id": "gl2",
    "group": "glass",
-   "en": "Leave out ceramics, mirrors and bulbs",
-   "ar": "لا تضع الخزف والمرايا والمصابيح",
+   "en": "I checked there is no ceramic, mirror or light bulb glass",
+   "ar": "تأكدت أنه لا يحتوي خزفًا أو مرايا أو مصابيح",
    "source": {
     "kind": "internal",
     "ref": "PRODUCT-SPECIFICATION.md section 4, Glass row"
+   },
+   "why": {
+    "ar": "تنصهر هذه المواد بحرارة مختلفة عن زجاج العبوات وتفسد الدفعة",
+    "en": "These melt at a different temperature from container glass and spoil the batch"
    }
   },
   {
    "id": "gl3",
    "group": "glass",
-   "en": "Handle broken glass safely",
-   "ar": "تعامل مع الزجاج المكسور بحذر",
+   "en": "I wrapped any broken glass carefully",
+   "ar": "لففت الزجاج المكسور بحذر",
    "source": {
     "kind": "internal",
     "ref": "PRODUCT-SPECIFICATION.md section 4, Glass row"
+   },
+   "why": {
+    "ar": "لحماية عمال الجمع من الجروح",
+    "en": "To protect collection workers from cuts"
    }
   },
   {
    "id": "me1",
    "group": "metals",
-   "en": "Rinse cans",
-   "ar": "اشطف العلب",
+   "en": "I rinsed the cans",
+   "ar": "شطفت العلب",
    "source": {
     "kind": "internal",
     "ref": "PRODUCT-SPECIFICATION.md section 4, Metals row"
+   },
+   "why": {
+    "ar": "بقايا الطعام تلوّث المعدن وتجذب الحشرات",
+    "en": "Food residue contaminates the metal and attracts pests"
    }
   },
   {
    "id": "me2",
    "group": "metals",
-   "en": "Take scrap metal to collectors",
-   "ar": "سلّم الخردة المعدنية إلى جامعيها",
+   "en": "I took large scrap metal to a scrap collector",
+   "ar": "سلّمت الخردة المعدنية الكبيرة إلى جامعيها",
    "source": {
     "kind": "internal",
     "ref": "PRODUCT-SPECIFICATION.md section 4, Metals row"
+   },
+   "why": {
+    "ar": "الحجم الكبير لا يناسب الحاوية المنزلية",
+    "en": "Large pieces do not fit a household bin"
    }
   },
   {
    "id": "or1",
    "group": "organic",
-   "en": "Keep plastics out",
-   "ar": "أبعد البلاستيك عنها",
+   "en": "I kept plastic and bags out of it",
+   "ar": "أبعدت البلاستيك والأكياس عنها",
    "source": {
     "kind": "internal",
     "ref": "PRODUCT-SPECIFICATION.md section 4, Organic row"
+   },
+   "why": {
+    "ar": "البلاستيك لا يتحلل مع السماد ويبقى ملوّثًا له",
+    "en": "Plastic does not break down in compost and stays as contamination"
    }
   },
   {
    "id": "or2",
    "group": "organic",
-   "en": "Keep cooked oil out",
-   "ar": "لا تضف الزيت المطبوخ",
+   "en": "I did not add used cooking oil",
+   "ar": "لم أضف زيت الطهي المستعمل",
    "source": {
     "kind": "internal",
     "ref": "PRODUCT-SPECIFICATION.md section 4, Organic row"
+   },
+   "why": {
+    "ar": "الزيت يبطئ التحلل ويجذب الآفات",
+    "en": "Oil slows breakdown and attracts pests"
    }
   },
   {
    "id": "ew1",
    "group": "e-waste",
-   "en": "Never put it in general trash",
-   "ar": "لا ترمه في النفايات العامة",
+   "en": "I will not put it in the general waste",
+   "ar": "لن أرميه في النفايات العامة",
    "source": {
     "kind": "internal",
     "ref": "PRODUCT-SPECIFICATION.md section 4, E-waste row"
+   },
+   "why": {
+    "ar": "البطاريات والأجهزة قد تشتعل أو تسرّب مواد ضارة أثناء الجمع والدفن",
+    "en": "Batteries and devices can ignite or leak harmful substances during collection and landfill"
    }
   },
   {
    "id": "ew2",
    "group": "e-waste",
-   "en": "Take it to a collection point",
-   "ar": "سلّمه إلى نقطة تجميع",
+   "en": "I will take it to a collection point",
+   "ar": "سأسلّمه إلى نقطة تجميع",
    "source": {
     "kind": "internal",
     "ref": "PRODUCT-SPECIFICATION.md section 4, E-waste row"
+   },
+   "why": {
+    "ar": "تُفكَّك فيها الأجهزة بأمان وتُستعاد موادها",
+    "en": "Devices are dismantled safely there and their materials recovered"
    }
   },
   {
    "id": "ew3",
    "group": "e-waste",
-   "en": "Tape battery terminals",
-   "ar": "الصق شريطًا على أطراف البطارية",
+   "en": "I taped over the battery terminals",
+   "ar": "ألصقت شريطًا على أطراف البطارية",
    "source": {
     "kind": "internal",
     "ref": "PRODUCT-SPECIFICATION.md section 4, E-waste row"
+   },
+   "why": {
+    "ar": "يمنع تلامس الأطراف وحدوث شرارة أو حرارة",
+    "en": "It stops the terminals touching and causing a spark or heat"
    }
   }
  ]

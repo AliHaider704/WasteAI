@@ -32,11 +32,18 @@ function tidy(y) {
   return Math.round(y / mag) * mag;
 }
 
-/** Share of the item left after `t` years: whole before the range, a log-scaled decline inside it, gone after. */
+/** Share left after `t` years: whole before the range, a log-scaled decline inside it, gone after. Null for a single-figure source. */
 function remaining(t, min, max) {
   if (t < min) return 1;
   if (t >= max) return 0;
   return 1 - (Math.log(t) - Math.log(min)) / (Math.log(max) - Math.log(min));
+}
+
+/** Stage names come from where `t` falls against the sourced figure(s); no per-material claims. */
+function stageOf(t, min, max) {
+  if (t >= max) return "gone";
+  if (t < min) return t / min < 0.5 ? "intact" : "early";
+  return remaining(t, min, max) > 0.35 ? "active" : "late";
 }
 
 export default function init(ctx) {
@@ -51,6 +58,13 @@ export default function init(ctx) {
     const months = y < 1 || Math.round(y * 12) < 12;
     const n = months ? Math.max(1, Math.round(y * 12)) : Math.round(y);
     const unit = word(months ? "month" : "year", n);
+    return n === 2 && rules().select(2) === "two" ? unit : `${n.toLocaleString("en")} ${unit}`;
+  };
+  /** Time left: whole months under three years, so 18 months is not rounded to "2 years". */
+  const fmtLeft = (y) => {
+    if (y >= 3) return fmt(tidy(y));
+    const n = Math.max(1, Math.round(y * 12));
+    const unit = word("month", n);
     return n === 2 && rules().select(2) === "two" ? unit : `${n.toLocaleString("en")} ${unit}`;
   };
   const tick = (y) => {
@@ -116,19 +130,35 @@ export default function init(ctx) {
     out.htmlFor = slider.id;
     out.setAttribute("aria-live", "polite");
     const when = document.createElement("strong");
-    const state = document.createElement("span");
-    out.append(when, state);
+    const stageEl = document.createElement("span");
+    stageEl.className = "f-time__stage";
+    const rows = document.createElement("dl");
+    rows.className = "f-time__rows";
+    const cells = {};
+    ["elapsed", "left", "mass"].forEach((k) => {
+      const dt = document.createElement("dt");
+      dt.textContent = t(`f.time-machine.row_${k}`);
+      const dd = document.createElement("dd");
+      cells[k] = { dt, dd };
+      rows.append(dt, dd);
+    });
+    out.append(when, stageEl, rows);
+    const ranged = max > min;
 
     function sync() {
       const p = Number(slider.value);
       const years = p === 0 ? 0 : tidy(yearsAt(p));
+      const stage = stageOf(years, min, max);
       const left = years === 0 ? 1 : remaining(years, min, max);
       const text = years === 0 ? t("f.time-machine.today") : t("f.time-machine.after", { value: fmt(years) });
-      const key = left >= 0.995 ? "intact" : left <= 0.005 ? "gone" : "partial";
       when.textContent = text;
-      state.textContent = t(`f.time-machine.state_${key}`, { pct: Math.round(left * 100) });
-      out.dataset.state = key;
-      slider.setAttribute("aria-valuetext", `${text}: ${state.textContent}`);
+      stageEl.textContent = t(`f.time-machine.stage_${stage}`);
+      out.dataset.state = stage;
+      cells.elapsed.dd.textContent = `${Math.min(100, Math.round((years / max) * 100 * 10) / 10).toLocaleString("en")}%`;
+      cells.left.dd.textContent = years >= max ? t("f.time-machine.none") : fmtLeft(max - years);
+      cells.mass.dt.hidden = cells.mass.dd.hidden = !ranged;
+      cells.mass.dd.textContent = `${Math.round(left * 100)}%`;
+      slider.setAttribute("aria-valuetext", `${text}: ${stageEl.textContent}`);
       wrap.style.setProperty("--f-fade", String(Math.max(0.12, left)));
     }
     slider.addEventListener("input", sync);

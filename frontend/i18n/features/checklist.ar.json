@@ -1,5 +1,9 @@
 {
  "_path": "frontend/i18n/features/checklist.ar.json",
  "f.checklist.summary": "معلومات مفيدة",
- "f.checklist.title": "قبل أن ترميه"
+ "f.checklist.title": "قبل أن ترميه: تأكد من هذه الخطوات",
+ "f.checklist.progress": "تم {done} من {total}",
+ "f.checklist.pending": "أكمل الخطوات المتبقية قبل أن ترميه.",
+ "f.checklist.ready": "جاهز. المكان المناسب: {bin}",
+ "f.checklist.ready_plain": "جاهز للرمي."
 }

@@ -1,5 +1,9 @@
 {
  "_path": "frontend/i18n/features/checklist.en.json",
  "f.checklist.summary": "Good to know",
- "f.checklist.title": "Before you drop it"
+ "f.checklist.title": "Before you drop it: check these steps",
+ "f.checklist.progress": "{done} of {total} done",
+ "f.checklist.pending": "Finish the remaining steps before you drop it.",
+ "f.checklist.ready": "Ready. Where it goes: {bin}",
+ "f.checklist.ready_plain": "Ready to drop."
 }

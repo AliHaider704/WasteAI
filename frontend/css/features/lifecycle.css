@@ -35,6 +35,10 @@
 .f-time__ticks span:last-child { translate: calc(var(--f-sign) * -100% + var(--f-sign) * 0.75rem) 0; }
 .f-time__out { display: flex; flex-direction: column; gap: 0.125rem; padding: var(--space-1); border-radius: var(--radius-sm); background: var(--color-surface-2); font-variant-numeric: tabular-nums; }
 .f-time__out strong { font-size: var(--fs-lg); }
+.f-time__stage { font-weight: 600; }
+.f-time__rows { display: grid; grid-template-columns: 1fr auto; gap: 0.25rem var(--space-2); margin: var(--space-1) 0 0; padding-block-start: var(--space-1); border-block-start: 1px solid var(--color-border-strong); font-size: var(--fs-sm); }
+.f-time__rows dt { color: var(--color-text-muted); }
+.f-time__rows dd { margin: 0; font-weight: 600; text-align: end; }
 .f-time__estimate { margin: 0; font-weight: 600; }
 .f-time__vary { display: block; }
 @media (prefers-reduced-motion: no-preference) {
