@@ -1,30 +1,58 @@
 /* File: frontend/css/results.css */
-/* Result UI. Two columns (photo | details) from 900px. Colors fall back if a token is missing. */
+/* Result view. One layout, no stacked overrides: phone = photo band above details, normal page scroll;
+   wide screens and sideways phones = photo beside details, pinned while the page scrolls.
+   Tokens only (D-020). Motion: opacity/transform, off under reduced motion. */
 
-/* Give the two-column layout room while the result view is visible. */
 .app-main:has(.view[data-view="result"]:not([hidden])) { max-inline-size: 60rem; }
 
-.result { display: grid; gap: 1.5rem; grid-template-columns: minmax(0, 1fr); }
+/* Title row: Back and the heading share one line, same place on every screen. */
+.view[data-view="result"]:not([hidden]) {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas: "back title" "root root";
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+.view[data-view="result"] > * { margin: 0; }
+.view[data-view="result"] > .btn { grid-area: back; min-block-size: 2.75rem; }
+.view[data-view="result"] h1 { grid-area: title; font-size: 1.5rem; line-height: 1.3; }
+.view[data-view="result"] > #result-root { grid-area: root; align-self: start; }
+.view[data-view="result"] > #slot-result { grid-column: 1 / -1; }
+
+.result { display: grid; gap: 1rem; grid-template-columns: minmax(0, 1fr); }
 .result__media { min-inline-size: 0; }
+.result__media:empty { display: none; }
+.result__card { display: grid; gap: 1rem; align-content: start; min-inline-size: 0; padding-block-end: 1rem; }
+
+/* The whole item stays visible (contain) on a neutral mat; never cropped. */
 .result__photo {
   display: block;
   inline-size: 100%;
-  block-size: auto;
-  aspect-ratio: 4 / 3;
-  max-block-size: 50vh;
-  object-fit: cover;
+  block-size: 9rem;
+  block-size: clamp(6rem, 20dvh, 10rem);
+  object-fit: contain;
+  background: var(--color-surface-2, #8881);
   border: 1px solid var(--color-border, #8886);
   border-radius: var(--radius-md);
 }
-.result__card { display: grid; gap: 1rem; align-content: start; min-inline-size: 0; }
 
+@media (min-width: 900px), (orientation: landscape) and (max-height: 32rem) {
+  .result { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 2rem; align-items: start; }
+  .result__media { position: sticky; inset-block-start: 1rem; }
+  .result__photo { block-size: auto; aspect-ratio: 4 / 3; max-block-size: 70vh; max-block-size: 70dvh; }
+}
+
+/* Head: stamp, then the serif category name as the one focal word, then the confidence word. */
+.result__stamp { margin-block-end: -0.25rem; }
+.result__stamp .bin { font-size: 1rem; padding-inline: 1rem; min-block-size: 2.5rem; }
 .result__head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
 .result__icon { inline-size: 2rem; block-size: 2rem; }
-/* Serif: the one focal word per screen (category name). */
 .result__name { margin: 0; font-family: var(--font-serif); font-weight: 600; font-size: 2.25rem; line-height: 1.2; overflow-wrap: anywhere; }
 .result__meta { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .result__sub { margin: 0; font-size: 1.25rem; }
 .result__summary { margin: 0; }
+.card { border-radius: var(--radius-md); }
+.card__title { font-family: var(--font-serif); font-weight: 600; }
 
 /* Confidence is always written in words; the border style is only a secondary cue. */
 .result__confidence {
@@ -38,7 +66,6 @@
   font-weight: 600;
 }
 .result__confidence[data-level="high"] { border-color: var(--color-accent, #1f5d3a); }
-.result__confidence[data-level="medium"] { border-style: solid; }
 .result__confidence[data-level="low"] { border-style: dashed; }
 
 .result__steps, .result__list { margin: 0; padding-inline-start: 1.5rem; display: grid; gap: 0.5rem; }
@@ -61,13 +88,7 @@
 .result__chosen:empty { display: none; }
 
 .result__why { border: 1px solid var(--color-border, #8886); border-radius: var(--radius-md); padding-inline: 1rem; }
-.result__why summary {
-  min-block-size: 3rem;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  font-weight: 600;
-}
+.result__why summary { min-block-size: 3rem; display: flex; align-items: center; cursor: pointer; font-weight: 600; }
 .result__why[open] summary { border-block-end: 1px solid var(--color-border, #8886); margin-block-end: 0.75rem; }
 .result__why > :last-child { margin-block-end: 1rem; }
 .result__why summary:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
@@ -84,95 +105,12 @@
 .result__form[hidden] { display: none; }
 .result__label { font-weight: 600; }
 
-@media (min-width: 900px) {
-  .result { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); align-items: start; gap: 2rem; }
-  .result__photo { max-block-size: none; }
-  .result__media { position: sticky; inset-block-start: 5rem; }
-}
-
-/* Reveal: opacity/transform only, 200ms ease-out; skipped entirely under reduced motion. */
-@keyframes result-reveal {
-  from { opacity: 0; transform: translateY(0.5rem); }
-  to { opacity: 1; transform: none; }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .result--reveal { animation: result-reveal 200ms ease-out both; }
-}
-
-/* ---- M15 (D3): stamp, serif names, motion ---- */
-.result__stamp { margin-block-end: -0.25rem; }
-.result__stamp .bin { font-size: 1rem; padding-inline: 1rem; min-block-size: 2.5rem; }
-.card { border-radius: var(--radius-md); }
-.card__title { font-family: var(--font-serif); font-weight: 600; }
-
-@keyframes stamp-down {
-  from { transform: rotate(-2deg) scale(1.06); }
-  to { transform: rotate(-2deg) scale(1); }
-}
+/* Motion: opacity/transform only, interruptible, skipped under reduced motion. */
+@keyframes result-reveal { from { opacity: 0; transform: translateY(0.5rem); } to { opacity: 1; transform: none; } }
+@keyframes stamp-down { from { transform: rotate(-2deg) scale(1.06); } to { transform: rotate(-2deg) scale(1); } }
 @keyframes word-fade { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: no-preference) {
+  .result--reveal { animation: result-reveal 200ms ease-out both; }
   .result__stamp .bin { animation: stamp-down 160ms ease-out both; }
   .result__confidence { animation: word-fade 150ms ease-out both; }
-}
-
-/* Result view = fixed frame: the photo slot never moves, only the details column scrolls.
-   (No sticky: it depends on header and window scroll, which is what made the photo drift.) */
-body:has(.view[data-view="result"]:not([hidden])) { block-size: 100vh; block-size: 100dvh; overflow: hidden; }
-.app-main:has(.view[data-view="result"]:not([hidden])) { flex: 1 1 auto; min-block-size: 0; display: flex; flex-direction: column; inline-size: 100%; }
-/* Back sits on the title row (saves a full row of height; same place on phone and desktop). */
-.view[data-view="result"]:not([hidden]) {
-  flex: 1 1 auto; min-block-size: 0;
-  display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr);
-  grid-template-areas: "back title" "root root"; align-items: center; gap: 0.5rem 0.75rem;
-}
-.view[data-view="result"] > * { margin: 0; }
-.view[data-view="result"] > .btn { grid-area: back; min-block-size: 2.75rem; }
-.view[data-view="result"] h1 { grid-area: title; }
-.view[data-view="result"] > #result-root { grid-area: root; align-self: stretch; }
-.view[data-view="result"] h1 { flex: none; margin-block: 0; font-size: 1.5rem; line-height: 1.3; }
-#result-root { flex: 1 1 auto; min-block-size: 0; display: flex; flex-direction: column; }
-#result-root > .result { flex: 1 1 auto; min-block-size: 0; display: flex; flex-direction: column; gap: 0.75rem; }
-.result__media { flex: none; position: static; padding: 0; }
-/* Phone: a compact thumbnail band (about 16% of the screen); the whole item stays visible (contain) on a neutral mat.
-   Declarations are doubled so browsers without dvh/clamp fall back to a fixed height. */
-.result__photo {
-  block-size: 7.5rem;
-  block-size: clamp(6rem, 16dvh, 9rem);
-  max-block-size: none;
-  aspect-ratio: auto;
-  object-fit: contain;
-  background: var(--color-surface-2, #8881);
-}
-.result__card, .result > :not(.result__media) { flex: 1 1 auto; min-block-size: 0; overflow-y: auto; overscroll-behavior: contain; padding-inline-end: 0.5rem; padding-block-end: 1rem; }
-/* Wide screens, and phones held sideways (too short for photo-above-details). */
-@media (min-width: 900px), (orientation: landscape) and (max-height: 32rem) {
-  #result-root > .result { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); grid-template-rows: minmax(0, 1fr); gap: 2rem; align-items: stretch; }
-  .result__media { align-self: start; position: static; }
-  .result__photo { block-size: auto; aspect-ratio: 4 / 3; max-block-size: 40vh; max-block-size: 40dvh; }
-}
-/* Sideways phone: no room for a visible title; the photo fills the left column instead of overflowing it. */
-@media (orientation: landscape) and (max-height: 32rem) and (max-width: 899px) {
-  .view[data-view="result"] h1 { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  .result__media { align-self: stretch; min-block-size: 0; }
-  .result__photo { block-size: 100%; aspect-ratio: auto; max-block-size: none; }
-}
-/* Soft fade where the details scroll under the edge, so text is not cut mid-line. */
-@media (max-width: 899px) and (orientation: portrait) {
-  .result__card, .result > :not(.result__media) { -webkit-mask-image: linear-gradient(#000 calc(100% - 1.5rem), transparent); mask-image: linear-gradient(#000 calc(100% - 1.5rem), transparent); }
-}
-
-/* Every screen: normal page scroll (no locked frame, no inner scroll box). Phones stack photo above details. */
-body:has(.view[data-view="result"]:not([hidden])) { block-size: auto; overflow: visible; }
-.app-main:has(.view[data-view="result"]:not([hidden])) { display: block; }
-.view[data-view="result"]:not([hidden]) { display: grid; grid-template-rows: auto auto; align-items: center; }
-.view[data-view="result"] > #result-root { align-self: start; }
-#result-root, #result-root > .result { min-block-size: auto; }
-#result-root > .result { display: flex; flex-direction: column; align-items: stretch; }
-.result__card, .result > :not(.result__media) { flex: none; overflow: visible; padding-block-end: 1rem; -webkit-mask-image: none; mask-image: none; }
-.result__photo { block-size: clamp(8rem, 28dvh, 14rem); }
-/* Wide screens and sideways phones: photo beside details, pinned while the page scrolls. */
-@media (min-width: 900px), (orientation: landscape) and (max-height: 32rem) {
-  #result-root > .result { display: grid; grid-template-rows: auto; align-items: start; }
-  .result__media { position: sticky; inset-block-start: 1rem; align-self: start; }
-  .result__photo { block-size: auto; aspect-ratio: 4 / 3; max-block-size: 70vh; max-block-size: 70dvh; }
 }

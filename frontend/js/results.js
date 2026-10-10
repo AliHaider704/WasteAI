@@ -268,9 +268,10 @@ function buildOk(result) {
   conf.dataset.level = level;
   head.append(conf);
   card.append(head);
-  card.append(guidanceBlocks(g));
   const warn = warningsBlock(g && g.warnings, result.hazard);
-  if (warn) card.append(warn);
+  if (warn && result.hazard) card.append(warn); // hazard: warnings come first (values filter 7)
+  card.append(guidanceBlocks(g));
+  if (warn && !result.hazard) card.append(warn);
   card.append(whyPanel(result));
   card.append(feedbackBlock(result, cat.id));
   return card;
@@ -279,10 +280,7 @@ function buildOk(result) {
 function buildUncertain(result) {
   const card = el("article", "result__card");
   const head = el("div", "result__head");
-  head.append(el("h2", "result__name", "result.not_sure"));
-  const conf = el("span", "result__confidence", "result.confidence.low");
-  conf.dataset.level = "low";
-  head.append(conf);
+  head.append(el("h2", "result__name", "result.not_sure")); // the heading already says it; no second "Not sure" chip
   card.append(head);
   const g = result.guidance;
   const warn = warningsBlock(g && g.warnings, result.hazard);
