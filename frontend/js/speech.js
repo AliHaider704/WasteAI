@@ -62,6 +62,8 @@ export function cancel() {
 }
 
 /** Plays server audio files one after another. Resolves "done", or "error" if any file cannot play (caller falls back). */
+export const CLIP_SPEED = 1.2; // server audio plays this much faster than recorded (1 = as recorded; try 1.1 to 1.3)
+
 export function playClips(urls, { volume = 0.85, onStart } = {}) {
   return new Promise((resolve) => {
     let i = 0;
@@ -70,6 +72,8 @@ export function playClips(urls, { volume = 0.85, onStart } = {}) {
       const a = new Audio(urls[i++]);
       clip = a;
       a.volume = volume;
+      a.preservesPitch = true;
+      a.playbackRate = CLIP_SPEED;
       a.onended = next;
       a.onerror = () => { clip = null; resolve("error"); };
       a.play().then(() => { if (i === 1 && onStart) onStart(); }).catch(() => { clip = null; resolve("error"); });
