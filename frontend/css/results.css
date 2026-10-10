@@ -46,7 +46,7 @@ body:has(.view[data-view="result"]:not([hidden])) .app-header__inner { max-inlin
    starts at its very top and is pinned there, so it has no distance to travel and never moves. ---- */
 @media (min-width: 900px), (orientation: landscape) and (max-height: 32rem) {
   body:has(.view[data-view="result"]:not([hidden])) { block-size: 100dvh; overflow: hidden; }
-  .app-main:has(.view[data-view="result"]:not([hidden])) { display: flex; flex-direction: column; min-block-size: 0; overflow: hidden; padding-block-end: 1rem; }
+  .app-main:has(.view[data-view="result"]:not([hidden])) { display: flex; flex-direction: column; min-block-size: 0; overflow: hidden; padding-block-end: 0.5rem; }
   .view[data-view="result"]:not([hidden]) {
     flex: 1 1 auto; min-block-size: 0; overflow-y: auto; overscroll-behavior: contain;
     grid-template-columns: var(--frame-w) auto minmax(0, 1fr);
@@ -64,6 +64,14 @@ body:has(.view[data-view="result"]:not([hidden])) .app-header__inner { max-inlin
   }
   .result > .result__card { grid-column: 2 / -1; grid-row: 2; }
   .view[data-view="result"] > #slot-result { grid-area: auto; grid-column: 2 / -1; grid-row: 3; }
+}
+
+/* Desktop only: the scroll area takes every pixel between the header and the footer, with a stable gutter and token colors. */
+@media (min-width: 900px) and (min-height: 32rem) {
+  .app-main:has(.view[data-view="result"]:not([hidden])) { padding-block-start: 1.25rem; }
+  .view[data-view="result"]:not([hidden]) { scrollbar-gutter: stable; scrollbar-color: var(--color-border-strong) var(--color-bg); padding-block-end: 1rem; }
+  body:has(.view[data-view="result"]:not([hidden])) #slot-footer { padding-block: 0; }
+  body:has(.view[data-view="result"]:not([hidden])) #slot-footer .btn { min-block-size: 2.5rem; }
 }
 
 /* ---- The slip: one bordered surface holding the whole answer ---- */
