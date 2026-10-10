@@ -1,0 +1,15 @@
+.env
+*.onnx
+docs/Server_Blueprint.md
+eval_photos/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+server/data/app.db
+server/data/*.db
+server/data/*.db-*
+*.zip
+server/eval_photos/
+server/eval/runs/

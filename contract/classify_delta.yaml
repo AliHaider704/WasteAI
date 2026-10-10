@@ -1,0 +1,34 @@
+# File: contract/classify_delta.yaml
+# D-046 (additive only, optional fields). Referenced from openapi.yaml after both developers agree.
+# Clients ignore unknown fields (ARCHITECTURE section 7). No existing field is renamed or removed.
+SourceLabelDelta:
+  description: |
+    `sources[].top[]` item. `mapped` and `cat` are new and optional.
+    Order: mapped labels first (by contribution), then unmapped by score. Still max 3 items.
+  type: object
+  required: [label, score]
+  properties:
+    label: {type: string}
+    score: {type: number, minimum: 0, maximum: 1}
+    mapped:
+      type: boolean
+      description: The label matched at least one rule and fed the decision.
+    cat:
+      type: string
+      description: Strongest category id this label contributed to. Absent when `mapped` is false.
+Evidence:
+  description: Optional, shown by the UI only inside "Why?".
+  type: object
+  required: [strength, cloud_share]
+  properties:
+    strength:
+      type: number
+      minimum: 0
+      maximum: 1
+      description: Absolute evidence mass of the winner (not normalized to the group).
+    cloud_share:
+      type: number
+      minimum: 0
+      maximum: 1
+      description: Share of the final score that came from cloud sources.
+# ClassifyResponse gains: evidence: {$ref: "#/Evidence"} (optional). `/health` unchanged.

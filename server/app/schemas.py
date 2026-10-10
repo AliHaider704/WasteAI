@@ -24,6 +24,13 @@ class Guidance(BaseModel):
 class SourceLabel(BaseModel):
     label: str
     score: float
+    mapped: bool | None = None  # D-046: the label matched a rule and fed the decision
+    cat: str | None = None  # D-046: strongest category this label fed (absent when unmapped)
+
+
+class Evidence(BaseModel):
+    strength: float = Field(ge=0, le=1)
+    cloud_share: float = Field(ge=0, le=1)
 
 
 class SourceResult(BaseModel):
@@ -46,6 +53,7 @@ class ClassifyResponse(BaseModel):
     guidance: Guidance | None
     reason: list[str] = Field(default_factory=list)
     sources: list[SourceResult]
+    evidence: Evidence | None = None  # D-046, optional
     elapsed_ms: int
 
 

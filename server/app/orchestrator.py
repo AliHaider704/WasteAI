@@ -4,7 +4,7 @@ import inspect
 import logging
 import time
 
-from app import aggregator, catalog, mapper
+from app import aggregator, catalog, mapper, mapper_v2
 from app.sources.vision_azure import VisionAzure
 from app.sources.vision_llm import VisionLLM
 from app.sources.vision_reciclapi import VisionReciclAPI
@@ -53,10 +53,15 @@ async def _timed(name: str, src, data: bytes, timings: dict):
 
 
 def _source_items(results, timings: dict) -> list[dict]:
-    return [{"name": n, "ok": ok,
-             "top": [{"label": lb, "score": round(sc, 4)} for lb, sc in p[:3]],
-             "elapsed_ms": timings.get(n)}
+    return [{"name": n, "ok": ok, "top": mapper_v2.mark_items(p), "elapsed_ms": timings.get(n)}
             for n, ok, p in results]
+
+
+def _score(pairs) -> dict[str, float]:
+    """Per-source category scores: v2 keeps evidence strength (flag MAPPER_V2), v1 is the old way."""
+    if mapper_v2.v2_enabled():
+        return mapper_v2.map_labels_v2(pairs).shares()
+    return mapper.map_labels(pairs)
 
 
 def _hazard_warning(cats: dict) -> list[str]:
@@ -126,7 +131,7 @@ class Orchestrator:
         cats = catalog.by_id(lang)
         usable = {}
         for name, ok, pairs in results:
-            scores = mapper.map_labels(pairs) if ok else {}
+            scores = _score(pairs) if ok else {}
             if scores:
                 usable[name] = scores
         first = aggregator.decide(usable) if usable else None
@@ -135,7 +140,7 @@ class Orchestrator:
                 and (first is None or first.status != "ok" or first.agreement == "none")):
             name, ok, pairs = await _timed("llm", self.llm, data, timings)
             results.append((name, ok, pairs))
-            scores = mapper.map_labels(pairs) if ok else {}
+            scores = _score(pairs) if ok else {}
             if scores:
                 usable[name] = scores
         if not usable:
@@ -182,7 +187,10 @@ class Orchestrator:
             category = {"id": d.category_id, "name": cats.get(d.category_id, {}).get("name", d.category_id),
                         "group": cats.get(d.category_id, {}).get("group", ""),
                         "confidence": round(d.confidence, 2)}
-        return {
+        winner = d.category_id or (d.alternatives[0][0] if d.alternatives else None)
+        masses = {n: mapper_v2.map_labels_v2(p) for n, ok, p in results if ok and n in usable}
+        ev = mapper_v2.evidence(masses, aggregator.weights(), winner)
+        out = {
             "request_id": request_id,
             "status": "ok" if is_ok else "uncertain",
             "category": category,
@@ -194,6 +202,9 @@ class Orchestrator:
             "sources": _source_items(results, timings),
             "elapsed_ms": int((time.perf_counter() - t0) * 1000),
         }
+        if ev:
+            out["evidence"] = ev
+        return out
 
 
 def build_orchestrator() -> Orchestrator:

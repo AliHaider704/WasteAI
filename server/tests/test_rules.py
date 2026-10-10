@@ -17,7 +17,9 @@ FIXTURES = {
 
 def _load() -> dict[str, dict[str, float]]:
     rules: dict[str, dict[str, float]] = {}
-    for f in sorted(RULES_DIR.glob("*.json")):
+    for f in sorted(RULES_DIR.rglob("*.json")):
+        if f.name == "_scale.json" or f.parent.name != "hand":
+            continue
         data = json.loads(f.read_text(encoding="utf-8"))
         for label, cats in data["labels"].items():
             slot = rules.setdefault(label.lower(), {})

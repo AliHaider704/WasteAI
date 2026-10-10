@@ -14,7 +14,9 @@ def test_all_rule_files_load():
 
 
 def test_every_rule_file_has_labels_key():
-    for f in mapper.RULES_DIR.glob("*.json"):
+    for f in mapper.RULES_DIR.rglob("*.json"):
+        if f.name == "_scale.json":
+            continue
         assert "labels" in json.loads(f.read_text("utf-8")), f.name
 
 

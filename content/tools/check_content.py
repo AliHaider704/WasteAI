@@ -181,9 +181,9 @@ def check_text_rules():
 
 def rule_labels():
     found = set()
-    for path in sorted((ROOT / "server" / "data" / "label_rules").glob("*.json")):
+    for path in sorted((ROOT / "server" / "data" / "label_rules").rglob("*.json")):
         data = load_json(path)
-        if isinstance(data, dict):
+        if isinstance(data, dict) and path.name != "_scale.json":
             found |= set(data.get("labels", {}))
     stop = load_json(ROOT / "server" / "data" / "azure_stoplist.json") or {}
     return found | set(stop.get("stop", []))
