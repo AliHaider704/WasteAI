@@ -54,8 +54,28 @@ export function speakable(text, lang) {
   return s;
 }
 
+let clip = null; // the server audio file playing now, if any
+
 export function cancel() {
+  if (clip) { try { clip.pause(); } catch (err) { /* ignore */ } clip.onended = clip.onerror = null; clip = null; }
   try { if (supported()) window.speechSynthesis.cancel(); } catch (err) { /* ignore */ }
+}
+
+/** Plays server audio files one after another. Resolves "done", or "error" if any file cannot play (caller falls back). */
+export function playClips(urls, { volume = 0.85, onStart } = {}) {
+  return new Promise((resolve) => {
+    let i = 0;
+    const next = () => {
+      if (i >= urls.length) { clip = null; return resolve("done"); }
+      const a = new Audio(urls[i++]);
+      clip = a;
+      a.volume = volume;
+      a.onended = next;
+      a.onerror = () => { clip = null; resolve("error"); };
+      a.play().then(() => { if (i === 1 && onStart) onStart(); }).catch(() => { clip = null; resolve("error"); });
+    };
+    next();
+  });
 }
 
 /**

@@ -4,7 +4,19 @@
 // the status line says what to do instead of the button silently disappearing.
 import { onCard } from "./card-hook.js";
 import { isMuted } from "../audio.js";
-import { supported, speakParts, cancel } from "../speech.js";
+import { supported, speakParts, playClips, cancel } from "../speech.js";
+
+// Server audio (built by scripts/make_audio.py) is tried first: it sounds the same on every device.
+let manifest = null;
+async function serverFiles(lang, id) {
+  if (!id) return null;
+  if (manifest === null) {
+    try { const r = await fetch("audio/manifest.json", { cache: "no-cache" }); manifest = r.ok ? await r.json() : {}; }
+    catch (err) { manifest = {}; }
+  }
+  const files = manifest[lang] && manifest[lang][id];
+  return files && files.length ? files.map((f) => `audio/${f}`) : null;
+}
 export const styles = "comfort";
 
 export default function init(ctx) {
@@ -17,6 +29,14 @@ export default function init(ctx) {
 
   function say(message) {
     if (status) status.textContent = message;
+  }
+  // The fix differs by system, so the message names the settings page to open.
+  function noVoiceText() {
+    const ua = navigator.userAgent || "";
+    if (/Android|iPhone|iPad/.test(ua)) return t("f.read-aloud.no_voice");
+    if (/Windows/.test(ua)) return t("f.read-aloud.no_voice_win");
+    if (/Macintosh/.test(ua)) return t("f.read-aloud.no_voice_mac");
+    return t("f.read-aloud.no_voice");
   }
   function paint() {
     if (!btn) return;
@@ -31,7 +51,7 @@ export default function init(ctx) {
     paint();
   }
 
-  onCard((card) => {
+  onCard((card, result) => {
     const list = card.querySelector(".result__steps");
     const name = card.querySelector(".result__name");
     if (!list || !name) return;
@@ -47,10 +67,16 @@ export default function init(ctx) {
       speaking = true;
       say(t("f.read-aloud.loading"));
       paint();
-      const result = await speakParts(parts, { lang, onStart: () => mine === run && say("") });
+      const files = await serverFiles(lang.slice(0, 2), result && result.category && result.category.id);
       if (mine !== run) return;
+      const onStart = () => mine === run && say("");
+      let outcome = files ? await playClips(files, { onStart }) : "error";
+      if (mine !== run) return;
+      if (outcome === "error") outcome = await speakParts(parts, { lang, onStart });
+      if (mine !== run) return;
+      const result2 = outcome;
       speaking = false;
-      say(result === "no-voice" ? t("f.read-aloud.no_voice") : result === "error" ? t("f.read-aloud.error") : "");
+      say(result2 === "no-voice" ? noVoiceText() : result2 === "error" ? t("f.read-aloud.error") : "");
       paint();
     });
     status = document.createElement("p");

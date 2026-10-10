@@ -5,5 +5,7 @@
  "f.read-aloud.loading": "Preparing the voice…",
  "f.read-aloud.muted": "Sound is off. Turn it on with the sound button at the top, then try again.",
  "f.read-aloud.no_voice": "No English voice is installed on this device. Add one in the device's text-to-speech settings, then try again.",
- "f.read-aloud.error": "Reading aloud failed. Try again in a moment."
+ "f.read-aloud.error": "Reading aloud failed. Try again in a moment.",
+ "f.read-aloud.no_voice_win": "No English voice is installed on this computer. In Windows: Settings, Time and language, Speech, Add voices, then choose English. Then close the browser fully and open it again.",
+ "f.read-aloud.no_voice_mac": "No English voice is installed on this computer. On Mac: System Settings, Accessibility, Spoken Content, System Voice, Manage Voices, then choose English. Then close the browser and open it again."
 }
