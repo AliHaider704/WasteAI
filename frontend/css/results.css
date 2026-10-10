@@ -42,28 +42,28 @@ body:has(.view[data-view="result"]:not([hidden])) .app-header__inner { max-inlin
   background: var(--color-surface);
 }
 
-/* ---- Wide and landscape: two columns, photo frame pinned ---- */
+/* ---- Wide and landscape: the page itself does not scroll. The view is the scroll area; the photo frame
+   starts at its very top and is pinned there, so it has no distance to travel and never moves. ---- */
 @media (min-width: 900px), (orientation: landscape) and (max-height: 32rem) {
+  body:has(.view[data-view="result"]:not([hidden])) { block-size: 100dvh; overflow: hidden; }
+  .app-main:has(.view[data-view="result"]:not([hidden])) { display: flex; flex-direction: column; min-block-size: 0; overflow: hidden; padding-block-end: 1rem; }
   .view[data-view="result"]:not([hidden]) {
-    grid-template-columns: var(--frame-w) minmax(0, 1fr);
-    grid-template-areas: none;
-    align-items: start;
-    column-gap: 2rem;
+    flex: 1 1 auto; min-block-size: 0; overflow-y: auto; overscroll-behavior: contain;
+    grid-template-columns: var(--frame-w) auto minmax(0, 1fr);
+    grid-template-areas: none; grid-auto-rows: auto;
+    align-items: start; align-content: start; column-gap: 1.5rem; padding-inline-end: 0.5rem;
   }
-  .view[data-view="result"] > .btn { grid-area: auto; grid-column: 1; grid-row: 1; justify-self: start; }
-  .view[data-view="result"] h1 { grid-area: auto; grid-column: 2; grid-row: 1; align-self: center; }
+  .view[data-view="result"] > .btn { grid-area: auto; grid-column: 2; grid-row: 1; }
+  .view[data-view="result"] h1 { grid-area: auto; grid-column: 3; grid-row: 1; align-self: center; }
   /* #result-root and .result drop out of the layout so the frame and the slip become cells of the view grid. */
   .view[data-view="result"] > #result-root, .result { display: contents; }
   .result__media {
-    grid-column: 1; grid-row: 2 / span 2;
-    position: sticky; inset-block-start: 4.5rem; align-self: start;
+    grid-column: 1; grid-row: 1 / span 3;
+    position: sticky; inset-block-start: 0; align-self: start;
     block-size: auto; aspect-ratio: 4 / 3;
   }
-  .result > .result__card { grid-column: 2; grid-row: 2; }
-  .view[data-view="result"] > #slot-result { grid-area: auto; grid-column: 2; grid-row: 3; }
-}
-@media (orientation: landscape) and (max-height: 32rem) {
-  .result__media { inset-block-start: 3.5rem; }
+  .result > .result__card { grid-column: 2 / -1; grid-row: 2; }
+  .view[data-view="result"] > #slot-result { grid-area: auto; grid-column: 2 / -1; grid-row: 3; }
 }
 
 /* ---- The slip: one bordered surface holding the whole answer ---- */
