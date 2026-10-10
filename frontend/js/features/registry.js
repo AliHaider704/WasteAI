@@ -7,6 +7,9 @@ import { log } from "../log.js";
 const TRIGGERS = ["home", "capture", "result", "browse", "header", "footer", "idle", "command"];
 const state = { flags: {}, profiles: {}, profile: "public", loaded: new Map(), commands: [] };
 const listeners = [];
+// Remember the latest route: the first wasteai:route fires before features.json has loaded.
+let lastView = null;
+document.addEventListener("wasteai:route", (e) => { lastView = e.detail && e.detail.view; });
 
 function flagsFor(trigger) {
   return Object.entries(state.flags).filter(([slug, f]) => {
@@ -94,6 +97,8 @@ export async function startRegistry() {
     const trigger = viewTrigger(e.detail && e.detail.view);
     if (trigger) fire(trigger);
   });
+  const first = viewTrigger(lastView);
+  if (first) fire(first);
   on("wasteai:capture", () => fire("capture"));
   on("wasteai:result", () => fire("result"));
   fire("header");
