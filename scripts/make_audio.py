@@ -29,6 +29,8 @@ def main():
     ap.add_argument("--dry", action="store_true")
     a = ap.parse_args()
     ffmpeg = shutil.which("ffmpeg")
+    if ffmpeg and b"libopus" not in subprocess.run([ffmpeg, "-hide_banner", "-encoders"], capture_output=True).stdout:
+        ffmpeg = None  # no Opus encoder: keep WAV instead of failing
     out = ROOT / "frontend" / "audio"
     manifest = {"_path": "frontend/audio/manifest.json", "voices": VOICE}
     total = 0
