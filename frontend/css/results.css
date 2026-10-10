@@ -1,28 +1,72 @@
 /* File: frontend/css/results.css */
-/* Result view. One layout, no stacked overrides: phone = photo band above details, normal page scroll;
-   wide screens and sideways phones = photo beside details, pinned while the page scrolls.
-   Tokens only (D-020). Motion: opacity/transform, off under reduced motion. */
+/* Result view, "sorting desk" (D-020 kraft and ink; dials 2/2/2).
+   Wide screens and sideways phones: a fixed photo frame in the first column (pinned, same size and place
+   whatever the answer length), the slip and its tools in the second.
+   Phones: title row, the same framed photo at a fixed height, then the slip.
+   Tokens only. Motion: opacity/transform, off under reduced motion. */
 
-.app-main:has(.view[data-view="result"]:not([hidden])) { max-inline-size: 60rem; }
+.app-main:has(.view[data-view="result"]:not([hidden])) { max-inline-size: 68rem; }
+body:has(.view[data-view="result"]:not([hidden])) .app-header__inner { max-inline-size: 68rem; }
 
-/* Title row: Back and the heading share one line, same place on every screen. */
+/* ---- Phone: back + title, photo frame, slip, tools ---- */
 .view[data-view="result"]:not([hidden]) {
+  --frame-w: clamp(12rem, 30vw, 21rem);
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  grid-template-areas: "back title" "root root";
+  grid-template-areas: "back title" "root root" "tools tools";
   align-items: center;
   gap: 0.5rem 0.75rem;
 }
 .view[data-view="result"] > * { margin: 0; }
 .view[data-view="result"] > .btn { grid-area: back; min-block-size: 2.75rem; }
 .view[data-view="result"] h1 { grid-area: title; font-size: 1.5rem; line-height: 1.3; }
-.view[data-view="result"] > #result-root { grid-area: root; align-self: start; }
-.view[data-view="result"] > #slot-result { grid-column: 1 / -1; }
+.view[data-view="result"] > #result-root { grid-area: root; align-self: start; min-inline-size: 0; }
+.view[data-view="result"] > #slot-result { grid-area: tools; }
 
 .result { display: grid; gap: 1rem; grid-template-columns: minmax(0, 1fr); }
-.result__media { min-inline-size: 0; }
+
+/* The photo frame: fixed size, one mat, the whole item always visible (contain), never cropped, never resized by the answer. */
+.result__media {
+  min-inline-size: 0;
+  block-size: clamp(9rem, 26dvh, 13rem);
+  padding: 0.5rem;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+}
 .result__media:empty { display: none; }
-/* The slip: one bordered surface holding the whole answer. Flex-wrap lets injected tools sit in a single row (see Tools). */
+.result__photo {
+  display: block; inline-size: 100%; block-size: 100%;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+
+/* ---- Wide and landscape: two columns, photo frame pinned ---- */
+@media (min-width: 900px), (orientation: landscape) and (max-height: 32rem) {
+  .view[data-view="result"]:not([hidden]) {
+    grid-template-columns: var(--frame-w) minmax(0, 1fr);
+    grid-template-areas: none;
+    align-items: start;
+    column-gap: 2rem;
+  }
+  .view[data-view="result"] > .btn { grid-area: auto; grid-column: 1; grid-row: 1; justify-self: start; }
+  .view[data-view="result"] h1 { grid-area: auto; grid-column: 2; grid-row: 1; align-self: center; }
+  /* #result-root and .result drop out of the layout so the frame and the slip become cells of the view grid. */
+  .view[data-view="result"] > #result-root, .result { display: contents; }
+  .result__media {
+    grid-column: 1; grid-row: 2 / span 2;
+    position: sticky; inset-block-start: 4.5rem; align-self: start;
+    block-size: auto; aspect-ratio: 4 / 3;
+  }
+  .result > .result__card { grid-column: 2; grid-row: 2; }
+  .view[data-view="result"] > #slot-result { grid-area: auto; grid-column: 2; grid-row: 3; }
+}
+@media (orientation: landscape) and (max-height: 32rem) {
+  .result__media { inset-block-start: 3.5rem; }
+}
+
+/* ---- The slip: one bordered surface holding the whole answer ---- */
 .result__card {
   display: flex; flex-wrap: wrap; align-content: start; gap: 1rem;
   min-inline-size: 0; padding: 1.25rem;
@@ -31,117 +75,97 @@
   border-radius: var(--radius-md);
 }
 .result__card > * { flex: 1 1 100%; min-inline-size: 0; margin: 0; }
+@media (min-width: 900px) { .result__card { padding: 1.75rem; gap: 1.25rem; } }
 
-/* The whole item stays visible (contain) on a neutral mat; never cropped. */
-.result__photo {
-  display: block;
-  inline-size: 100%;
-  block-size: 9rem;
-  block-size: clamp(6rem, 20dvh, 10rem);
-  object-fit: contain;
-  background: var(--color-surface-2, #8881);
-  border: 1px solid var(--color-border, #8886);
-  border-radius: var(--radius-md);
-}
-
-@media (min-width: 900px), (orientation: landscape) and (max-height: 32rem) {
-  .result { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 2rem; align-items: start; }
-  .result__media { position: sticky; inset-block-start: 1rem; }
-  .result__photo { block-size: auto; aspect-ratio: 4 / 3; max-block-size: 70vh; max-block-size: 70dvh; }
-}
-
-/* Head: stamp, then the serif category name as the one focal word, then the confidence word. */
-.result__stamp { margin-block-end: -0.25rem; }
+/* Head: stamp, then the serif category name as the one focal word, then the confidence word and its bar. */
+.result__stamp { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-block-end: -0.25rem; }
 .result__stamp .bin { font-size: 1rem; padding-inline: 1rem; min-block-size: 2.5rem; }
-.result__head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+.result__head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.875rem; }
 .result__head .f-meter { order: 3; flex: 1 1 100%; inline-size: auto; block-size: 0.375rem; }
-.result__icon { inline-size: 2rem; block-size: 2rem; }
+.result__icon { inline-size: 2.25rem; block-size: 2.25rem; flex: none; }
 .result__name { margin: 0; font-family: var(--font-serif); font-weight: 600; font-size: 2.25rem; line-height: 1.2; overflow-wrap: anywhere; }
-.result__meta { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+@media (min-width: 900px) { .result__name { font-size: 2.75rem; } }
+.result__confidence {
+  display: inline-flex; align-items: center; min-block-size: 2rem; padding-inline: 0.75rem;
+  border: 2px solid var(--color-border); border-radius: var(--radius-sm);
+  font-size: 0.875rem; font-weight: 600;
+}
+.result__confidence[data-level="high"] { border-color: var(--color-accent); }
+.result__confidence[data-level="low"] { border-style: dashed; }
 .result__sub { margin: 0; font-size: 1rem; font-weight: 600; letter-spacing: 0; color: var(--color-text-muted); }
-.result__summary { margin: 0; font-size: 1.0625rem; color: var(--color-text-muted); }
+.result__summary { margin: 0; font-size: 1.0625rem; max-inline-size: 60ch; color: var(--color-text-muted); }
+.result__meta { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .card { border-radius: var(--radius-md); }
 .card__title { font-family: var(--font-serif); font-weight: 600; }
 
-/* Confidence is always written in words; the border style is only a secondary cue. */
-.result__confidence {
-  display: inline-flex;
-  align-items: center;
-  min-block-size: 2rem;
-  padding-inline: 0.75rem;
-  border: 2px solid var(--color-border, #8886);
-  border-radius: var(--radius-sm);
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-.result__confidence[data-level="high"] { border-color: var(--color-accent, #1f5d3a); }
-.result__confidence[data-level="low"] { border-style: dashed; }
-
+/* Steps are a real sequence: serif numerals, one rule between rows. */
 .result__list { margin: 0; padding-inline-start: 1.5rem; display: grid; gap: 0.5rem; list-style: disc; }
 .result__steps { margin: 0; padding: 0; list-style: none; counter-reset: step; }
 .result__steps li {
-  counter-increment: step; display: grid; grid-template-columns: 2rem minmax(0, 1fr); gap: 0.75rem;
+  counter-increment: step; display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); gap: 0.75rem;
   padding-block: 0.75rem; border-block-end: 1px solid var(--color-border); font-size: 1.0625rem;
 }
+.result__steps li:first-child { border-block-start: 1px solid var(--color-border); }
 .result__steps li:last-child { border-block-end: 0; }
 .result__steps li::before { content: counter(step); font-family: var(--font-serif); font-weight: 600; font-size: 1.5rem; line-height: 1.1; color: var(--color-accent); }
 
+/* Warnings: whole border in the warning color, no stripe; always before the tools. */
 .result__warnings {
-  padding: 1rem;
-  border: 1px solid var(--color-border, #8886);
-  border-inline-start: 6px solid var(--color-warning-text);
-  border-radius: var(--radius-md);
-  background: var(--color-warning-bg);
-  color: var(--color-warning-text);
-  display: grid;
-  gap: 0.5rem;
+  display: grid; gap: 0.5rem; padding: 1rem 1.25rem;
+  border: 1px solid var(--color-warning-text); border-radius: var(--radius-md);
+  background: var(--color-warning-bg); color: var(--color-warning-text);
 }
+.result__warnings .result__sub { color: inherit; }
 
 .result__alts { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
 .result__alts .btn { inline-size: 100%; justify-content: flex-start; }
 .result__chosen { display: grid; gap: 0.75rem; }
 .result__chosen:empty { display: none; }
 
-.result__why { border: 1px solid var(--color-border, #8886); border-radius: var(--radius-md); padding-inline: 1rem; }
-.result__why summary { min-block-size: 3rem; display: flex; align-items: center; cursor: pointer; font-weight: 600; }
-.result__why[open] summary { border-block-end: 1px solid var(--color-border, #8886); margin-block-end: 0.75rem; }
+/* Why and good-to-know: closed rows with a plus or minus, same height, same look. */
+.result__why, .result__card > .f-know, #slot-result > .f-know { border: 1px solid var(--color-border); border-radius: var(--radius-md); padding-inline: 1rem; }
+.result__why summary, .f-know > summary { min-block-size: 3rem; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-weight: 600; list-style: none; }
+.result__why summary::-webkit-details-marker, .f-know > summary::-webkit-details-marker { display: none; }
+.result__why summary::after, .f-know > summary::after { content: "+"; margin-inline-start: auto; font-size: 1.5rem; font-weight: 400; line-height: 1; }
+.result__why[open] > summary::after, .f-know[open] > summary::after { content: "\2212"; }
+.result__why[open] summary { border-block-end: 1px solid var(--color-border); margin-block-end: 0.75rem; }
 .result__why > :last-child { margin-block-end: 1rem; }
-.result__why summary:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
-@media (hover: hover) {
-  .result__why summary:hover { background: var(--color-surface-2, #8881); text-decoration: underline; }
-}
-.result__why summary:active { background: var(--color-accent-soft, #8882); }
+.result__why summary:focus-visible, .f-know > summary:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+@media (hover: hover) { .result__why summary:hover, .f-know > summary:hover { background: var(--color-surface-2); } }
+.result__why summary:active, .f-know > summary:active { background: var(--color-accent-soft); }
 .result__facts { display: grid; grid-template-columns: auto 1fr; gap: 0.25rem 1rem; margin-block: 0 0.75rem; }
 .result__facts dt { font-weight: 600; }
 .result__facts dd { margin: 0; }
 .result__labels { overflow-wrap: anywhere; }
+.f-know:not([open]):not(:has(.f-know__s)) { display: none; } /* never an empty box */
 
 .result__feedback, .result__form { display: grid; gap: 0.75rem; }
 .result__form[hidden] { display: none; }
 .result__label { font-weight: 600; }
 
-/* Tools: read aloud, share, my bins, feedback opener share one look and one row, after the steps and warnings. */
+/* Tools: read aloud and share sit in the slip after the warnings; my bins, favorites and photo removal sit under it.
+   Same height, same outline button, one row that wraps. */
 .result__card > .btn:not(.btn--primary), .result__card > .f-share, #slot-result > .btn {
-  order: 5; flex: 0 0 auto; inline-size: auto; min-block-size: 2.75rem; background: transparent; border-color: var(--color-border-strong);
+  order: 5; flex: 0 0 auto; inline-size: auto; background: transparent; border-color: var(--color-border-strong);
 }
-.result__card > .btn:not(.btn--primary), .f-share .btn, #slot-result > .btn { block-size: 2.75rem; padding-block: 0; white-space: nowrap; }
-#slot-result { display: flex; flex-direction: column; align-items: flex-start; gap: 1rem; margin-block-start: 1rem; }
-#slot-result > .f-know, #slot-result > .f-card { align-self: stretch; }
-.result__card > .f-share { display: contents; margin: 0; }
-.f-share .btn { order: 5; flex: 0 0 auto; min-block-size: 2.75rem; background: transparent; border-color: var(--color-border-strong); }
+.result__card > .btn:not(.btn--primary), .f-share .btn, #slot-result > .btn { block-size: 2.75rem; min-block-size: 2.75rem; padding-block: 0; white-space: nowrap; }
+.result__card > .f-share { display: contents; }
+.f-share .btn { order: 5; flex: 0 0 auto; background: transparent; border-color: var(--color-border-strong); }
 .f-share textarea, .f-share .muted { flex: 1 1 100%; order: 5; }
-.result__why, .result__card > .f-know { order: 6; border-radius: var(--radius-md); }
+.result__why, .result__card > .f-know { order: 6; }
 .result__feedback { order: 7; }
 .result__feedback > .btn { inline-size: auto; background: transparent; border-color: transparent; text-decoration: underline; text-underline-offset: 0.25em; }
+
+#slot-result { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+#slot-result > .f-know, #slot-result > .f-card, #slot-result > .f-evap, #slot-result > .f-guess-result { flex: 1 1 100%; }
 .f-know > summary { padding-inline: 0; }
-.f-know:not([open]):not(:has(.f-know__s)) { display: none; } /* never an empty box */
 
 /* Motion: opacity/transform only, interruptible, skipped under reduced motion. */
 @keyframes result-reveal { from { opacity: 0; transform: translateY(0.5rem); } to { opacity: 1; transform: none; } }
 @keyframes stamp-down { from { transform: rotate(-2deg) scale(1.06); } to { transform: rotate(-2deg) scale(1); } }
 @keyframes word-fade { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: no-preference) {
-  .result--reveal { animation: result-reveal 200ms ease-out both; }
+  .result--reveal > .result__card { animation: result-reveal 200ms ease-out both; }
   .result__stamp .bin { animation: stamp-down 160ms ease-out both; }
   .result__confidence { animation: word-fade 150ms ease-out both; }
 }
