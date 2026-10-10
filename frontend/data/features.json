@@ -100,7 +100,7 @@
       "playful": false
     },
     "read-aloud": {
-      "enabled": false,
+      "enabled": true,
       "module": "read-aloud",
       "trigger": "result",
       "needs": [],
@@ -262,7 +262,7 @@
     }
   },
   "profiles": {
-    "public": [],
+    "public": ["read-aloud"],
     "exhibition": []
   }
 }

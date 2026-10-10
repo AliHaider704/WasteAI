@@ -5,6 +5,8 @@
 // - Wiring needs no changes elsewhere: it listens for the shutter button click, the "wasteai:result" event
 //   and error messages shown in the capture panel. Only app.js must import this file.
 
+import { speakParts, cancel as speechCancel } from "./speech.js";
+
 const STORAGE_KEY = "wasteai.sound";
 const VOICE_KEY = "wasteai.voice";
 const MAX_GAIN = 0.15; // hard ceiling for every cue
@@ -143,37 +145,13 @@ export function playShutter() {
 // ---------- optional speech ----------
 
 function stopSpeech() {
-  try {
-    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
-  } catch (err) {
-    // ignore
-  }
+  speechCancel();
 }
 
-function pickVoice(lang) {
-  const code = String(lang || "en").slice(0, 2).toLowerCase();
-  const voices = window.speechSynthesis.getVoices() || [];
-  const matches = voices.filter((v) => String(v.lang).toLowerCase().startsWith(code));
-  return matches.find((v) => v.default) || matches[0] || null;
-}
-
-/** Speaks `text` in the page language. Does nothing (silently) if there is no matching voice. */
+/** Speaks `text` in the page language (Arabic included). Does nothing, silently, if the device has no matching voice. */
 export function speak(text) {
   if (muted || !voiceEnabled || !text) return;
-  try {
-    if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") return;
-    const voice = pickVoice(document.documentElement.lang);
-    if (!voice) return; // no voice for this language (common for Arabic): stay silent
-    stopSpeech();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.voice = voice;
-    utterance.lang = voice.lang;
-    utterance.volume = 0.8;
-    utterance.rate = 0.95;
-    window.speechSynthesis.speak(utterance);
-  } catch (err) {
-    // speech must never break the app
-  }
+  speakParts([text], { lang: document.documentElement.lang, needVoice: true, volume: 0.8 }).catch(() => {});
 }
 
 // ---------- wiring ----------

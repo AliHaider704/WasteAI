@@ -1,30 +1,33 @@
 // File: frontend/js/features/read-aloud.js
-// F15: read the category name and steps aloud, only when the user presses the button.
-// No voice for the page language, or sound off: the button is not shown.
+// F15: read the category name and steps aloud, only when the user presses the button. Arabic and English.
+// The button is always shown when the browser has speech. If the device has no voice for the language,
+// the status line says what to do instead of the button silently disappearing.
 import { onCard } from "./card-hook.js";
 import { isMuted } from "../audio.js";
+import { supported, speakParts, cancel } from "../speech.js";
 export const styles = "comfort";
 
 export default function init(ctx) {
   const { t } = ctx;
-  const syn = window.speechSynthesis;
-  if (!syn || typeof SpeechSynthesisUtterance === "undefined") return;
-  let current = null;
+  if (!supported()) return;
+  let btn = null;
+  let status = null;
   let speaking = false;
+  let run = 0; // id of the latest read, so a stale result cannot repaint
 
-  const hasVoice = () => {
-    const code = document.documentElement.lang.slice(0, 2).toLowerCase();
-    return (syn.getVoices() || []).some((v) => String(v.lang).toLowerCase().startsWith(code));
-  };
-  function paint() {
-    if (!current) return;
-    current.hidden = isMuted() || !hasVoice();
-    current.textContent = t(speaking ? "f.read-aloud.stop" : "f.read-aloud.start");
-    current.setAttribute("aria-pressed", String(speaking));
+  function say(message) {
+    if (status) status.textContent = message;
   }
-  function stop() {
+  function paint() {
+    if (!btn) return;
+    btn.textContent = speaking ? t("f.read-aloud.stop") : t("f.read-aloud.start");
+    btn.setAttribute("aria-pressed", String(speaking));
+  }
+  function stop(message = "") {
+    run += 1;
     speaking = false;
-    try { syn.cancel(); } catch (err) { /* ignore */ }
+    cancel();
+    say(message);
     paint();
   }
 
@@ -32,33 +35,33 @@ export default function init(ctx) {
     const list = card.querySelector(".result__steps");
     const name = card.querySelector(".result__name");
     if (!list || !name) return;
-    const b = document.createElement("button");
-    b.type = "button";
-    b.className = "btn";
-    current = b;
-    b.addEventListener("click", () => {
+    btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn";
+    btn.addEventListener("click", async () => {
       if (speaking) return stop();
-      const code = document.documentElement.lang.slice(0, 2).toLowerCase();
-      const voice = (syn.getVoices() || []).find((v) => String(v.lang).toLowerCase().startsWith(code));
-      if (!voice) return paint();
+      if (isMuted()) return say(t("f.read-aloud.muted"));
+      const lang = document.documentElement.lang || "en";
       const parts = [name.textContent, ...[...list.querySelectorAll("li")].map((li) => li.textContent)];
-      const u = new SpeechSynthesisUtterance(parts.join(". "));
-      u.voice = voice;
-      u.lang = voice.lang;
-      u.volume = 0.8;
-      u.rate = 0.95;
-      u.onend = u.onerror = () => { speaking = false; paint(); };
+      const mine = ++run;
       speaking = true;
+      say(t("f.read-aloud.loading"));
       paint();
-      try { syn.speak(u); } catch (err) { stop(); }
+      const result = await speakParts(parts, { lang, onStart: () => mine === run && say("") });
+      if (mine !== run) return;
+      speaking = false;
+      say(result === "no-voice" ? t("f.read-aloud.no_voice") : result === "error" ? t("f.read-aloud.error") : "");
+      paint();
     });
-    list.before(b);
+    status = document.createElement("p");
+    status.className = "muted f-readstatus";
+    status.setAttribute("role", "status");
+    list.before(btn, status);
     paint();
   });
 
-  if (syn.addEventListener) syn.addEventListener("voiceschanged", paint);
-  ctx.on("i18n:change", stop);
-  ctx.on("wasteai:route", stop);
-  ctx.on("sound:change", (e) => { if (e.detail && e.detail.muted) stop(); else paint(); });
+  ctx.on("i18n:change", () => stop());
+  ctx.on("wasteai:route", () => stop());
+  ctx.on("sound:change", (e) => { if (e.detail && e.detail.muted) stop(); });
   document.addEventListener("visibilitychange", () => { if (document.hidden) stop(); });
 }

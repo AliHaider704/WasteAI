@@ -1,5 +1,9 @@
 {
  "_path": "frontend/i18n/features/read-aloud.en.json",
  "f.read-aloud.start": "Read steps aloud",
- "f.read-aloud.stop": "Stop reading"
+ "f.read-aloud.stop": "Stop reading",
+ "f.read-aloud.loading": "Preparing the voice…",
+ "f.read-aloud.muted": "Sound is off. Turn it on with the sound button at the top, then try again.",
+ "f.read-aloud.no_voice": "No English voice is installed on this device. Add one in the device's text-to-speech settings, then try again.",
+ "f.read-aloud.error": "Reading aloud failed. Try again in a moment."
 }

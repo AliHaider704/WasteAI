@@ -7,3 +7,4 @@ html[data-readable="on"] body { line-height: 1.9; }
 html[data-readable="on"] .result__card, html[data-readable="on"] .result__summary { max-inline-size: 60ch; }
 html[data-readable="on"] .result__steps { list-style-position: inside; padding-inline: 0; }
 html[data-readable="on"] .result__steps li { margin-block: var(--space-2); padding: var(--space-2); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+.f-readstatus { margin-block: var(--space-1); }
