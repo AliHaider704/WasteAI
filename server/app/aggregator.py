@@ -4,11 +4,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from . import policy, weighting
+
 # Baseline weights (D-031). Runtime values come from env W_LOCAL, W_AZURE,
 # W_RECICLAPI, W_LLM via weights(). Defaults stay local-heavy until the A23/A24
 # field report shows a cloud-heavy setting (e.g. W_AZURE=0.6, W_LOCAL=0.4) is not
 # worse. Rollback: unset the env vars (or set 0.4 / 0.6) and restart the service.
-WEIGHTS = {"local_onnx": 0.6, "azure": 0.4, "reciclapi": 0.2, "llm": 0.3}
+WEIGHTS = {"local_onnx": 0.6, "azure": 0.4, "reciclapi": 0.2, "llm": 0.3, "clip": 0.3}
 # Baseline values (A5/A7a, before A14): TEMPERATURE 1.0, OK_MIN 0.65,
 # SINGLE_OK_MIN 0.80, HAZARD_MIN 0.35. Change only from field data
 # (scripts/fit_temperature.py) and record before/after in DECISIONS.
@@ -73,17 +75,19 @@ def weights() -> dict[str, float]:
         "azure": st.w_azure,
         "reciclapi": st.w_reciclapi,
         "llm": st.w_llm,
+        "clip": st.w_clip,
     }
     return {k: v for k, v in w.items()}
 
 
-def combine(scores: dict[str, dict[str, float]]) -> dict[str, float]:
-    """Weighted mean over the sources that answered (weights renormalized)."""
-    wt = weights()
-    total = sum(wt.get(name, 0.2) for name in scores)
+def combine(scores: dict[str, dict[str, float]],
+            strengths: dict[str, float] | None = None) -> dict[str, float]:
+    """Weighted mean over the sources that answered (weights renormalized, see weighting.py)."""
+    wt = weighting.source_weights(scores, weights(), strengths, GROUP_OF)
+    total = sum(wt.values())
     out: dict[str, float] = {}
     for name, cats in scores.items():
-        w = wt.get(name, 0.2) / total
+        w = wt[name] / total
         for cat, val in cats.items():
             out[cat] = out.get(cat, 0.0) + w * val
     return out
@@ -128,21 +132,32 @@ def agreement_of(scores: dict[str, dict[str, float]]) -> str:
     return "none"
 
 
-def decide(scores: dict[str, dict[str, float]]) -> Decision:
-    """scores: {source_name: {category_id: score}} for sources that returned ok."""
+def decide(scores: dict[str, dict[str, float]],
+           strengths: dict[str, float] | None = None) -> Decision:
+    """scores: {source_name: {category_id: score}} for sources that returned ok.
+
+    strengths (optional, A37): {source: evidence strength 0..1}, used only by WEIGHT_MODE=reliability.
+    """
     scores = {k: v for k, v in scores.items() if v}
     if not scores:
         raise ValueError("no source scores")
-    combined = calibrate(combine(scores))
+    scores = weighting.cloud_override(scores, strengths)
+    combined = calibrate(combine(scores, strengths))
     ranked = sorted(combined.items(), key=lambda kv: (-kv[1], kv[0]))
     top_id, top_score = ranked[0]
     agreement = agreement_of(scores)
-    ok = top_score >= OK_MIN and (
+    pol = policy.params(OK_MIN, SINGLE_OK_MIN) if policy.enabled() else None
+    ok_min, single_min = (pol.ok_min, pol.single_ok_min) if pol else (OK_MIN, SINGLE_OK_MIN)
+    ok = top_score >= ok_min and (
         agreement in ("full", "partial")
-        or (agreement == "single_source" and top_score >= SINGLE_OK_MIN)
+        or (agreement == "single_source" and top_score >= single_min)
     )
     hazards = [(c, s) for c, s in ranked if c in HAZARD_IDS and s >= HAZARD_MIN]
     hazard_id = hazards[0][0] if hazards else None
+    if pol and not ok and not hazard_id:  # A41: strong cloud, weak local
+        cloud_cat = policy.cloud_ok(scores, strengths, pol.s_cloud, HAZARD_IDS, GROUP_OF)
+        if cloud_cat:
+            ok, top_id, top_score = True, cloud_cat, combined.get(cloud_cat, 0.0)
     fb = None if (ok or hazard_id) else group_fallback(ranked)
     if fb:
         default_id, conf = fb

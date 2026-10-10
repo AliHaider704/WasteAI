@@ -16,11 +16,49 @@ export async function loadLabels(lang = getLang()) {
   return cache[lang];
 }
 
-// Unknown or not-yet-loaded labels return the localized generic text, never the raw string.
+// Dictionary hit, else the raw tag (shown in <bdi dir="ltr">); the generic text only for an empty tag (D-053).
 export function labelFor(raw, lang = getLang()) {
   const dict = cache[lang] || {};
+  const text = String(raw || "").trim();
+  const key = text.toLowerCase();
+  if (!text) return t("why.other_label");
+  return Object.prototype.hasOwnProperty.call(dict, key) && key[0] !== "_" ? dict[key] : text;
+}
+
+function isKnown(raw, lang) {
+  const dict = cache[lang] || {};
   const key = String(raw || "").trim().toLowerCase();
-  return Object.prototype.hasOwnProperty.call(dict, key) && key[0] !== "_" ? dict[key] : t("why.other_label");
+  return Object.prototype.hasOwnProperty.call(dict, key) && key[0] !== "_";
+}
+
+/** One tag as a node: name (raw tags in bdi), score, "used" marker; unmapped tags are dimmed. */
+export function renderTag(item, lang = getLang(), catName = "") {
+  const node = document.createElement("span");
+  node.className = "why-tag" + (item.mapped === false ? " why-tag--unused" : "");
+  const name = document.createElement(isKnown(item.label, lang) ? "span" : "bdi");
+  if (name.tagName === "BDI") { name.dir = "ltr"; name.translate = false; }
+  name.textContent = labelFor(item.label, lang);
+  node.append(name, ` ${Math.round((item.score || 0) * 100)}%`);
+  if (item.mapped === true) {
+    const used = document.createElement("span");
+    used.className = "why-tag__used";
+    used.dataset.i18n = "why.used";
+    used.textContent = ` (${t("why.used")}${catName ? ": " + catName : ""})`;
+    node.append(used);
+  } else if (item.mapped === false) {
+    node.title = t("why.unused");
+  }
+  return node;
+}
+
+/** A comma-separated list of tags; every renderer uses this so they cannot drift. */
+export function renderTags(items, lang = getLang(), catNameOf = () => "") {
+  const frag = document.createDocumentFragment();
+  items.forEach((it, n) => {
+    if (n) frag.append(", ");
+    frag.append(renderTag(it, lang, it.cat ? catNameOf(it.cat) : ""));
+  });
+  return frag;
 }
 
 let names = null;

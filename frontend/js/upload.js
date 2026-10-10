@@ -60,6 +60,8 @@ function build() {
   ui.img.height = 3;
   ui.progress = document.createElement("progress"); // no value = calm indeterminate bar
   ui.progress.className = "capture__progress";
+  ui.hint = el("p", "muted capture__hint", "capture.hint");
+  ui.hint.hidden = true;
   ui.status = el("p", "muted capture__status");
   ui.status.setAttribute("role", "status");
 
@@ -77,7 +79,7 @@ function build() {
 
   ui.fileCapture = fileInput(true);
   ui.fileGallery = fileInput(false);
-  ui.panel.append(title, ui.video, ui.img, ui.progress, ui.status, ui.consent.node, buttons, ui.fileCapture, ui.fileGallery);
+  ui.panel.append(title, ui.hint, ui.video, ui.img, ui.progress, ui.status, ui.consent.node, buttons, ui.fileCapture, ui.fileGallery);
   ui.home.append(ui.panel);
   return true;
 }
@@ -102,8 +104,12 @@ function stage(name, extra) {
   document.dispatchEvent(new CustomEvent("wasteai:capture", { detail: { stage: name, ...extra } }));
 }
 
+let hintUsed = false; // capture hint: once per page session, never stored
 function setMode(mode) {
-  if (state.mode === "idle" && mode !== "idle") stage("open");
+  if (state.mode === "idle" && mode !== "idle") {
+    stage("open");
+    if (ui.hint) { ui.hint.hidden = hintUsed; hintUsed = true; }
+  }
   state.mode = mode;
   const cfg = MODES[mode];
   ui.panel.hidden = mode === "idle";

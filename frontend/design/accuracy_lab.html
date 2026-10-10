@@ -1,0 +1,44 @@
+<!-- File: frontend/design/accuracy_lab.html -->
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Accuracy lab (dev only)</title>
+<link rel="stylesheet" href="accuracy_lab.css">
+</head>
+<body>
+<main class="lab">
+  <h1>Accuracy lab: label evaluation photos</h1>
+  <p class="note">Dev tool. Nothing is uploaded; photos stay in this page. Only <code>filename,category_id</code> is exported.</p>
+
+  <label class="pick">Choose photos
+    <input id="files" type="file" accept="image/*" multiple>
+  </label>
+
+  <section id="work" hidden>
+    <p id="pos" role="status" aria-live="polite"></p>
+    <div class="frame"><img id="img" alt="Photo to label"></div>
+    <p id="fname" class="fname"></p>
+    <label for="cat">Category</label>
+    <select id="cat" name="category"></select>
+    <div class="row">
+      <button type="button" id="back">Back (←)</button>
+      <button type="button" id="next">Next (→)</button>
+      <button type="button" id="skip">Clear label</button>
+    </div>
+    <p class="hint">Keys: ← / → move between photos (when the select is not focused). Picking a category moves to the next photo.</p>
+  </section>
+
+  <section>
+    <h2>Progress</h2>
+    <p id="total"></p>
+    <table id="counts"><thead><tr><th>Category</th><th>Photos</th></tr></thead><tbody></tbody></table>
+    <p id="warn" class="warn" role="status"></p>
+    <button type="button" id="csv">Download eval_labels.csv</button>
+  </section>
+</main>
+<script type="module" src="accuracy_lab.js"></script>
+</body>
+</html>

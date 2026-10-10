@@ -4,7 +4,7 @@ import inspect
 import logging
 import time
 
-from app import aggregator, catalog, mapper, mapper_v2
+from app import aggregator, catalog, mapper, mapper_v2, policy, weighting
 from app.sources.vision_azure import VisionAzure
 from app.sources.vision_llm import VisionLLM
 from app.sources.vision_reciclapi import VisionReciclAPI
@@ -52,13 +52,27 @@ async def _timed(name: str, src, data: bytes, timings: dict):
     return res
 
 
+def _clip_items(p) -> list[dict]:
+    """The clip source answers with category ids: identity mapping (A40)."""
+    return [{"label": lb, "score": round(sc, 4), "mapped": True, "cat": lb} for lb, sc in p[:3]]
+
+
 def _source_items(results, timings: dict) -> list[dict]:
-    return [{"name": n, "ok": ok, "top": mapper_v2.mark_items(p), "elapsed_ms": timings.get(n)}
-            for n, ok, p in results]
+    return [{"name": n, "ok": ok, "top": _clip_items(p) if n == "clip" else mapper_v2.mark_items(p),
+             "elapsed_ms": timings.get(n)} for n, ok, p in results]
 
 
-def _score(pairs) -> dict[str, float]:
+def _strengths(results, usable) -> dict[str, float] | None:
+    """Evidence strength per source, needed by WEIGHT_MODE=reliability (A39) and POLICY_V2 (A41)."""
+    if weighting.mode() != "reliability" and not policy.enabled():
+        return None
+    return {n: mapper_v2.map_labels_v2(p).strength() for n, ok, p in results if ok and n in usable}
+
+
+def _score(pairs, name: str = "") -> dict[str, float]:
     """Per-source category scores: v2 keeps evidence strength (flag MAPPER_V2), v1 is the old way."""
+    if name == "clip":  # labels are already category ids (identity rule)
+        return {lb: sc for lb, sc in pairs}
     if mapper_v2.v2_enabled():
         return mapper_v2.map_labels_v2(pairs).shares()
     return mapper.map_labels(pairs)
@@ -71,7 +85,7 @@ def _hazard_warning(cats: dict) -> list[str]:
 
 
 class Orchestrator:
-    def __init__(self, local, azure: VisionAzure, recicl: VisionReciclAPI, llm=None) -> None:
+    def __init__(self, local, azure: VisionAzure, recicl: VisionReciclAPI, llm=None, clip=None) -> None:
         self.local, self.azure, self.recicl, self.llm = local, azure, recicl, llm
         self.sources = []
         if local is not None:
@@ -80,6 +94,9 @@ class Orchestrator:
             self.sources.append(("azure", azure))
         if recicl.enabled:
             self.sources.append(("reciclapi", recicl))
+        self.clip = clip
+        if clip is not None and clip.enabled:
+            self.sources.append(("clip", clip))
 
     def local_status(self) -> str:
         if self.local is None:
@@ -104,7 +121,10 @@ class Orchestrator:
             azure["quota_used"], azure["quota_limit"] = quota.used(), quota.LIMIT
         except Exception:
             azure["quota_used"] = None
-        return {"local_onnx": local, "azure": azure}
+        out = {"local_onnx": local, "azure": azure}
+        if self.clip is not None and hasattr(self.clip, "selftest"):
+            out["clip"] = await asyncio.to_thread(self.clip.selftest)
+        return out
 
     def statuses(self) -> dict:
         return {
@@ -131,16 +151,16 @@ class Orchestrator:
         cats = catalog.by_id(lang)
         usable = {}
         for name, ok, pairs in results:
-            scores = _score(pairs) if ok else {}
+            scores = _score(pairs, name) if ok else {}
             if scores:
                 usable[name] = scores
-        first = aggregator.decide(usable) if usable else None
+        first = aggregator.decide(usable, _strengths(results, usable)) if usable else None
         # Tiebreaker: flag on + per-photo consent + unclear first pass; never after a hazard.
         if (allow_cloud_llm and self.llm_active() and not (first and first.hazard)
                 and (first is None or first.status != "ok" or first.agreement == "none")):
             name, ok, pairs = await _timed("llm", self.llm, data, timings)
             results.append((name, ok, pairs))
-            scores = _score(pairs) if ok else {}
+            scores = _score(pairs, name) if ok else {}
             if scores:
                 usable[name] = scores
         if not usable:
@@ -155,7 +175,7 @@ class Orchestrator:
                 "sources": _source_items(results, timings),
                 "elapsed_ms": int((time.perf_counter() - t0) * 1000),
             }
-        d = aggregator.decide(usable)
+        d = aggregator.decide(usable, _strengths(results, usable))
         is_ok = d.status == "ok"
 
         def brief(cid: str, score: float) -> dict:
@@ -207,6 +227,22 @@ class Orchestrator:
         return out
 
 
+def _build_clip():
+    """Optional third source (A40): None unless CLIP_ENABLED=true; a load failure only disables it."""
+    try:
+        from app.sources.vision_clip import VisionClip
+
+        clip = VisionClip.from_env()
+        if clip is not None:
+            try:
+                clip.load()
+            except Exception as exc:
+                clip.mark_down(f"load_error:{type(exc).__name__}")
+        return clip
+    except Exception:
+        return None
+
+
 def build_orchestrator() -> Orchestrator:
     local = None
     try:
@@ -221,7 +257,7 @@ def build_orchestrator() -> Orchestrator:
     except Exception:
         local = None
     return Orchestrator(local, VisionAzure.from_env(), VisionReciclAPI.from_env(),
-                        VisionLLM.from_env())
+                        VisionLLM.from_env(), _build_clip())
 
 
 def get_orchestrator(app) -> Orchestrator:

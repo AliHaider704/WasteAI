@@ -177,3 +177,10 @@ body:has(.view[data-view="result"]:not([hidden])) .app-header__inner { max-inlin
   .result__stamp .bin { animation: stamp-down 160ms ease-out both; }
   .result__confidence { animation: word-fade 150ms ease-out both; }
 }
+
+.why-tag--unused { opacity: 0.6; }
+.why-tag__used { font-weight: 600; }
+
+.result__guess { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; inline-size: 100%; text-align: start; }
+.result__guess-rank { font-weight: 600; }
+.result__guess-name { font-family: var(--font-serif); }

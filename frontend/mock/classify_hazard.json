@@ -39,15 +39,19 @@
       "top": [
         {
           "label": "battery",
-          "score": 0.78
+          "score": 0.78,
+          "mapped": true,
+          "cat": "battery"
         },
         {
           "label": "metal",
-          "score": 0.12
+          "score": 0.12,
+          "mapped": false
         },
         {
           "label": "plastic",
-          "score": 0.04
+          "score": 0.04,
+          "mapped": false
         }
       ],
       "elapsed_ms": 380
@@ -58,15 +62,19 @@
       "top": [
         {
           "label": "battery",
-          "score": 0.69
+          "score": 0.69,
+          "mapped": true,
+          "cat": "battery"
         },
         {
           "label": "electronics",
-          "score": 0.55
+          "score": 0.55,
+          "mapped": false
         },
         {
           "label": "cylinder",
-          "score": 0.33
+          "score": 0.33,
+          "mapped": false
         }
       ],
       "elapsed_ms": 920
@@ -76,5 +84,9 @@
   "reason": [
     "local_onnx:battery>battery",
     "azure:battery>battery"
-  ]
+  ],
+  "evidence": {
+    "strength": 0.74,
+    "cloud_share": 0.55
+  }
 }

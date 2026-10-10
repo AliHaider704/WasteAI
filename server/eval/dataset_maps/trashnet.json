@@ -1,0 +1,3 @@
+{"_path": "server/eval/dataset_maps/trashnet.json",
+ "classes": {"cardboard": "cardboard", "glass": "glass", "metal": "metal_other",
+             "paper": "paper", "plastic": "plastic_unknown", "trash": "general_residual"}}

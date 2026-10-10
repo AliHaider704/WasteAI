@@ -1,0 +1,5 @@
+{"_path": "server/eval/dataset_maps/kaggle_garbage12.json",
+ "classes": {"battery": "battery", "biological": "organic_food", "brown-glass": "glass",
+             "cardboard": "cardboard", "clothes": "textile", "green-glass": "glass",
+             "metal": "metal_other", "paper": "paper", "plastic": "plastic_unknown",
+             "shoes": "textile", "trash": "general_residual", "white-glass": "glass"}}

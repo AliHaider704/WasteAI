@@ -51,6 +51,20 @@ def top_labels(body: dict, limit: int = 10) -> list[dict]:
     return [{"label": k, "score": round(v, 4)} for k, v in best]
 
 
+def caption_enabled() -> bool:
+    """A38: AZURE_CAPTION=true asks for the 4.0 caption too (region dependent; default off)."""
+    return os.getenv("AZURE_CAPTION", "false").strip().lower() in ("1", "true", "yes", "on")
+
+
+def caption_label(body: dict) -> dict | None:
+    """The caption as one extra label: the mapper matches rule words inside the phrase."""
+    cap = body.get("captionResult") or {}
+    text = str(cap.get("text", "")).strip()
+    if not text:
+        return None
+    return {"label": text, "score": round(float(cap.get("confidence", 0.5)), 4)}
+
+
 DEEP_INTERVAL = 3600.0  # one real Azure call per hour at most (/health/deep)
 
 
@@ -127,17 +141,26 @@ class VisionAzure:
         if self._client is None:
             self._client = httpx.AsyncClient(timeout=self.timeout)
         try:
-            resp = await self._client.post(
-                f"{self.endpoint}/computervision/imageanalysis:analyze",
-                params={"api-version": API_VERSION, "features": "tags,objects"},
-                content=data,
-                headers={
-                    "Ocp-Apim-Subscription-Key": self.key,
-                    "Content-Type": "application/octet-stream",
-                },
-            )
+            feats = ["tags,objects,caption", "tags,objects"] if caption_enabled() else ["tags,objects"]
+            for i, features in enumerate(feats):
+                resp = await self._client.post(
+                    f"{self.endpoint}/computervision/imageanalysis:analyze",
+                    params={"api-version": API_VERSION, "features": features},
+                    content=data,
+                    headers={
+                        "Ocp-Apim-Subscription-Key": self.key,
+                        "Content-Type": "application/octet-stream",
+                    },
+                )
+                if resp.status_code == 400 and i + 1 < len(feats):
+                    continue  # caption not offered in this region: retry without it
+                break
             resp.raise_for_status()
-            top = top_labels(resp.json())
+            body = resp.json()
+            top = top_labels(body)
+            cap = caption_label(body) if caption_enabled() else None
+            if cap:
+                top.append(cap)
         except httpx.TimeoutException:
             return self._fail("timeout")
         except httpx.HTTPStatusError as exc:

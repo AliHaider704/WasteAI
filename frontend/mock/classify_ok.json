@@ -35,15 +35,19 @@
       "top": [
         {
           "label": "plastic",
-          "score": 0.91
+          "score": 0.91,
+          "mapped": true,
+          "cat": "plastic_pet"
         },
         {
           "label": "bottle",
-          "score": 0.05
+          "score": 0.05,
+          "mapped": false
         },
         {
           "label": "glass",
-          "score": 0.02
+          "score": 0.02,
+          "mapped": false
         }
       ],
       "elapsed_ms": 380
@@ -54,15 +58,19 @@
       "top": [
         {
           "label": "bottle",
-          "score": 0.88
+          "score": 0.88,
+          "mapped": true,
+          "cat": "plastic_pet"
         },
         {
           "label": "plastic",
-          "score": 0.74
+          "score": 0.74,
+          "mapped": false
         },
         {
           "label": "drink",
-          "score": 0.52
+          "score": 0.52,
+          "mapped": false
         }
       ],
       "elapsed_ms": 920
@@ -72,5 +80,9 @@
   "reason": [
     "local_onnx:plastic>plastic_pet",
     "azure:bottle>plastic_pet"
-  ]
+  ],
+  "evidence": {
+    "strength": 0.74,
+    "cloud_share": 0.55
+  }
 }

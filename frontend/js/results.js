@@ -4,8 +4,8 @@
 // All text is looked up by key via window.__i18n (M5); the key itself is shown until then.
 
 import { store, getCategories, sendFeedback, ApiError } from "./api.js";
-import { loadLabels, labelFor, loadSourceNames, sourceName } from "./labels.js";
-import { plain, setRich, t } from "./i18n.js";
+import { loadLabels, renderTags, loadSourceNames, sourceName } from "./labels.js";
+import { getLang, plain, setRich, t } from "./i18n.js";
 
 const HIGH = 0.8;   // confidence in words: >= HIGH -> high, >= MEDIUM -> medium, else not sure
 const MEDIUM = 0.65;
@@ -142,13 +142,19 @@ function whyPanel(result) {
     li.append(head, " ");
     if (real) li.append(el("span", "muted", `source.${src.name}`), " ");
     if (src.ok && src.top && src.top.length) {
-      li.append(txt("span", "result__labels", src.top.map((l) => `${labelFor(l.label)} ${Math.round(l.score * 100)}%`).join(", ")));
+      const tags = el("span", "result__labels");
+      tags.append(renderTags(src.top, getLang(), (id) => plain((catalog.find((c) => c.id === id) || {}).name || "")));
+      li.append(tags);
     } else {
       li.append(el("span", "muted", "result.source_failed"));
     }
     list.append(li);
   });
   details.append(list);
+  const ev = result.evidence;
+  if (ev && typeof ev.cloud_share === "number") {
+    details.append(el("p", "muted", ev.cloud_share >= 0.5 ? "why.strong_cloud" : "why.weak_cloud"));
+  }
   return details;
 }
 
@@ -277,6 +283,13 @@ function buildOk(result) {
   return card;
 }
 
+function tipKeyFor(result) {
+  if (result.agreement === "none") return "result.tip.single";
+  if (result.agreement === "partial") return "result.tip.closer";
+  if (result.agreement === "single_source") return "result.tip.light";
+  return "result.tip.background";
+}
+
 function buildUncertain(result) {
   const card = el("article", "result__card");
   const head = el("div", "result__head");
@@ -292,11 +305,20 @@ function buildUncertain(result) {
     const list = el("ul", "result__alts");
     const chosen = el("div", "result__chosen");
     chosen.setAttribute("aria-live", "polite");
-    alts.forEach((alt) => {
+    alts.forEach((alt, n) => {
       const li = el("li");
       const altMeta = catalog.find((c) => c.id === alt.id);
-      const b = txt("button", "btn", altMeta ? altMeta.name : alt.name);
+      const b = el("button", "btn result__guess");
       b.type = "button";
+      b.append(el("span", "result__guess-rank", n === 0 ? "result.possible" : "result.less_likely"));
+      b.append(txt("span", "result__guess-name", altMeta ? altMeta.name : alt.name));
+      if (altMeta) {
+        b.append(el("span", "muted", `group.${altMeta.group}`));
+        const stamp = el("span", `bin bin--${altMeta.bin}`);
+        stamp.dataset.i18n = `bin.${altMeta.bin}`;
+        stamp.textContent = t(`bin.${altMeta.bin}`);
+        b.append(stamp);
+      }
       b.addEventListener("click", () => chooseAlternative(result, alt, chosen, list));
       li.append(b);
       list.append(li);
@@ -306,11 +328,14 @@ function buildUncertain(result) {
 
   card.append(el("h3", "result__sub", "result.tips"));
   const tips = el("ul", "result__list");
-  TIP_KEYS.forEach((key) => tips.append(el("li", null, key)));
+  tips.append(el("li", null, tipKeyFor(result))); // one specific tip, chosen by agreement
   card.append(tips);
   card.append(el("p", "muted", "result.second_photo"));
-  const again = el("a", "btn btn--primary", "result.try_again");
-  again.href = "#/";
+  const again = button("result.retake", "btn btn--primary");
+  again.addEventListener("click", () => {
+    location.hash = "#/";
+    setTimeout(() => { const scan = document.querySelector('[data-action="scan"]'); if (scan) scan.click(); }, 100);
+  });
   card.append(again, whyPanel(result), feedbackBlock(result, null));
   return card;
 }

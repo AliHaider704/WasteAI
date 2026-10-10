@@ -5,16 +5,36 @@
 <h1>Photo check lab</h1>
 <p>Label each photo good or poor in its file name, drop 20 files, then pick thresholds that flag the poor ones and at most 1 of 10 good ones.</p>
 <div id="drop" tabindex="0">Drop photos here or <input type="file" accept="image/*" multiple></div>
+<p>Name files <code>good_*</code> or <code>poor_*</code>. Suggested thresholds allow at most 1 good photo to be flagged (2nd lowest or highest good score).</p>
+<pre id="sug"></pre>
 <table><thead><tr><th>File</th><th>Brightness</th><th>Sharpness</th><th>Flag</th></tr></thead><tbody id="rows"></tbody></table>
 <script type="module">
 import { scorePhoto } from "../js/features/photo-check.js";
 const cfg = await fetch("../data/photo-check.json").then((r) => r.json());
 const rows = document.getElementById("rows");
+const all = [];
+function suggest() {
+  const good = all.filter((x) => /^good/i.test(x.name));
+  const poor = all.filter((x) => /^poor/i.test(x.name));
+  if (good.length < 3) { document.getElementById("sug").textContent = "Need good_* photos (10 recommended)."; return; }
+  const asc = (k) => good.map((x) => x[k]).sort((a, b) => a - b);
+  const second = (a) => a[Math.min(1, a.length - 1)];
+  const sug = {
+    dark_below: Math.floor(second(asc("b"))),
+    bright_above: Math.ceil(second(asc("b").reverse())),
+    blurry_below: Math.floor(second(asc("s")))
+  };
+  const caught = poor.filter((x) => x.b < sug.dark_below || x.b > sug.bright_above || x.s < sug.blurry_below).length;
+  document.getElementById("sug").textContent = JSON.stringify(sug) + `\ngood: ${good.length}, poor: ${poor.length}, poor flagged: ${caught}`;
+}
+
 async function add(files) {
   for (const f of files) {
     const s = await scorePhoto(f, cfg.side);
     const flag = s.brightness < cfg.dark_below ? "dark" : s.brightness > cfg.bright_above ? "bright" : s.sharpness < cfg.blurry_below ? "blurry" : "";
     const tr = rows.insertRow();
+    all.push({ name: f.name, b: s.brightness, s: s.sharpness });
+    suggest();
     [f.name, s.brightness.toFixed(1), s.sharpness.toFixed(1), flag].forEach((v) => (tr.insertCell().textContent = v));
   }
 }
