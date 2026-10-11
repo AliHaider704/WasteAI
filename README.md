@@ -3,7 +3,7 @@
 
 Arabic: نظام فصل النفايات باستخدام الذكاء الاصطناعي (D-029, proposed).
 
-Live site: https://wasteai.duckdns.org/
+**Live site:** https://wasteai.duckdns.org/
 
 WasteAI is a web app that tells you how to dispose of an item. Upload a photo and it returns a waste category and disposal instructions. Arabic (RTL) and English, light and dark themes, works on phones, tablets and desktops.
 
